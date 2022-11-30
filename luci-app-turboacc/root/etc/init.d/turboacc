@@ -348,7 +348,7 @@ check_status(){
 		fi
 		;;
 	"fullconenat")
-    if [[ -z "$(iptables -t nat -L zone_wan_postrouting | grep -i fullcone)"  || "$(cat "/sys/module/nft_fullcone/refcnt" 2>"/dev/null" || echo 0)" -eq "0" ]]; then
+    if [[ -z "$(iptables -t nat -L zone_wan_postrouting | grep -i fullcone)"  || "$(cat "/sys/module/nft_fullcone/refcnt" 2>"/dev/null" || echo 0)" -ne "0" ]]; then
       exit 1
     else
       exit 0
