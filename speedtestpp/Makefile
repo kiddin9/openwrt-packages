@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=speedtestpp
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 PKG_VERSION:=1.14
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/taganaka/SpeedTest.git
-PKG_SOURCE_VERSION:=0f63cfbf7ce8d64ea803bf143b957eae76323405
+PKG_SOURCE_VERSION:=null
 
 PKG_MAINTAINER:=Konstantine Shevlakov <shevlyakov@132lan.ru>
 PKG_LICENSE:=MIT

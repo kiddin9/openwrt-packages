@@ -50,7 +50,7 @@ const dns_port = uci.get(uciconfig, uciinfra, 'dns_port') || '5333';
 
 let main_node, main_udp_node, dedicated_udp_node, default_outbound, sniff_override = '1',
     dns_server, dns_default_strategy, dns_default_server, dns_disable_cache, dns_disable_cache_expire,
-    lan_proxy_ips, wan_proxy_ips, proxy_domain_list, direct_domain_list;
+    lan_proxy_ips, direct_domain_list;
 
 if (routing_mode !== 'custom') {
 	main_node = uci.get(uciconfig, ucimain, 'main_node') || 'nil';
@@ -70,19 +70,7 @@ if (routing_mode !== 'custom') {
 		}
 	}
 
-	for (let i in ['wan_proxy_ipv4_ips', 'wan_proxy_ipv6_ips']) {
-		const proxy_ips = uci.get(uciconfig, ucicontrol, i);
-		if (length(proxy_ips)) {
-			if (!wan_proxy_ips)
-				wan_proxy_ips = [];
-			map(proxy_ips, (v) => push(wan_proxy_ips, v));
-		}
-	}
-
-	proxy_domain_list = trim(readfile(HP_DIR + '/resources/proxy_list.txt'));
 	direct_domain_list = trim(readfile(HP_DIR + '/resources/direct_list.txt'));
-	if (proxy_domain_list)
-		proxy_domain_list = split(proxy_domain_list, /[\r\n]/);
 	if (direct_domain_list)
 		direct_domain_list = split(direct_domain_list, /[\r\n]/);
 } else {
@@ -587,16 +575,16 @@ if (!isEmpty(main_node)) {
 /* Default settings */
 if (!isEmpty(main_node) || !isEmpty(default_outbound))
 	config.route = {
-		geoip: {
+		geoip: !isEmpty(default_outbound) ? {
 			path: HP_DIR + '/resources/geoip.db',
 			download_url: 'https://github.com/1715173329/sing-geoip/releases/latest/download/geoip.db',
-			download_detour: get_outbound(default_outbound) || ((routing_mode !== 'proxy_mainland_china' && !isEmpty(main_node)) ? 'main-out' : 'direct-out')
-		},
-		geosite: {
+			download_detour: get_outbound(default_outbound)
+		} : null,
+		geosite: !isEmpty(default_outbound) ? {
 			path: HP_DIR + '/resources/geosite.db',
 			download_url: 'https://github.com/1715173329/sing-geosite/releases/latest/download/geosite.db',
-			download_detour: get_outbound(default_outbound) || ((routing_mode !== 'proxy_mainland_china' && !isEmpty(main_node)) ? 'main-out' : 'direct-out')
-		},
+			download_detour: get_outbound(default_outbound)
+		} : null,
 		rules: [
 			{
 				inbound: 'dns-in',
@@ -615,12 +603,6 @@ if (!isEmpty(main_node)) {
 	/* Routing rules */
 	/* LAN ACL */
 	if (length(lan_proxy_ips)) {
-		push(config.route.rules, {
-			source_ip_cidr: lan_proxy_ips,
-			network: dedicated_udp_node ? 'tcp' : null,
-			outbound: 'main-out'
-		});
-
 		if (dedicated_udp_node) {
 			push(config.route.rules, {
 				source_ip_cidr: lan_proxy_ips,
@@ -628,25 +610,11 @@ if (!isEmpty(main_node)) {
 				outbound: 'main-udp-out'
 			});
 		}
-	}
 
-	/* Proxy list */
-	if (length(proxy_domain_list) || length(wan_proxy_ips)) {
 		push(config.route.rules, {
-			domain_keyword: proxy_domain_list,
-			ip_cidr: wan_proxy_ips,
-			network: dedicated_udp_node ? 'tcp' : null,
+			source_ip_cidr: lan_proxy_ips,
 			outbound: 'main-out'
 		});
-
-		if (dedicated_udp_node) {
-			push(config.route.rules, {
-				domain_keyword: proxy_domain_list,
-				ip_cidr: wan_proxy_ips,
-				network: 'udp',
-				outbound: 'main-udp-out'
-			});
-		}
 	}
 
 	/* Direct list */
@@ -656,34 +624,14 @@ if (!isEmpty(main_node)) {
 			outbound: 'direct-out'
 		});
 
-	let routing_geosite;
-	if (routing_mode === 'gfwlist') {
-		routing_geosite = [ 'gfw', 'greatfire' ];
-
-		push(config.route.rules, {
-			geosite: routing_geosite,
-			network: dedicated_udp_node ? 'tcp' : null,
-			outbound: 'main-out'
-		});
-	} else if (routing_mode in ['bypass_mainland_china', 'proxy_mainland_china']) {
-		/* Check CN traffic, in case of dirty nftset table */
-		push(config.route.rules, {
-			geosite: [ 'cn' ],
-			geoip: [ 'cn' ],
-			invert: (routing_mode === 'proxy_mainland_china') ? true : null,
-			outbound: 'direct-out'
-		});
-	}
-
 	/* Main UDP out */
 	if (dedicated_udp_node)
 		push(config.route.rules, {
-			geosite: routing_geosite,
 			network: 'udp',
 			outbound: 'main-udp-out'
 		});
 
-	config.route.final = (routing_mode === 'gfwlist') ? 'direct-out' : 'main-out';
+	config.route.final = 'main-out';
 } else if (!isEmpty(default_outbound)) {
 	uci.foreach(uciconfig, uciroutingrule, (cfg) => {
 		if (cfg.enabled !== '1')

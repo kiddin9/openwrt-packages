@@ -5,8 +5,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=joker
-PKG_VERSION:=20230101
-PKG_RELEASE:=1
+PKG_VERSION:=20210214
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/txthinking/joker/tar.gz/v$(PKG_VERSION)?
