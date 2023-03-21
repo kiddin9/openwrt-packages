@@ -91,7 +91,6 @@ jobs:
         }
         (
         git_clone https://github.com/kiddin9/my-packages && mvdir my-packages
-        git_clone https://github.com/kiddin9/openwrt-bypass && mvdir openwrt-bypass
         git_clone https://github.com/kiddin9/luci-app-dnsfilter
         git_clone https://github.com/kiddin9/aria2
         git_clone https://github.com/kiddin9/luci-app-baidupcs-web
