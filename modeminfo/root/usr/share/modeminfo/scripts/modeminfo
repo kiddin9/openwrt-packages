@@ -48,7 +48,7 @@ function modem_family() {
 			FAMILY=FIBOCOM
 		elif (echo ${F} | grep -i qua >/dev/null); then
 			FAMILY=QUALCOMM
-		elif (echo ${F} | grep -i qua >/dev/null); then
+		elif (echo ${F} | grep -i hua >/dev/null); then
 			FAMILY=HUAWEI
 		else
 			FAMILY=GENERIC
