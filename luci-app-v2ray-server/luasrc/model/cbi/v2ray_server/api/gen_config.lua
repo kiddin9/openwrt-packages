@@ -151,6 +151,9 @@ function gen_config(user)
                     httpSettings = (user.transport == "h2") and {
                         path = user.h2_path, host = user.h2_host
                     } or nil,
+                    grpcSettings = (user.transport == "grpc") and {
+                        serviceName = user.grpc_sn
+                    } or nil,
                     dsSettings = (user.transport == "ds") and {
                         path = user.ds_path
                     } or nil,

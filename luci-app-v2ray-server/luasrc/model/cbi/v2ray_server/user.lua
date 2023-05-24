@@ -179,6 +179,7 @@ transport:value("tcp", "TCP")
 transport:value("mkcp", "mKCP")
 transport:value("ws", "WebSocket")
 transport:value("h2", "HTTP/2")
+transport:value("grpc", "gRPC")
 transport:value("ds", "DomainSocket")
 transport:value("quic", "QUIC")
 transport:depends({ protocol = "vmess" })
@@ -214,6 +215,14 @@ h2_path:depends("transport", "h2")
 h2_path:depends("ss_transport", "h2")
 h2_path:depends("trojan_transport", "h2+ws")
 h2_path:depends("trojan_transport", "h2")
+
+-- [[ gRPC部分 ]]--
+grpc_sn = s:option(Value, "grpc_sn", translate("gRPC Service-Name"))
+grpc_sn:depends("transport", "grpc")
+grpc_sn:depends("ss_transport", "grpc")
+grpc_sn:depends("trojan_transport", "grpc+ws")
+grpc_sn:depends("trojan_transport", "grpc")
+
 
 -- [[ TCP部分 ]]--
 
