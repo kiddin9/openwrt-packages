@@ -69,10 +69,10 @@ define Package/cloudreve/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/Cloudreve $(1)/usr/bin/cloudreve
 	
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/cloudreve.init $(1)/etc/init.d/cloudreve
+	$(INSTALL_BIN) /files/cloudreve.init $(1)/etc/init.d/cloudreve
 
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/cloudreve.conf $(1)/etc/config/cloudreve
+	$(INSTALL_CONF) /files/cloudreve.conf $(1)/etc/config/cloudreve
 endef
 
 $(eval $(call GoBinPackage,cloudreve))
