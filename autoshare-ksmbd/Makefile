@@ -17,7 +17,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/autoshare-ksmbd
   TITLE:=Samba autoconfig hotplug script.
   MAINTAINER:=Lean
-  DEPENDS:=+wsdd2
+  DEPENDS:=luci-app-ksmdb +wsdd2
 endef
 
 define Package/autoshare-ksmbd/description
