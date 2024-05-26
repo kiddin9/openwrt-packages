@@ -7,11 +7,11 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=daed-next
 PKG_VERSION:=2023-12-02-102cb56
 CORE_VERSION:=core-$(shell date "+%Y-%m-%d")
-PKG_RELEASE:=10
+PKG_RELEASE:=11
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=102cb562b6962b44c47f38092284d2ab2506a702
+PKG_SOURCE_VERSION:=null
 PKG_SOURCE_URL:=https://github.com/daeuniverse/daed-revived-next.git
 PKG_MIRROR_HASH:=skip
 
