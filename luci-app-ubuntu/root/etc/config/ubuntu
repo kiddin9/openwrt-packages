@@ -1,0 +1,5 @@
+config ubuntu
+	option 'image' 'linkease/desktop-ubuntu-standard-arm64:latest'
+	option 'password' 'password'
+	option 'port' '6901'
+	option 'version' 'standard'

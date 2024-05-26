@@ -1,0 +1,10 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@iperf3-server[-1]
+	add ucitrack iperf3-server
+	set ucitrack.@iperf3-server[-1].init=iperf3-server
+	commit ucitrack
+EOF
+
+exit 0

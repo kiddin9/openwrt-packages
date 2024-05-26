@@ -1,0 +1,64 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2018 Ycarus (Yannick Chabanois) <ycarus@zugaina.org>
+
+START=90
+STOP=10
+
+USE_PROCD=1
+
+validate_section() {
+	uci_validate_section mail smtp "${1}" \
+		'server:host'          \
+		'tls:bool:0'           \
+		'tls_starttls:bool:0'  \
+		'from:string'          \
+		'user:string'          \
+		'password:string'      \
+		'port:port:25'
+}
+
+config_account() {
+	local server tls tls_starttls from user password
+
+	validate_section "${1}" || {
+		_err "validation failed"
+		return 1
+	}
+
+	cat > /tmp/msmtp.tmp <<-EOF
+	account default
+	host $server
+	port $port
+	EOF
+	[ -n "$user" ] && [ -n "$password" ] && {
+		cat >> /tmp/msmtp.tmp <<-EOF
+		auth on
+		user $user
+		password $password
+		EOF
+	}
+	[ -n "$from" ] && echo "from $from" >> /tmp/msmtp.tmp
+	[ "$tls" = "1" ] && {
+		cat >> /tmp/msmtp.tmp <<-EOF
+		tls_trust_file /etc/ssl/certs/ca-certificates.crt
+		tls on
+		EOF
+	} || {
+		echo 'tls off' >> /tmp/msmtp.tmp
+	}
+	[ "$tls_starttls" = "1" ] && {
+		echo 'tls_starttls on' >> /tmp/msmtp.tmp
+	} || {
+		echo 'tls_starttls off' >> /tmp/msmtp.tmp
+	}
+}
+
+start_service() {
+	config_load mail
+	config_foreach config_account smtp
+	[ -f "/tmp/msmtp.tmp" ] && mv /tmp/msmtp.tmp /etc/msmtprc
+}
+
+service_triggers() {
+	procd_add_reload_trigger mail
+}

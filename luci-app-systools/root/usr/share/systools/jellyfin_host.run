@@ -1,0 +1,46 @@
+#!/bin/sh
+# @jjm2473
+
+hosts() {
+    cat <<-EOF
+api.themoviedb.org 13.35.67.86
+image.tmdb.org 104.16.61.155
+www.themoviedb.org 54.192.151.79
+EOF
+}
+
+filter() {
+    local EXISTED=`uci show dhcp | grep -E '^dhcp\.@domain\[\d+\]\.name=' | sed 's/.*=//g'"; s/'//g" | sort -u`
+    if [ "x$EXISTED" = "x" ]; then
+    	cat
+    else
+	    grep -vFwe "$EXISTED"
+    fi
+}
+add_host() {
+    [ "x$1" = "x" -o "x$2" = "x" ] && return
+    echo "set $1 = $2"
+    uci -q batch <<-EOF >/dev/null
+        add dhcp domain
+        set dhcp.@domain[-1].name=$1
+        set dhcp.@domain[-1].ip=$2
+EOF
+}
+add_hosts() {
+    local line
+    while read; do
+        line="$REPLY"
+        add_host $line
+    done
+    if [ -n "`uci changes dhcp`" ]; then
+        echo "commit changes and reload dnsmasq"
+        uci commit dhcp
+        /etc/init.d/dnsmasq reload
+    else
+        echo "there is nothing to do"
+    fi
+}
+
+hosts | filter | add_hosts
+
+echo "done"

@@ -1,0 +1,6 @@
+config main
+	option 'http_port' '4533'
+	option 'image_name' 'deluan/navidrome:latest'
+	option 'config_path' ''
+	option 'music_path' ''
+

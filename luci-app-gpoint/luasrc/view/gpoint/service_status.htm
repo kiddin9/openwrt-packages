@@ -1,0 +1,85 @@
+<%#
+Module for providing data from a mobile satellite navigation system ( mobile modems, etc.)
+-= Design and Development 2021-2023 =-
+Licensed to the public under the Apache License 2.0.
+-%>
+
+<%+cbi/valueheader%>
+<div align="left"><label class="cbi-section"><h3>Service control</h3></label>
+    <table style="outline:none;border:none;box-shadow:none;background:transparent;font-weight:bold;line-height:30px;height:30px;width:60em;">
+        <tr class="tr">
+            <td class="td left" id="application">-</td>
+        </tr>
+        <tr class="tr"></tr>
+        <tr class="tr">
+            <td class="td left" id="app">Application: -</td>
+        </tr>
+        <tr class="tr"></tr>
+        <tr class="tr">
+            <td class="td left" id="server">Remote Server: -</td>
+        </tr>
+        <tr class="tr"></tr>
+        <tr class="tr">
+            <td class="td left" id="locat">Yandex Locator: -</td>
+        </tr>
+        <tr class="tr"></tr>
+        <tr class="tr">
+            <td class="td left" id="filter">GpointFilter: -</td>
+        </tr>
+        <tr class="tr"></tr>
+        <tr class="tr">
+            <td class="td left" id="kalmanf">KalmanFilter: -</td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    function createForm(f_input, f_name, f_id) {
+        var f = document.getElementById(f_id);
+        var color = "orange";
+        if(f_input) {
+            f.innerHTML = f_name + f_input[1];
+            if (f_input[1] == "OK") {
+                color = "green";
+            }
+            else if(f_input[1] == "OFF") {
+                color = "red";
+            }
+        }
+        document.querySelector("#" + f_id).style.color = color;
+    }
+
+    var pointer = ""
+    XHR.poll(3, '<%=luci.dispatcher.build_url("admin", "services", "gpoint", "geopoint")%>', null,
+        function (x, data) {
+            var app = document.getElementById("application");
+            var color = "green";
+            if(document.getElementById("btn_disable").disabled) {
+                app.innerHTML = "Stop (Disabled)";
+                color = "red";
+            }
+            else if (document.getElementById("btn_stop").disabled) {
+                app.innerHTML = "Stop";
+                color = "orange";
+            }
+            else if(document.getElementById("btn_start").disabled) {
+                app.innerHTML = "Running" + pointer;
+                pointer += '.';
+                if(pointer.length > 3) {
+                    pointer = ''
+                }
+            }
+            else {}
+            document.querySelector("#application").style.color = color
+
+            createForm(data.warning.app, "Application: ", "app");
+            createForm(data.warning.server, "Remote Server: ", "server");
+            createForm(data.warning.locator, "Yandex Locator: ", "locat");
+            createForm(data.warning.filter, "GeoHash Filter: ", "filter");
+            createForm(data.warning.kalman, "Kalman filter: ", "kalmanf");
+        });
+    //]]>
+</script>
+
+<%+cbi/valuefooter%>

@@ -1,0 +1,310 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Advanced"
+msgstr ""
+
+msgid "AuthKey"
+msgstr ""
+
+msgid "BER"
+msgstr ""
+
+msgid "Callsign"
+msgstr ""
+
+msgid "ColorCode"
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "DAPNET GW"
+msgstr ""
+
+msgid "DAPNET Gateway Activity"
+msgstr ""
+
+msgid "DMR Server"
+msgstr ""
+
+msgid "DMR Settings"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Digital Modes"
+msgstr ""
+
+msgid "DumpTAData"
+msgstr ""
+
+msgid "Duplex"
+msgstr ""
+
+msgid "Duplex/Simplex"
+msgstr ""
+
+msgid "Dur"
+msgstr ""
+
+msgid "Enable DMR Mode"
+msgstr ""
+
+msgid "Enable NXDN Mode"
+msgstr ""
+
+msgid "Enable P25 Mode"
+msgstr ""
+
+msgid "Enable POCSAG Mode"
+msgstr ""
+
+msgid "Enable YSF Mode"
+msgstr ""
+
+msgid "Frequency"
+msgstr ""
+
+msgid "Gateway Activity"
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "General Settings"
+msgstr ""
+
+msgid "Height"
+msgstr ""
+
+msgid ""
+"Here you can configure the basic aspects of your device like its callsign or "
+"the operating modes."
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "InactivityTimeout"
+msgstr ""
+
+msgid "Infomation Settings"
+msgstr ""
+
+msgid "Input file not found, please check your configuration."
+msgstr ""
+
+msgid "Latitude"
+msgstr ""
+
+msgid "Live Caller"
+msgstr ""
+
+msgid "Live Log"
+msgstr ""
+
+msgid "Local RF"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "Longitude"
+msgstr ""
+
+msgid "Loss"
+msgstr ""
+
+msgid "MMDVM"
+msgstr ""
+
+msgid "MMDVMHost"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
+msgid "Minutes to disconect when idle"
+msgstr ""
+
+msgid "Mode"
+msgstr ""
+
+msgid "Modem Settings"
+msgstr ""
+
+msgid "NAC"
+msgstr ""
+
+msgid "NXDN GW"
+msgstr ""
+
+msgid "NXDN Settings"
+msgstr ""
+
+msgid "NetModeHang"
+msgstr ""
+
+msgid "Network Access Control"
+msgstr ""
+
+msgid "Only the callsign you entered above shall pass in DMR mode"
+msgstr ""
+
+msgid "Only the callsign you entered above shall pass in P25 mode"
+msgstr ""
+
+msgid "Only the callsign you entered above shall pass in YSF mode"
+msgstr ""
+
+msgid "Only vaild IDs shall pass on RF transmition by unchecked this"
+msgstr ""
+
+msgid "OverrideUIDCheck"
+msgstr ""
+
+msgid "P25 GW"
+msgstr ""
+
+msgid "P25 Settings"
+msgstr ""
+
+msgid "POCSAG"
+msgstr ""
+
+msgid "POCSAG Settings"
+msgstr ""
+
+msgid "Personal hotspots typically use color code 1"
+msgstr ""
+
+msgid "Please edit this file directly in a terminal session."
+msgstr ""
+
+msgid "Port"
+msgstr ""
+
+msgid "Radio"
+msgstr ""
+
+msgid "RFModeHang"
+msgstr ""
+
+msgid "RSSIMappingFile"
+msgstr ""
+
+msgid "RXFrequency"
+msgstr ""
+
+msgid "RXOffset"
+msgstr ""
+
+msgid "Revert to Startup"
+msgstr ""
+
+msgid "Revert to Startup reflector when InactivityTimeout"
+msgstr ""
+
+msgid "Save & Reload Service"
+msgstr ""
+
+msgid "SelfOnly"
+msgstr ""
+
+msgid "Server"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Simplex"
+msgstr ""
+
+msgid "Src"
+msgstr ""
+
+msgid "Startup Reflector"
+msgstr ""
+
+msgid "TXFrequency"
+msgstr ""
+
+msgid "TXOffset"
+msgstr ""
+
+msgid "TXPower"
+msgstr ""
+
+msgid "Target"
+msgstr ""
+
+msgid "The file size is too large for online editing in LuCI (&ge; 100 KB)."
+msgstr ""
+
+msgid "The port of Modem"
+msgstr ""
+
+msgid "This form allows you to modify the .ini file of the DAPNETGateway (%s)."
+msgstr ""
+
+msgid "This form allows you to modify the .ini file of the MMDVMHost (%s)."
+msgstr ""
+
+msgid "This form allows you to modify the .ini file of the NXDNGateway (%s)."
+msgstr ""
+
+msgid "This form allows you to modify the .ini file of the P25Gateway (%s)."
+msgstr ""
+
+msgid "This form allows you to modify the .ini file of the YSFGateway (%s)."
+msgstr ""
+
+msgid ""
+"Those infomation will show up at brandmeister.network if you enable DMR mode"
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Timeslot"
+msgstr ""
+
+msgid "URL"
+msgstr ""
+
+msgid "Use the format <abbr title=\"the Unit is Hz\">434500000</abbr>, in Hz"
+msgstr ""
+
+msgid "Use the same format as RXFrequency"
+msgstr ""
+
+msgid ""
+"Which enables \"Talker Alias\" information to be received by radios that "
+"support this feature"
+msgstr ""
+
+msgid "YSF GW"
+msgstr ""
+
+msgid "YSF Settings"
+msgstr ""
+
+msgid "Your DmrId or DmrId + <abbr title=\"ex. 460713301\">2 digitals</abbr>"
+msgstr ""
+
+msgid "e.g. 1 Watt"
+msgstr ""
+
+msgid "e.g. 110 Meters"
+msgstr ""
+
+msgid "e.g. 114.3 E"
+msgstr ""
+
+msgid "e.g. 22.10 N"
+msgstr ""

@@ -1,0 +1,115 @@
+#!/bin/sh /etc/rc.common
+
+START=88
+STOP=11
+USE_PROCD=1
+PROG=/usr/bin/oled
+
+get_section() {
+	eval "export -n ${2}=\"$1\""
+	return 1
+}
+
+start_service() {
+	local mainsection
+	config_load oled
+	config_foreach get_section oled mainsection
+	local section=$mainsection
+
+	local enabled ; config_get enabled "$section" enable 0
+	if [[ $enabled -eq 0 ]]; then
+		return 1
+	fi
+
+	procd_open_instance
+	procd_set_param command ${PROG}
+	procd_append_param command --needInit
+
+	local param
+	# default /dev/i2c-0
+	config_get param "$section" path
+	[ "$param" != "" ]  && procd_append_param command --i2cDevPath="$param"
+
+	# from begin_minitues to end_minitues
+	# default 0 - 1440
+	config_get param "$section" from
+	[ "$param" != "" ]  && procd_append_param command --from="$param"
+	config_get param "$section" to
+	[ "$param" != "" ]  && procd_append_param command --to="$param"
+
+	config_get param "$section" date
+	[ "$param" == "1" ] && procd_append_param command --displayDate
+
+	config_get param "$section" lanip
+	[ "$param" == "1" ] && procd_append_param command --displayIp
+	config_get param "$section" ipifname
+	if [ "$param" != "" ];then
+		procd_append_param command --ipIfName="$param"
+	else
+		procd_append_param command --ipIfName="br-lan"
+	fi
+
+	config_get param "$section" cputemp
+	[ "$param" == "1" ] && procd_append_param command --displayCpuTemp
+
+	config_get param "$section" cpufreq
+	[ "$param" == "1" ] && procd_append_param command --displayCpuFreq
+
+	config_get param "$section" netspeed
+	[ "$param" == "1" ] && procd_append_param command --displayNetSpeed
+	# default eth0
+	config_get param "$section" netsource
+	[ "$param" != "" ]  && procd_append_param command --speedIfName="$param"
+
+	# default 60
+	config_get param "$section" time
+	[ "$param" != "" ]  && procd_append_param command --interval="$param"
+
+	config_get param "$section" drawline
+	[ "$param" == "1" ] && procd_append_param command --drawLine
+
+	config_get param "$section" drawrect
+	[ "$param" == "1" ] && procd_append_param command --drawRect
+
+	config_get param "$section" fillrect
+	[ "$param" == "1" ] && procd_append_param command --fillRect
+
+	config_get param "$section" drawcircle
+	[ "$param" == "1" ] && procd_append_param command --drawCircle
+
+	config_get param "$section" drawroundrect
+	[ "$param" == "1" ] && procd_append_param command --drawRoundCircle
+
+	config_get param "$section" fillroundrect
+	[ "$param" == "1" ] && procd_append_param command --fillRoundCircle
+
+	config_get param "$section" drawtriangle
+	[ "$param" == "1" ] && procd_append_param command --drawTriangle
+
+	config_get param "$section" filltriangle
+	[ "$param" == "1" ] && procd_append_param command --fillTriangle
+
+	config_get param "$section" displaybitmap
+	[ "$param" == "1" ] && procd_append_param command --displayBitmap
+
+	config_get param "$section" drawbitmapeg
+	[ "$param" == "1" ] && procd_append_param command --drawBitmapEg
+
+	config_get param "$section" displayinvertnormal
+	[ "$param" == "1" ] && procd_append_param command --displayInvertNormal
+
+	config_get param "$section" rotate
+	[ "$param" == "1" ] && procd_append_param command --rotate
+
+	config_get param "$section" scroll
+	[ "$param" == "1" ] && procd_append_param command --scroll
+	config_get param "$section" text
+	[ "$param" != "" ]  && procd_append_param command --scrollText="$param"
+
+	procd_set_param respawn
+	procd_close_instance
+}
+
+service_triggers() {
+	procd_add_reload_trigger "oled"
+}

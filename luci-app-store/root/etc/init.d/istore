@@ -1,0 +1,54 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2016 OpenWrt.org
+
+START=45
+
+boot() {
+    local ARCH=`/bin/is-opkg arch`
+    generate_store_id $ARCH
+    generate_super_arch $ARCH
+}
+
+generate_store_id() {
+    [ -s /etc/.app_store.id ] && return 0
+    local ARCH=$1
+    local iface HASH
+
+    for iface in eth0 br-lan; do
+        if [ -e /sys/class/net/$iface/address ]; then
+            HASH=`md5sum /sys/class/net/$iface/address | cut -d ' ' -f1`
+            break
+        fi
+    done
+
+    if [ -z "$HASH" ]; then
+        HASH=`dd if=/dev/urandom bs=512 count=1 2>/dev/null | md5sum | cut -d ' ' -f1`
+    fi
+
+    echo "{\"arch\":\"${ARCH}\", \"uid\":\"${HASH}\"}" > /etc/.app_store.id
+}
+
+generate_super_arch() {
+    local ARCH=$1
+    local super_arch
+    case "$ARCH" in
+    arm*)
+        super_arch="arm"
+        ;;
+    i386)
+        super_arch="x86"
+        ;;
+    x86_64)
+        super_arch="x86_64"
+        ;;
+    *)
+        super_arch="${ARCH%%_*}"
+        ;;
+    esac
+    local old=`uci -q get istore.istore.super_arch`
+    [ "$old" = "$super_arch" ] && return 0
+    uci -q batch <<-EOF >/dev/null
+        set istore.istore.super_arch=$super_arch
+        commit istore
+EOF
+}

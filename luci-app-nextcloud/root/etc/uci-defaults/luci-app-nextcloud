@@ -1,0 +1,14 @@
+#!/bin/sh
+
+config_dir=`uci -q get nextcloud.@nextcloud[0].config_path`
+
+data_dir=`docker inspect --format '{{.Mounts}}' nextcloud | grep -Eom1 '[^ ]+/_data /var/www/html local  true ' | cut -d' ' -f1`
+
+if [ -n "$data_dir" -a "$data_dir" != "$config_dir" ]; then
+    uci -q batch <<-EOF >/dev/null
+        set nextcloud.@nextcloud[0].config_path="$data_dir"
+        commit nextcloud
+EOF
+fi
+
+exit 0

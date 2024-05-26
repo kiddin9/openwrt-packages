@@ -1,0 +1,24 @@
+--- a/src/fw_iptables.c	2009-09-18 19:01:57.000000000 -0400
++++ b/src/fw_iptables.c	2010-08-21 19:37:28.975094088 -0400
+@@ -513,6 +513,7 @@ iptables_fw_counters_update(void)
+ 	char *script,
+ 	     ip[16],
+ 	     rc;
++        char mystring[250];
+ 	unsigned long long int counter;
+ 	t_client *p1;
+ 	struct in_addr tempaddr;
+@@ -533,8 +534,11 @@ iptables_fw_counters_update(void)
+ 	while (('\n' != fgetc(output)) && !feof(output))
+ 		;
+ 	while (output && !(feof(output))) {
+-		rc = fscanf(output, "%*s %llu %*s %*s %*s %*s %*s %15[0-9.] %*s %*s %*s %*s %*s %*s", &counter, ip);
++		rc = fgets(mystring,250,output);
++		rc = sscanf(mystring, "%*s %llu %*s %*s %*s %*s %*s %15[0-9.]", &counter, ip);
++		//rc = fscanf(output, "%*s %llu %*s %*s %*s %*s %*s %15[0-9.] %*s %*s %*s %*s %*s %*s", &counter, ip);
+ 		//rc = fscanf(output, "%*s %llu %*s %*s %*s %*s %*s %15[0-9.] %*s %*s %*s %*s %*s 0x%*u", &counter, ip);
++		
+ 		if (2 == rc && EOF != rc) {
+ 			/* Sanity*/
+ 			if (!inet_aton(ip, &tempaddr)) {
+ 

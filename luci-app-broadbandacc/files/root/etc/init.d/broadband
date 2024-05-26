@@ -1,0 +1,51 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=10
+SERVICE_DAEMONIZE=1
+
+NAME=broadband
+
+start() {	
+	local retry=1
+	while ps -w | grep ${NAME}.sh | grep -v grep >/dev/null 2>&1; do
+		[ $retry -ge 10 ] && return 1 || let retry++
+		sleep 1
+	done
+	rm -f /var/lock/${NAME}.lock
+
+	config_load "$NAME"
+	config_get_bool enabled "general" "enabled" 0
+	config_get_bool down_acc "general" "down_acc" 1
+	config_get_bool up_acc "general" "up_acc" 1
+	config_get network "general" "network"
+	( [ $enabled -eq 0 ] || [ $down_acc -eq 0 -a $up_acc -eq 0 ] || [ -z "$network" ] ) && return 2
+
+	logger -p "daemon.notice" -t "$NAME" "broadband is starting ..."
+	service_start /usr/bin/${NAME}.sh --start
+}
+
+stop() {
+	ps | grep ${NAME}.sh | grep -v 'grep' >/dev/null 2>&1 || return 1
+
+	local pid spid
+	for pid in $(ps | grep ${NAME}.sh | grep -v 'grep' | awk '{print $1}'); do
+		echo "Stop broadband process PID: $pid"
+		for spid in $(pgrep -P $pid "sleep"); do
+			echo "Stop broadband process SPID: $spid"
+			kill $spid >/dev/null 2>&1
+		done
+		kill $pid >/dev/null 2>&1
+	done
+	rm -f /var/lock/${NAME}.lock
+	rm -f /var/state/${NAME}_down_state
+	rm -f /var/state/${NAME}_up_state
+	logger -p "daemon.notice" -t "$NAME" "broadband has stoped."
+	return 0
+}
+
+restart() {
+  rm -rf /tmp/state/${NAME}*
+	stop && sleep 1
+	start
+}

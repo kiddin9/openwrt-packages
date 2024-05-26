@@ -1,0 +1,31 @@
+<%
+require("luci.json")
+require("luci.sys")
+require("luci.phtunnel")
+
+local write_err_log = luci.phtunnel.write_err_log
+local manager_url
+
+local function main()
+	--登录信息查看
+	local login_info_code
+	login_info_code, manager_url = luci.phtunnel.get_login_info()
+
+	if not login_info_code then
+		write_err_log("get manager url failed : inner_status")
+		return
+	end
+
+	if login_info_code ~= 0 then
+		write_err_log("get manger url failed and code = " .. login_info_code .. " : inner_status")
+		return
+	end
+
+end
+
+main()
+%>
+
+{
+	"url" : "<%=(manager_url and manager_url or "")%>"
+}

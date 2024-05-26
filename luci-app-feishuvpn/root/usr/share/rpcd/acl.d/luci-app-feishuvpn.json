@@ -1,0 +1,11 @@
+{
+	"luci-app-feishuvpn": {
+		"description": "Grant UCI access for luci-app-feishuvpn",
+		"read": {
+			"uci": [ "feishuvpn" ]
+		},
+		"write": {
+			"uci": [ "feishuvpn" ]
+		}
+	}
+}

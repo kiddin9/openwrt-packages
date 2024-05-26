@@ -1,0 +1,2 @@
+#	Shell commands that run when the public IP address changes.
+#	New IP is available as value of the $PUBLIC_IP variable.

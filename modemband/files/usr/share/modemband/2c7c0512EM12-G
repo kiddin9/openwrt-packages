@@ -1,0 +1,26 @@
+_DEVICE=/dev/ttyUSB2
+_DEFAULT_LTE_BANDS="1 2 3 4 5 7 8 9 12 13 14 17 18 19 20 21 25 26 28 29 30 32 38 39 40 41 66"
+
+getinfo() {
+	echo "Quectel EM12-G"
+}
+
+getsupportedbands() {
+	echo "$_DEFAULT_LTE_BANDS"
+}
+
+getbands() {
+# +QCFG: "band",0x5af0,0x42000000003300185a,0x1
+
+	O=$(sms_tool -d $_DEVICE at "AT+QCFG=\"band\"")
+	HEX=$(echo "$O" | awk -F[:,] '{print $4}' | xargs)
+	hextobands "$HEX"
+}
+
+setbands() {
+	BANDS="$1"
+	[ "$BANDS" = "default" ] && BANDS="$_DEFAULT_LTE_BANDS"
+
+	HEX=$(bandstohex "$BANDS")
+	[ "$HEX" != "0" ] && sms_tool -d $_DEVICE at "AT+QCFG=\"band\",0,$HEX,1"
+}

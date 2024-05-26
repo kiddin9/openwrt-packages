@@ -1,0 +1,13 @@
+--- a/src/Cedar/Proto_OpenVPN.c	2020-04-30 16:48:22.000000000 +0800
++++ b/src/Cedar/Proto_OpenVPN.c	2022-08-12 15:12:00.000000000 +0800
+@@ -2436,8 +2436,8 @@
+ 											if (r->Exists)
+ 											{
+ 												Format(l3_options, sizeof(l3_options),
+-													",route %r %r vpn_gateway",
+-													&r->Network, &r->SubnetMask);
++													",route %r %r %r",
++													&r->Network, &r->SubnetMask, &r->Gateway);
+ 
+ 												StrCat(option_str, sizeof(option_str), l3_options);
+ 											}

@@ -1,0 +1,15 @@
+--- a/Source/Pcap_DNSProxy/Platform.h
++++ b/Source/Pcap_DNSProxy/Platform.h
+@@ -653,10 +653,12 @@
+ #if defined(ENABLE_LIBSODIUM)
+ #define VERSION_REQUIRE_LIBSODIUM_MAJOR   10
+ #define VERSION_REQUIRE_LIBSODIUM_MINOR   1
++#if !(SODIUM_LIBRARY_VERSION_MAJOR >= 11)
+ #if !(SODIUM_LIBRARY_VERSION_MAJOR >= VERSION_REQUIRE_LIBSODIUM_MAJOR && SODIUM_LIBRARY_VERSION_MINOR >= VERSION_REQUIRE_LIBSODIUM_MINOR)
+ 	#error "The version of LibSodium is too old."
+ #endif
+ #endif
++#endif
+ 
+ //WinPcap or LibPcap
+ #if defined(ENABLE_PCAP)

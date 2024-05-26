@@ -1,0 +1,21 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@vlmcsd[-1]
+	add ucitrack vlmcsd
+	set ucitrack.@vlmcsd[-1].init=kms
+	commit ucitrack
+
+	delete firewall.kms
+	add firewall rule 
+	rename firewall.@rule[-1]="kms"
+	set firewall.@rule[-1].name="kms"
+	set firewall.@rule[-1].target="ACCEPT"
+	set firewall.@rule[-1].src="wan"
+	set firewall.@rule[-1].proto="tcp"
+	set firewall.@rule[-1].dest_port="1688"
+	commit firewall
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0

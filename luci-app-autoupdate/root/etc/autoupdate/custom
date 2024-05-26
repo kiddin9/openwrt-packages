@@ -1,0 +1,8 @@
+## 请在下方输入你的自定义变量,一行填写一个变量
+## 该文件将在运行 autoupdate 脚本时被读取, 且该文件中的内容优先级高于 default
+#
+## 示例(添加时不含注释):
+# Author=Hyy2001
+# TARGET_PROFILE=x86_64
+# Github=https://github.com/Hyy2001X/AutoBuild-Actions
+#

@@ -1,0 +1,71 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:91
+msgid "Allow access from Internet"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:86
+msgid "Auth once"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:67
+msgid "Bind address"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:57
+msgid "Collecting data..."
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:63
+msgid "Enable"
+msgstr ""
+
+#: applications/luci-app-microsocks/root/usr/share/rpcd/acl.d/luci-app-microsocks.json:3
+msgid "Grant UCI access for luci-app-microsocks"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:71
+msgid "Listen address"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:75
+msgid "Listen port"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:31
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:33
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:43
+#: applications/luci-app-microsocks/root/usr/share/luci/menu.d/luci-app-microsocks.json:3
+msgid "MicroSocks"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:44
+msgid "MicroSocks - multithreaded, small, efficient SOCKS5 server."
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:33
+msgid "NOT RUNNING"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:87
+msgid ""
+"Once a specific ip address authed successfully with user/pass, it is added "
+"to a whitelist and may use the proxy without auth."
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:81
+msgid "Password"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:31
+msgid "RUNNING"
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:68
+msgid "Specifiy which ip outgoing connections are bound to."
+msgstr ""
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:79
+msgid "Username"
+msgstr ""

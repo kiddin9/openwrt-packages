@@ -1,0 +1,6 @@
+config main
+	option 'hostnet' '0'
+	option 'http_port' '8083'
+	option 'image_name' 'lscr.io/linuxserver/unifi-controller:latest'
+	option 'config_path' ''
+

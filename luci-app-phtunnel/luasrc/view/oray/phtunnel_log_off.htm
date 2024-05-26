@@ -1,0 +1,34 @@
+<%
+require("luci.phtunnel")
+
+local ret_code = 0
+local ret_msg = ""
+
+local function main()
+	local base_info_code, device_sn, device_pwd, device_status, public_ip = luci.phtunnel.get_base_info()
+	if not base_info_code then
+		ret_code = 1
+		ret_msg = "phtunnel is not running"
+		return
+	end
+
+	if base_info_code ~= 0 then
+		ret_code = 2
+		ret_msg = "get sn failed and code = " .. base_info_code
+		return
+	end
+
+	if not luci.phtunnel.unbind_account(device_sn, device_pwd) then
+		ret_code = 3
+		ret_msg = "unbind failed"
+		return
+	end
+end
+
+main()
+%>
+
+{
+	"code" : "<%=ret_code%>",
+	"error_msg" : "<%=_(ret_msg)%>"
+}

@@ -1,0 +1,44 @@
+#!/bin/bash
+
+runflag=$1
+if [[ $1 -eq 1 ]]; then
+	enabled=$2
+    secretId=$3
+    secretKey=$4
+    bucket=$5
+    region=$6
+    uin=`/etc/openw $3 $4`
+    siteid=`uci get cosclient.@cosclient[-1].siteid`
+    siteurl="openwrt"
+    siteapp="openwrt"
+    plugintype="cos"
+    if [[ ! $siteid ]]; then
+    	$siteid="openwrt_"$(rand 1 50)
+    	`uci set cosclient.@cosclient[-1].sitid=$siteid`
+    	`uci commit cosclient`
+    fi
+    . /usr/share/libubox/jshn.sh
+    json_init
+    json_add_string "action" "save_config"
+    json_add_string "plugin_type" "cos"
+    json_add_object "data"
+    json_add_string "site_id" $siteid
+    json_add_string "site_url" $siteurl
+    json_add_string "site_app" $siteapp
+    json_add_string "uin" $uin
+    json_add_string "cust_sec_on" "2"
+    json_add_object "others"
+    json_add_string "cos_bucket" $bucket
+    json_add_string "cos_region" $region
+
+
+    postdata=`json_dump`
+    `curl -X POST https://openapp.qq.com/api/public/index.php/upload  -H "Content-Type: application/json" -d "$postdata"`
+fi
+
+function rand(){
+    min=$1
+    max=$(($2-$min+1))
+    num=$(date +%s%N)
+    echo $(($num%$max+$min))
+}

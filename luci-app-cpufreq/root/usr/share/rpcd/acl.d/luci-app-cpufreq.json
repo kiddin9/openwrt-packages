@@ -1,0 +1,14 @@
+{
+	"luci-app-cpufreq": {
+		"description": "Grant access to CPUFreq configuration",
+		"read": {
+			"file": {
+				"/etc/init.d/cpufreq get_policies": [ "exec" ]
+			},
+			"uci": [ "cpufreq" ]
+		},
+		"write": {
+			"uci": [ "cpufreq" ]
+		}
+	}
+}

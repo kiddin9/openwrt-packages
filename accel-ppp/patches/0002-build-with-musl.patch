@@ -1,0 +1,49 @@
+Index: accel-ppp-1.11.2/accel-pppd/ctrl/ipoe/arp.c
+===================================================================
+--- accel-ppp-1.11.2.orig/accel-pppd/ctrl/ipoe/arp.c
++++ accel-ppp-1.11.2/accel-pppd/ctrl/ipoe/arp.c
+@@ -13,7 +13,7 @@
+ #include <netinet/ip.h>
+ #include <sys/socket.h>
+ #include <sys/ioctl.h>
+-#include <linux/if_arp.h>
++#include <net/if_arp.h>
+ #include <linux/if_packet.h>
+ 
+ #include "list.h"
+Index: accel-ppp-1.11.2/accel-pppd/ctrl/pppoe/pppoe.c
+===================================================================
+--- accel-ppp-1.11.2.orig/accel-pppd/ctrl/pppoe/pppoe.c
++++ accel-ppp-1.11.2/accel-pppd/ctrl/pppoe/pppoe.c
+@@ -11,7 +11,6 @@
+ #include <net/ethernet.h>
+ #include <netpacket/packet.h>
+ #include <arpa/inet.h>
+-#include <printf.h>
+ 
+ #include "crypto.h"
+ 
+Index: accel-ppp-1.11.2/accel-pppd/include/ap_session.h
+===================================================================
+--- accel-ppp-1.11.2.orig/accel-pppd/include/ap_session.h
++++ accel-ppp-1.11.2/accel-pppd/include/ap_session.h
+@@ -2,6 +2,7 @@
+ #define __AP_SESSION_H__
+ 
+ #include "ap_net.h"
++#include <pthread.h>
+ 
+ //#define AP_SESSIONID_LEN 16
+ #define AP_IFNAME_LEN 16
+Index: accel-ppp-1.11.2/accel-pppd/session_backup.c
+===================================================================
+--- accel-ppp-1.11.2.orig/accel-pppd/session_backup.c
++++ accel-ppp-1.11.2/accel-pppd/session_backup.c
+@@ -5,6 +5,7 @@
+ #include <unistd.h>
+ #include <netinet/in.h>
+ 
++#include "pthread.h"
+ #include "events.h"
+ #include "triton.h"
+ #include "log.h"

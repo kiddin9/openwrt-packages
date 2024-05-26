@@ -1,0 +1,83 @@
+From 7f54980a5079848c148ab8301302fc8afb1058eb Mon Sep 17 00:00:00 2001
+From: Tianling Shen <i@cnsztl.eu.org>
+Date: Mon, 5 Jun 2023 00:11:36 +0800
+Subject: [PATCH] chore: update dependencies
+
+Fix build with riscv64.
+
+Signed-off-by: Tianling Shen <i@cnsztl.eu.org>
+---
+ cmd/wol/alias.go |  2 +-
+ go.mod           | 10 +++++-----
+ go.sum           | 45 +++++++++++++++++++++++++++++++--------------
+ 3 files changed, 37 insertions(+), 20 deletions(-)
+
+--- a/cmd/wol/alias.go
++++ b/cmd/wol/alias.go
+@@ -10,7 +10,7 @@ import (
+ 	"path"
+ 	"sync"
+ 
+-	bolt "github.com/coreos/bbolt"
++	bolt "go.etcd.io/bbolt"
+ )
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+--- a/go.mod
++++ b/go.mod
+@@ -3,9 +3,9 @@ module github.com/sabhiram/go-wol
+ go 1.14
+ 
+ require (
+-	github.com/coreos/bbolt v1.3.1-coreos.6.0.20180223184059-4f5275f4ebbf
+-	github.com/jessevdk/go-flags v0.0.0-20150816100521-1acbbaff2f34
++	github.com/jessevdk/go-flags v1.5.0
+ 	github.com/sabhiram/go-colorize v0.0.0-20210403184538-366f55d711cf
+-	github.com/stretchr/testify v0.0.0-20150929183540-2b15294402a8
+-	golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57 // indirect
++	github.com/stretchr/testify v1.8.1
++	go.etcd.io/bbolt v1.3.7
++	golang.org/x/sys v0.8.0 // indirect
+ )
+--- a/go.sum
++++ b/go.sum
+@@ -1,13 +1,31 @@
+-github.com/coreos/bbolt v1.3.1-coreos.6.0.20180223184059-4f5275f4ebbf h1:CmPJznEcWS7opZI1p2IXCRPDxE/6o4YFBv4HYb7VsH4=
+-github.com/coreos/bbolt v1.3.1-coreos.6.0.20180223184059-4f5275f4ebbf/go.mod h1:iRUV2dpdMOn7Bo10OQBFzIJO9kkE559Wcmn+qkEiiKk=
+-github.com/jessevdk/go-flags v0.0.0-20150816100521-1acbbaff2f34 h1:OsL9UGMqb35j8AxF7EK7UGEK58a4YAWo7DYtJIufuh0=
+-github.com/jessevdk/go-flags v0.0.0-20150816100521-1acbbaff2f34/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
++github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
++github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
++github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
++github.com/jessevdk/go-flags v1.5.0 h1:1jKYvbxEjfUl0fmqTCOfonvskHHXMjBySTLW4y9LFvc=
++github.com/jessevdk/go-flags v1.5.0/go.mod h1:Fw0T6WPc1dYxT4mKEZRfG5kJhaTDP9pj1c2EWnYs/m4=
+ github.com/mattn/go-isatty v0.0.12 h1:wuysRhFDzyxgEmMf5xjvJ2M9dZoWAXNNr5LSBS7uHXY=
+ github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
++github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
++github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+ github.com/sabhiram/go-colorize v0.0.0-20210403184538-366f55d711cf h1:ohn00dtgqfd3k6+B257yGDnqzA4OR0WgWuyTl75TN64=
+ github.com/sabhiram/go-colorize v0.0.0-20210403184538-366f55d711cf/go.mod h1:GvlEbMJBpbAXFn06UajbdBlGZ18iLvHyuIrgG//L8uk=
+-github.com/stretchr/testify v0.0.0-20150929183540-2b15294402a8 h1:ryzplALtTWkUnRgVkNSsChh81lD3UeYMJ22gPVK/8N0=
+-github.com/stretchr/testify v0.0.0-20150929183540-2b15294402a8/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
++github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
++github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
++github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
++github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
++github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
++github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
++github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
++go.etcd.io/bbolt v1.3.7 h1:j+zJOnnEjF/kyHlDDgGnVL/AIqIJPq8UoB2GSNfkUfQ=
++go.etcd.io/bbolt v1.3.7/go.mod h1:N9Mkw9X8x5fupy0IKsmuqVtoGDyxsaDlbk4Rd05IAQw=
++go.etcd.io/gofail v0.1.0/go.mod h1:VZBCXYGZhHAinaBiiqYvuDynvahNsAyLFwB3kEHKz1M=
+ golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+-golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57 h1:F5Gozwx4I1xtr/sr/8CFbb57iKi3297KFs0QDbGN60A=
+-golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
++golang.org/x/sys v0.0.0-20210320140829-1e4c9ba3b0c4/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
++golang.org/x/sys v0.4.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
++golang.org/x/sys v0.8.0 h1:EBmGv8NaZBZTWvrbjNoL6HVt+IVy3QDQpJs7VRIw3tU=
++golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
++gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
++gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
++gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
++gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
++gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=

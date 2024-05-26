@@ -1,0 +1,19 @@
+#: applications/luci-app-dawn/luasrc/controller/dawn.lua:8
+msgid "Configure DAWN"
+msgstr "配置 DAWN"
+
+#: applications/luci-app-dawn/luasrc/controller/dawn.lua:9
+msgid "View Network Overview"
+msgstr "查看网络概览"
+
+#: applications/luci-app-dawn/luasrc/controller/dawn.lua:10
+msgid "View Hearing Map"
+msgstr "查看发现地图"
+
+#: applications/luci-app-dawn/luasrc/model/cbi/dawn/dawn_network.lua:1
+msgid "Network Overview"
+msgstr "网络概览"
+
+#: applications/luci-app-dawn/luasrc/model/cbi/dawn/dawn_hearing_map.lua:1
+msgid "Hearing Map"
+msgstr "发现地图"

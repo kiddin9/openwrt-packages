@@ -1,0 +1,6 @@
+config telegram_bot 'config'
+	option bot_token ''
+	option chat_id ''
+	option polling_time '1'
+	option timeout '30'
+	option plugins '/usr/lib/telegrambot/plugins'

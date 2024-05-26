@@ -1,0 +1,1 @@
+LuCI realtime traffic monitor, inspired by luci-app-wrtbwmon

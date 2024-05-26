@@ -1,0 +1,10 @@
+_DEVICE=/dev/ttyUSB2
+_DEFAULT_LTE_BANDS="1 3 5 7 8 20 28 32 38 40 41"
+
+getinfo() {
+	echo "Quectel EG06-E"
+}
+
+# +QCFG: "band",0x8df,0x1a0880800d5,0x0
+
+. $RES/_quectel_common

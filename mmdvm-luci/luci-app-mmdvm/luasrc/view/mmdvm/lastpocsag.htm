@@ -1,0 +1,27 @@
+<%#
+Copyright 2019-2020 Michael BD7MQB <bd7mqb@qq.com>
+This is free software, licensed under the GNU GENERAL PUBLIC LICENSE, Version 2.0
+-%>
+<table>
+<tr>
+	<th class="auto-display"><%:Time%></th>
+	<th><%:Timeslot%></th>
+	<th><%:Target%></th>
+	<th><%:Message%></th>
+</tr>
+<% for i, ps in ipairs(pocsags) do
+if i > 20 then
+	break
+end
+
+repeat
+%>
+<tr>
+	<td class="auto-display"><%=ps.timestamp%></td>
+	<td><%=ps.timeslot%></td>
+	<td><%=ps.target%></td>
+	<td style="text-align: left;"><%=ps.message:gsub("\n", "")%></td>
+</tr>
+<% until true %>
+<% end %>
+</table>

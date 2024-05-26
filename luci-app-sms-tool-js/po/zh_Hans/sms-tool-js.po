@@ -1,0 +1,392 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+# Translation: lazyoop 
+# https://github.com/lazyoop
+
+msgid "SMS Messages"
+msgstr "短信"
+
+msgid "Received Messages"
+msgstr "收件箱"
+
+msgid "Send Messages"
+msgstr "发信"
+
+msgid "USSD"
+msgstr "USSD"
+
+msgid "From"
+msgstr "来自"
+
+msgid "Received"
+msgstr "收件"
+
+msgid "Message"
+msgstr "信息"
+
+msgid "Configuration"
+msgstr "配置"
+
+msgid "AT Commands"
+msgstr "AT命令"
+
+msgid "Configuration"
+msgstr "配置"
+
+msgid "Please enter phone number"
+msgstr "请输入电话号"
+
+msgid "Please enter a message text"
+msgstr "请输入内容"
+
+msgid "Reply"
+msgstr "回复"
+
+msgid "Please enter a USSD code"
+msgstr "请输入USSD码"
+
+msgid "USSD Codes"
+msgstr "USSD码"
+
+msgid "Send to"
+msgstr "发送到"
+
+msgid "Message text"
+msgstr "消息内容"
+
+msgid "Send"
+msgstr "发送"
+
+msgid "Send to number"
+msgstr "发送至号码"
+
+msgid "to number"
+msgstr "号码"
+
+msgid "to group"
+msgstr "群组"
+
+msgid "SMS sent sucessfully"
+msgstr "短信发送成功"
+
+msgid "Code to send"
+msgstr "要发送的代码"
+
+msgid "Send code"
+msgstr "发送代码"
+
+msgid "SMS Settings"
+msgstr "短信设置"
+
+msgid "USSD Codes Settings"
+msgstr "USSD码设置"
+
+msgid "SMS reading port"
+msgstr "短信读取端口"
+
+msgid "SMS sending port"
+msgstr "短信发送端口"
+
+msgid "AT commands sending port"
+msgstr "发送AT命令端口"
+
+msgid "AT Commands Settings"
+msgstr "AT命令设置"
+
+msgid "Merge split messages"
+msgstr "合并分割消息"
+
+msgid "Checking this option will make it easier to read the messages, but it will cause a discrepancy in the number of messages shown and received."
+msgstr "选中此选项将使阅读消息更容易, 但会导致显示和接收的消息数量出现差异."
+
+msgid "USSD sending port"
+msgstr "USSD发送端口"
+
+msgid "Sending USSD code in plain text"
+msgstr "纯文本发送USSD码"
+
+msgid "Receive message without PDU decoding"
+msgstr "接收消息无需PDU解码"
+
+msgid "Send the USSD code in plain text. Command is not being coded to the PDU."
+msgstr "以纯文本形式发送USSD代码.未编码到PDU."
+
+msgid "Receive and display the message without decoding it as a PDU."
+msgstr "接收并显示消息而不将其解码为PDU"
+
+msgid "Explanation of number and prefix"
+msgstr "号码和前缀说明"
+
+msgid "In the tab for sending SMSes, show an explanation of the prefix and the correct phone number."
+msgstr "在发送短信的选项卡中, 显示前缀说明和正确的电话号码"
+
+msgid "The phone number should be preceded by the country prefix (for Poland it is 48, without '+'). If the number is 5, 4 or 3 characters, it is treated as 'short' and should not be preceded by a country prefix."
+msgstr "电话号码前面应带有国家/地区前缀(波兰为48，不带“+”). 如果号码为5,4或3个字符，则被视为“短”, 并且前面不应带有国家/地区前缀."
+
+msgid "The phone number should be preceded by the country prefix (for Poland it is 48, without +). If the number is 5, 4 or 3 characters, it is treated as.. short and should not be preceded by a country prefix."
+msgstr "电话号码前面应带有国家/地区前缀(波兰为48，不带“+”). 如果号码为5,4或3个字符，则被视为“短”, 并且前面不应带有国家/地区前缀."
+
+msgid "Add prefix to phone number"
+msgstr "为电话号码添加前缀"
+
+msgid "Automatically add prefix to the phone number field."
+msgstr "自动将前缀添加到电话号码字段"
+
+msgid "Prefix number"
+msgstr "前缀号码"
+
+msgid "Please specify the command to send"
+msgstr "请指定要发送的命令"
+
+msgid "Please specify the code to send"
+msgstr "请指定要发送的代码"
+
+msgid "Please set the port for communication with the modem"
+msgstr "请设置与调制解调器通信的端口"
+
+msgid "User AT commands"
+msgstr "用户AT指令"
+
+msgid "Command to send"
+msgstr "发送命令"
+
+msgid "Clear form"
+msgstr "清除表格"
+
+msgid "Send command"
+msgstr "发送命令"
+
+msgid "Send code"
+msgstr "发送代码"
+
+msgid "Reply"
+msgstr "回复"
+
+msgid "Message storage area"
+msgstr "消息存储区"
+
+msgid "Messages are stored in a specific location (for example, on the SIM card or modem memory), but other areas may also be available depending on the type of device."
+msgstr "消息存储在特定位置(例如, SIM卡或调制解调器内存上), 但根据设备类型,其他区域也可能可用"
+
+msgid "SIM card"
+msgstr "SIM卡"
+
+msgid "Modem memory"
+msgstr "调制解调器内存"
+
+msgid "Messages store in"
+msgstr "消息存储在"
+
+msgid "Messages (inbox / maximum)"
+msgstr "消息(收件箱/最多)"
+
+msgid "Delete selected"
+msgstr "删除所选"
+
+msgid "Delete message(s)"
+msgstr "删除消息"
+
+msgid "Delete all"
+msgstr "删除所有"
+
+msgid "Refresh messages"
+msgstr "刷新消息"
+
+msgid "Please select the message(s) to be deleted"
+msgstr "请选择要删除的消息"
+
+msgid "Delete selected message(s)?"
+msgstr "删除选定的消息?"
+
+msgid "Delete all the messages?"
+msgstr "删除所有消息?"
+
+msgid "User interface for reading messages using sms-tool. More information about the sms-tool on the %seko.one.pl forum%s."
+msgstr "使用短信工具读取消息的用户界面.有关短信工具的更多信息, 请访问%sforum eko.one.pl%s."
+
+msgid "User interface for sending messages using sms-tool. More information about the sms-tool on the %seko.one.pl forum%s."
+msgstr "Interfejs użytkownika do wysyłania wiadomości SMS za pomocą sms-tool. Więcej informacji o programie sms-tool na %sforum eko.one.pl%s."
+
+msgid "User interface for sending AT commands using sms-tool. More information about the sms-tool on the %seko.one.pl forum%s."
+msgstr "Interfejs użytkownika do wysyłania poleceń AT za pomocą sms-tool. Więcej informacji o programie sms-tool na %sforum eko.one.pl%s."
+
+msgid "User interface for sending USSD codes using sms-tool. More information about the sms-tool on the %seko.one.pl forum%s."
+msgstr "Interfejs użytkownika do wysyłania kodów USSD za pomocą sms-tool. Więcej informacji o programie sms-tool na %sforum eko.one.pl%s."
+
+msgid "Configuration sms-tool"
+msgstr "配置sms-tool"
+
+msgid "Configuration panel for sms-tool and gui application."
+msgstr "SMS工具和GUI的配置面板"
+
+msgid "Port for communication with the modem"
+msgstr "与调制解调器通信的端口"
+
+msgid "Select one of the available ttyUSBX ports."
+msgstr "选择一个可用的ttyUSB端口与调制解调器通信"
+
+msgid "Please select a port"
+msgstr "请选择端口"
+
+msgid "User contacts"
+msgstr "用户联系方式"
+
+msgid "Enable group messaging"
+msgstr "启用群组消息"
+
+msgid "This option allows you to send one message to all contacts in the user's contact list."
+msgstr "此选项允许您向用户联系人列表中的所有联系人发送一条消息"
+
+msgid "Message sending delay"
+msgstr "延迟发送消息"
+
+msgid "[Bot] Message sent to number:"
+msgstr "[Bot] 消息已发送至号码:"
+
+msgid "User USSD codes"
+msgstr "用户USSD代码"
+
+msgid "Each line must have the following format: 'Contact name;phone number'. For user convenience, the file is saved to the location <code>/etc/modem/phonebook.user</code>."
+msgstr "每行必须采用以下格式: “联系人姓名；电话号码”. 为了方便用户, 文件保存到以下位置 <code>/etc/modem/phonebook.user</code>"
+
+msgid "Each line must have the following format: 'At command description;AT command'. For user convenience, the file is saved to the location <code>/etc/modem/atcmmds.user</code>."
+msgstr "每行必须具有以下格式：“At 命令描述；AT 命令”. 为了方便用户, 文件保存到以下位置 <code>/etc/modem/atcmmds.user</code>"
+
+msgid "Each line must have the following format: 'Code description;code'. For user convenience, the file is saved to the location <code>/etc/modem/ussdcodes.user</code>."
+msgstr "每行必须采用以下格式：“代码描述；代码”. 为了方便用户, 文件保存到以下位置 <code>/etc/modem/ussdcodes.user</code>."
+
+msgid "Press [Enter] to send the command, press [Delete] to delete the command"
+msgstr "按[Enter]发送命令, 按[Delete]删除命令"
+
+msgid "Press [Enter] to send the code, press [Delete] to delete the code"
+msgstr "按[Enter]发送代码, 按[Delete]删除代码"
+
+msgid "Press [Delete] to delete the phone number"
+msgstr "按[DELETE]删除电话号码"
+
+msgid "Press [Delete] to delete the content of the message"
+msgstr "按[Delete]删除消息内容"
+
+msgid "Notification Settings"
+msgstr "通知设置"
+
+msgid "The LED informs about a new message. Before activating this function, please config and save the SMS reading port, time to check SMS inbox and select the notification LED."
+msgstr "LED通知有新消息. 在激活此功能之前, 请配置并保存短信读取端口、查看短信收件箱的时间以及选择通知LED"
+
+msgid "Check inbox every minute(s)"
+msgstr "每分钟检查收件箱"
+
+msgid "Specify how many minutes you want your inbox to be checked."
+msgstr "指定您希望检查收件箱的分钟数"
+
+msgid "Notification LED"
+msgstr "通知LED"
+
+msgid "Select the notification LED."
+msgstr "选择通知LED"
+
+msgid "Notify new messages"
+msgstr "新消息通知"
+
+msgid "Restart the inbox checking process every"
+msgstr "每隔一段时间重新启动收件箱进程"
+
+msgid "The process will restart at the selected time interval. This will eliminate the delay in checking your inbox."
+msgstr "该过程将按照选定的时间间隔重新启动. 这将消除检查收件箱的延迟."
+
+msgid "4h"
+msgstr "4小时"
+
+msgid "6h"
+msgstr "6小时"
+
+msgid "8h"
+msgstr "8小时"
+
+msgid "12h"
+msgstr "12小时"
+
+msgid "The diode is dedicated only to these notifications"
+msgstr "二极管仅专用于这些通知(不理解)"
+
+msgid ""
+"Select 'No' in case the router has only one LED or if the LED is multi-tasking. <br /><br /><b>Important</b> <br />This "
+"option requires LED to be defined in the system (if possible) to work properly. This requirement applies when the diode supports multiple tasks."
+msgstr ""
+"如果路由器只有一个 LED 或 LED 处于多任务状态，请选择“否”. 这 <br /><br /><b>很重要</b> <br /> "
+"选项需要在系统中定义 LED（如果可以）才能正常工作。当二极管支持多个任务时，此要求适用."
+
+msgid ""
+"[3 - 59] second(s) <br /><br /><b>Important</b> <br />Messages "
+"are sent without verification and confirmation delivery of the message. Therefore, there is a risk of non-delivery of the message."
+msgstr ""
+"[3 - 59] 秒 <br /><br /><b>重要</b> <br />消息 "
+"在没有验证或确认消息传递的情况下发送. 因此存在消息无法送达的风险."
+
+msgid "No"
+msgstr "No"
+
+msgid "Yes"
+msgstr "Yes"
+
+msgid "Merge algorithm"
+msgstr "合并算法"
+
+msgid "Simple (merge without sorting)"
+msgstr "简单 (合并而不排序)"
+
+msgid "Advanced (merges with sorting)"
+msgstr "高级 (排序合并)"
+
+msgid "Phone number to be blurred"
+msgstr "电话号码模糊处理"
+
+msgid "The last 5 digits of this number will be blurred."
+msgstr "该号码的最后5位数字将模糊处理"
+
+msgid "Expect a decimal value between five and fifty-nine"
+msgstr "预计小数值介于 5 到 59 之间"
+
+msgid "Expect a decimal value between three and fifty-nine"
+msgstr "预计小数值介于 3 到 59 之间"
+
+msgid "Expect a decimal value"
+msgstr "期望一个十进制值"
+
+msgid "Direction of message merging"
+msgstr "消息合并方向"
+
+msgid "From beginning to end"
+msgstr "从开始到结束"
+
+msgid "From end to beginning"
+msgstr "从结束到开始"
+
+msgid "Save messages to a text file"
+msgstr "将消息保存到文本文件"
+
+msgid "Save sms to txt file?"
+msgstr "消息保存到文本文件?"
+
+msgid "Save as .txt file"
+msgstr "保存为 .txt 文件"
+
+msgid "Saving..."
+msgstr "保存中..."
+
+msgid "Please wait.. Process of saving SMS message to a text file is in progress."
+msgstr "请稍候.. 正在将短信保存到文本文件"
+
+msgid "This option allows to backup SMS messages or, for example, save messages that are not supported by the sms-tool."
+msgstr "此选项允许备份SMS消息,列如, 保存sms-tool不支持的消息"
+
+msgid "Delete all messages"
+msgstr "删除所有消息"
+
+msgid "This option allows you to delete all SMS messages when they are not visible in the 'Received Messages' tab."
+msgstr "此选项允许您删除“已接收消息”选项卡中不可见的所有短信"
+
+msgid "Saving SMS messages to a file failed. Please try again."
+msgstr "SMS消息保存到文件失败.请再试一次"
+

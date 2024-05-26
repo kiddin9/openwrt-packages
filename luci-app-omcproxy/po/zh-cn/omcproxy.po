@@ -1,0 +1,50 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Add instance"
+msgstr "添加实例"
+
+msgid "Downlink interface"
+msgstr "下行链路接口"
+
+msgid "Embedded IGMPv3 and MLDv2 proxy"
+msgstr "嵌入式IGMPv3和MLDv2组播代理(omcproxy)"
+
+msgid "Minimum multicast scope to proxy (only affects IPv6 multicast)"
+msgstr "代理的最小范围（只影响IPv6的组播）"
+
+msgid "Proxy Instance"
+msgstr "代理实例"
+
+msgid "Scope"
+msgstr "范围"
+
+msgid "Uplink interface"
+msgstr "上行链路接口"
+
+msgid "Where does the multicast come from?"
+msgstr "组播数据来源"
+
+msgid "Where does the multicast go to?"
+msgstr "组播代理去向"
+
+msgid "admin-local"
+msgstr "管理本地范围"
+
+msgid "default"
+msgstr "默认"
+
+msgid "global"
+msgstr "全球范围"
+
+msgid "omcproxy"
+msgstr "组播代理"
+
+msgid "organization-local"
+msgstr "机构本地范围"
+
+msgid "realm"
+msgstr "保留"
+
+msgid "site-local"
+msgstr "站点本地范围"

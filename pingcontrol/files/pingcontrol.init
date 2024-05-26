@@ -1,0 +1,49 @@
+#!/bin/sh /etc/rc.common
+
+START=80
+USE_PROCD=1
+PROG=/bin/pingcontrol
+
+validate_pingcontrol_section() {
+        uci_validate_section pingcontrol pingcontrol "${1}" \
+                'enabled:bool:0' \
+                'iface:string' \
+                'check_period:uinteger' \
+                'testip:list(host)' \
+                'sw_before_modres:uinteger' \
+                'sw_before_sysres:uinteger'
+}
+
+pingcontrol_instance() {
+        local enabled iface check_period testip sw_before_modres sw_before_sysres
+
+        validate_pingcontrol_section "$1" || {
+                echo "validation failed"
+                return 1
+        }
+
+        [ "$enabled" = 0 ] && return
+
+        procd_open_instance
+        procd_set_param command "$PROG" "$1"
+
+        procd_set_param stdout 1
+        procd_set_param stderr 1
+        procd_set_param respawn
+        procd_close_instance
+}
+
+start_service() {
+        config_load 'pingcontrol'
+        config_foreach pingcontrol_instance 'pingcontrol'
+}
+
+service_triggers() {
+        procd_add_reload_trigger 'pingcontrol'
+        procd_add_validation validate_pingcontrol_section
+}
+
+reload_service() {
+        stop
+        start
+}

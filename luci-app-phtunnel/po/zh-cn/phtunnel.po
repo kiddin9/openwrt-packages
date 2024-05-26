@@ -1,0 +1,8 @@
+msgid "Phtunnel"
+msgstr "花生壳内网穿透"
+
+msgid "Base Setup"
+msgstr "基本设置"
+
+msgid "Setup"
+msgstr "设置"

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+[ ! -f /etc/config/mmdvm ] && touch /etc/config/mmdvm
+[ -z `uci -q get mmdvm.System_Fusion.Enable` ] && {
+	uci set mmdvm.System_Fusion=mmdvmhost
+	uci set mmdvm.System_Fusion.Enable=0
+	uci commit mmdvm
+}
+
+ENABLE=$(uci -q get mmdvm.System_Fusion.Enable)
+if [ "$ENABLE" != "1" ]; then
+    /etc/init.d/ysfgateway stop && /etc/init.d/ysfgateway disable
+    /etc/init.d/ysfparrot stop && /etc/init.d/ysfparrot disable
+fi
+
+exit 0

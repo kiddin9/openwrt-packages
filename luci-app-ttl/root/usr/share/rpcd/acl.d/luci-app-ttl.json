@@ -1,0 +1,25 @@
+{
+	"luci-app-ttl": {
+		"description": "Grant access to TTL configuration",
+		"read": {
+			"file": {
+				"/etc/init.d/ttl": [ "exec" ],
+				"/etc/init.d/firewall": [ "exec" ]
+			},
+			"cgi-io": [ "exec" ],
+			"ubus": {
+				"file": [ "exec" ],
+				"uci": [ "changes", "get" ]
+			},
+			"uci": [ "ttl" ]
+		},
+		"write": {
+			"cgi-io": [ "exec" ],
+			"ubus": {
+				"file": [ "exec" ],
+				"uci": [ "add", "apply", "confirm", "delete", "order", "rename", "set" ]
+			},
+			"uci": [ "ttl" ]
+		}
+	}
+}

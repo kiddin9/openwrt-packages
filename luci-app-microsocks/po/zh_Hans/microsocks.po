@@ -1,0 +1,78 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:91
+msgid "Allow access from Internet"
+msgstr "允许从互联网访问"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:86
+msgid "Auth once"
+msgstr "单次认证"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:67
+msgid "Bind address"
+msgstr "绑定地址"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:57
+msgid "Collecting data..."
+msgstr "收集数据中..."
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:63
+msgid "Enable"
+msgstr "启用"
+
+#: applications/luci-app-microsocks/root/usr/share/rpcd/acl.d/luci-app-microsocks.json:3
+msgid "Grant UCI access for luci-app-microsocks"
+msgstr "授予 luci-app-microsocks 访问 UCI 配置的权限"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:71
+msgid "Listen address"
+msgstr "监听地址"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:75
+msgid "Listen port"
+msgstr "监听端口"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:31
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:33
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:43
+#: applications/luci-app-microsocks/root/usr/share/luci/menu.d/luci-app-microsocks.json:3
+msgid "MicroSocks"
+msgstr "MicroSocks"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:44
+msgid "MicroSocks - multithreaded, small, efficient SOCKS5 server."
+msgstr "MicroSocks - 多线程、小巧、高效的 SOCKS5 服务器。"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:33
+msgid "NOT RUNNING"
+msgstr "未运行"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:87
+msgid ""
+"Once a specific ip address authed successfully with user/pass, it is added "
+"to a whitelist and may use the proxy without auth."
+msgstr "一旦特定 IP 地址成功通过认证，它将被添加至白名单且后续不再要求认证。"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:81
+msgid "Password"
+msgstr "密码"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:31
+msgid "RUNNING"
+msgstr "运行中"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:68
+msgid "Specifiy which ip outgoing connections are bound to."
+msgstr "指定传出连接应该被绑定到哪个 IP。"
+
+#: applications/luci-app-microsocks/htdocs/luci-static/resources/view/microsocks.js:79
+msgid "Username"
+msgstr "用户名"

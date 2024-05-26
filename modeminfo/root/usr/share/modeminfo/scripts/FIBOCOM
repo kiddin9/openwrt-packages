@@ -1,0 +1,110 @@
+# Fibocom modems NL668/NL678
+function modem_data(){
+	generic_data
+	MANUF=$(echo "$O" | awk -F [:,] '/\+CGMI/{gsub("\"","");print $2}')
+	MODEL=$(echo "$O" | awk -F [:,] '/\+CGMM/{gsub("\"","");print $2}')
+	DEVICE="$MANUF $MODEL"
+	FW=$(echo "$O" | awk -F [:,] '/\+CGMR/{gsub("\"","");print $2}')
+	ICCID=$(echo "$O" | awk -F [:] '/ICCID:/{gsub("\r","");print $2}')
+	IMSI=$(echo "$O" | awk -F [:,] '/\+CIMI/{gsub("\"","");print $2}')
+	IMEI=$(echo "$O" | awk -F [:,] '/\+CGSN/{gsub("\"","");print $2}')
+	NETWORK=$(echo "$O"| grep -A2 'service cell' | awk 'NR ==2{print}')
+	EARFCN=$(echo "$NETWORK" | awk -F [,] '{print $7}')
+	case $MODEL in
+		*FM*) EARFCN=$(printf %d 0x${EARFCN}) ;;
+	esac
+	if [ "$MODE" = "LTE" ]; then
+		LAC=$(echo "$O" |awk -F[,\ ] '/^\+CEREG/{gsub("\"","");print $4}')
+	        CID=$(echo "$O" |awk -F[,\ ] '/^\+CEREG/{gsub("\"","");print $5}')
+		RSRQ=$(echo "$NETWORK" | awk -F [,] '{printf "%.0f\n", -20+($14/2)}')
+		RSRP=$(echo "$NETWORK" | awk -F [,] '{printf "%.0f\n", $13-140}')
+		SINR=$(echo "$NETWORK" | awk -F [,] '{printf "%.0f\n", $11/4+5}')
+		ENBx=$(echo $CID | sed -e 's/..$//')
+		CELL=$(printf %d 0x${CID: -2})
+		ENBID=$(printf %d 0x$ENBx)
+		PCI=$(echo "$NETWORK" | awk -F [,] '{print $8}')
+		case $MODEL in
+			*FM*) PCI=$(printf %d 0x${PCI}) ;;
+		esac
+		BWDx=$(echo "$NETWORK" | awk -F [,] '{print $10}')
+		case $BWDx in
+			15) BWDL=1 BWPx=1.3 ;;
+			25) BWDL=2 BWPx=5 ;;
+			50) BWDL=3 BWPx=10 ;;
+			75) BWDL=4 BWPx=15 ;;
+			100) BWDL=5 BWPx=20 ;;
+		esac
+		case $MODEL in
+			*FM*)
+				LTE_Cx=$(echo "$O" | awk '/PCC|SCC/{print}')
+				PCH=$(echo "$LTE_Cx" | awk -F [,] '/^\PCC:/{print $3}')
+				PCICA=$(echo "$LTE_Cx" | awk -F [,] '/^\PCC:/{print $2}') 
+			;;
+			*)
+				LTE_Cx=$(echo "$O" | awk '/^\+GTCAINFO/{print}')
+				PCH=$(echo "$LTE_Cx" | awk -F [,] '/^\+GTCAINFO: 1/{print $5}')
+				PCICA=$(echo "$LTE_Cx" | awk -F [,] '/^\+GTCAINFO: 1/{print $4}')
+			;;
+		esac
+		if [ "$EARFCN" = "$PCH" ] && [ "$PCI" = "$PCICA" ]; then
+			LTE_CA=1
+			. /usr/share/modeminfo/scripts/ch_to_band
+			case $MODEL in
+				*FM*)
+					SCH=$(echo "$LTE_Cx" | awk -F [,] '/^\SCC\d/{print  $2" "$5}')
+					for s in $SCH; do
+						case $s in
+							0|1) ;;
+							*)
+								ch_to_band $s
+								SCC="$SCC+$SC"
+							;;
+						esac
+					done
+					BWSx=$(echo "$LTE_Cx" | awk -F [,] '/^\SCC\d/{print  $6}')
+					for b in $BWSx; do
+						case $b in
+							*15*) BWCx=1.3 ;;
+							*20*) BWCx=5 ;;
+							*50*) BWCx=10 ;;
+							*75*) BWCx=15 ;;
+							*100*) BWCx=20 ;;
+						esac
+						BWCA=$(($BWCA+$BWCx))
+					done	
+					BWCA=$((BWPx+$BWCA))
+				;;
+				*)
+					SCH=$(echo "$LTE_Cx" | awk -F [,] '/^\+GTCAINFO: 2\,/{print $(NF-1)}')
+					BWSx=$(echo "$LTE_Cx" | awk -F [,] '/^\+GTCAINFO: 2\,/{print $NF}')
+					case $BWSx in
+						*15*) BWCx=1.3 ;;
+						*20*) BWCx=5 ;;
+						*50*) BWCx=10 ;;
+						*75*) BWCx=15 ;;
+						*100*) BWCx=20 ;;
+					esac
+					BWCA=$(echo $BWPx $BWCx | awk '{print $1+$2}')
+					ch_to_band $SCH
+					SCC="+$SC"
+				;;
+			esac
+		fi 
+
+	else
+		TECH=$(echo "$O" | awk -F[,\ ] '/^\*CNTI/ {print $3}' | sed 's|/|,|g')
+		LAC=$(echo "$O" |awk -F[,\ ] '/^\+CGREG/{gsub("\"","");print $4}')
+                CID=$(echo "$O" |awk -F[,\ ] '/^\+CGREG/{gsub("\"","");print $5}')
+		if [ "x$TECH" != "x" ]; then
+			MODE="$TECH"
+		fi
+		SINR=$(echo "$NETWORK" | awk -F [,] '{printf "%.0f\n", $NF/2-24}')
+	fi
+        LAC_NUM=$(printf %d 0x$LAC)
+        CID_NUM=$(printf %d 0x$CID)
+	CHIPTEMP=$(echo "$O" | awk '/\+MTSM/{print $2}')
+	if [ $(uci -q get modeminfo.@general[0].decimail) = "1" ]; then
+		LAC=$LAC_NUM
+		CID=$CID_NUM
+	fi
+}

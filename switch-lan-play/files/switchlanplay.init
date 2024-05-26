@@ -1,0 +1,58 @@
+#!/bin/sh /etc/rc.common
+START=99
+SERVICE=switchlanplay
+
+USE_PROCD=1
+
+run_switch_lan_play()
+{
+    config_get_bool enable $1 enable
+    if [ "$enable" -gt 0 ]; then
+	local ifname
+	config_get ifname $1 ifname
+	local relay_server_host
+	local relay_server_port
+	config_get relay_server_host $1 relay_server_host
+	config_get relay_server_port $1 relay_server_port
+	config_get pmtu $1 pmtu
+	if [ "$pmtu" -gt 0 ]; then
+		PROG="lan-play --relay-server-addr $relay_server_host:$relay_server_port --netif $ifname --pmtu $pmtu"
+	else
+		PROG="lan-play --relay-server-addr $relay_server_host:$relay_server_port --netif $ifname"
+	fi
+	echo "switch-lan-play client started."
+    else
+	PROG="lan-play --version"
+	echo "switch-lan-play is disabled. check configuration?"
+    fi
+}
+
+start_service()
+{
+    config_load switchlanplay
+    config_foreach run_switch_lan_play switch-lan-play
+
+    procd_open_instance
+    procd_set_param command $PROG
+    procd_close_instance
+
+    echo $PROG
+}
+
+stop_service()
+{
+    pgrep lan-play | xargs -r kill -9
+    echo "switch-lan-play client stopped."
+}
+
+
+reload_service()
+{
+    stop
+    start
+}
+
+service_triggers()
+{
+    procd_add_reload_trigger "/etc/config/switchlanplay" "switchlanplay"
+}

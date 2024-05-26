@@ -1,0 +1,11 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@wolplus[-1]
+	add ucitrack wolplus
+	set ucitrack.@wolplus[-1].init=wolplus
+	commit ucitrack
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0

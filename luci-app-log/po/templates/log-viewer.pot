@@ -1,0 +1,140 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Alert"
+msgstr ""
+
+msgid "All"
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+msgid "Apply message filter as regular expression"
+msgstr ""
+
+msgid "Apply timestamp filter as regular expression"
+msgstr ""
+
+msgid "Auto refresh"
+msgstr ""
+
+msgid "Critical"
+msgstr ""
+
+msgid "Debug"
+msgstr ""
+
+msgid "Dismiss"
+msgstr ""
+
+msgid "Download log"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Emergency"
+msgstr ""
+
+msgid "Entries"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "Facility"
+msgstr ""
+
+msgid "Facilities"
+msgstr ""
+
+msgid "Filter is regexp"
+msgstr ""
+
+msgid "Filter settings"
+msgstr ""
+
+msgid "Get all entries"
+msgstr ""
+
+msgid "Get more entries"
+msgstr ""
+
+msgid "Host"
+msgstr ""
+
+msgid "Hosts"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+msgid "Invalid regular expression"
+msgstr ""
+
+msgid "Kernel Log"
+msgstr ""
+
+msgid "Last entries"
+msgstr ""
+
+msgid "Level"
+msgstr ""
+
+msgid "Log"
+msgstr ""
+
+msgid "Log Viewer"
+msgstr ""
+
+msgid "Logging levels"
+msgstr ""
+
+msgid "Logread not found"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
+msgid "Message filter"
+msgstr ""
+
+msgid "No entries available..."
+msgstr ""
+
+msgid "Notice"
+msgstr ""
+
+msgid "Refresh log"
+msgstr ""
+
+msgid "Sorting entries"
+msgstr ""
+
+msgid "System Log"
+msgstr ""
+
+msgid "Timestamp"
+msgstr ""
+
+msgid "Timestamp filter"
+msgstr ""
+
+msgid "Type a search pattern..."
+msgstr ""
+
+msgid "Unable to load log data:"
+msgstr ""
+
+msgid "Unsupported log format"
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "ascending"
+msgstr ""
+
+msgid "descending"
+msgstr ""

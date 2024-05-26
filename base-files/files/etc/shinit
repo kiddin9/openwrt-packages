@@ -1,0 +1,14 @@
+[ -x /bin/more ] || [ -x /usr/bin/more ] || alias more=less
+[ -x /usr/bin/vim ] && alias vi=vim || alias vim=vi
+
+alias ll='ls -alF --color=auto'
+alias reboot='(/bin/busybox reboot &);sleep 3;/bin/busybox reboot -f'
+PS1='\[\e[32m\][\[\e[m\]\[\e[31m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]:\[\e[m\]\[\e[32m\]\[\e[1;32m\]\@\[\e[36m\] \w\[\e[m\]\[\e[32m\]]\[\e[0m\] \$\[\e[m\] '
+
+[ -z "$KSH_VERSION" -o \! -s /etc/mkshrc ] || . /etc/mkshrc
+
+[ -x /usr/bin/arp -o -x /sbin/arp ] || arp() { cat /proc/net/arp; }
+[ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
+
+[ -n "$KSH_VERSION" -o \! -s "$HOME/.shinit" ] || . "$HOME/.shinit"
+[ -z "$KSH_VERSION" -o \! -s "$HOME/.mkshrc" ] || . "$HOME/.mkshrc"

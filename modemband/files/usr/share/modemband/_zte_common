@@ -1,0 +1,19 @@
+getsupportedbands() {
+	echo "$_DEFAULT_LTE_BANDS"
+}
+
+getbands() {
+# +ZNLOCKBAND: 80800c5,2000000680380
+
+	O=$(sms_tool -d $_DEVICE at "at+znlockband?")
+	HEX="0x"$(echo "$O" | awk -F[:,] '{print $2}' | xargs)
+	hextobands "$HEX"
+}
+
+setbands() {
+	BANDS="$1"
+	[ "$BANDS" = "default" ] && BANDS="$_DEFAULT_LTE_BANDS"
+
+	HEX=$(bandstohex "$BANDS")
+	[ "$HEX" != "0" ] && sms_tool -d $_DEVICE at "at+znlockband=1,0,$HEX,0"
+}

@@ -1,0 +1,20 @@
+_DEVICE=/dev/ttyUSB1
+_DEFAULT_LTE_BANDS="1 3 7 8 20 28"
+_NAME="ZTE MF286"
+
+case $(cat /tmp/sysinfo/board_name) in
+"zte,mf286a")
+	_DEFAULT_LTE_BANDS="1 2 3 5 7 8 20 38"
+	_NAME="ZTE MF286A"
+	;;
+"zte,mf289f")
+	_DEFAULT_LTE_BANDS="1 3 7 8 20 28 32 38"
+	_NAME="ZTE MF289F"
+	;;
+esac
+
+getinfo() {
+	echo "$_NAME"
+}
+
+. $RES/_zte_common

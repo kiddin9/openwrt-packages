@@ -1,0 +1,49 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2020-08-03 12:39+0000\n"
+"Last-Translator: Weblate Admin <contact@openmptcprouter.com>\n"
+"Language-Team: French <http://weblate.openmptcprouter.com/projects/omr/"
+"luciapplicationsmail/fr/>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.0.4\n"
+
+msgid "From"
+msgstr "De"
+
+msgid "Mail settings"
+msgstr "Paramètres e-mail"
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Port"
+msgstr "Port"
+
+msgid "SMTP"
+msgstr "SMTP"
+
+msgid "STARTTLS"
+msgstr "STARTTLS"
+
+msgid "Server"
+msgstr "Serveur"
+
+msgid "Set mail settings for services that need to send mails."
+msgstr ""
+"Définissez les paramètres de messagerie pour les services qui doivent "
+"envoyer des e-mails."
+
+msgid "TLS"
+msgstr "TLS"
+
+msgid "To"
+msgstr "À"
+
+msgid "Username"
+msgstr "Nom d'utilisateur"

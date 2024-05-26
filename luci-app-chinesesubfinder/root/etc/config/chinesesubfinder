@@ -1,0 +1,6 @@
+config main
+	option 'http_port' '19035'
+	option 'web_port' '19037'
+	option 'image_name' ''
+	option 'config_path' ''
+

@@ -1,0 +1,35 @@
+<%local fs = require "nixio.fs"%>
+<%+cbi/valueheader%>
+<div class="cbi-value">
+    <label class="cbi-value-title">
+        <p style="color: red">日记列表</p>
+    </label>
+    <div class="cbi-value-field">
+        <select class="cbi-input-select" size="1">
+            <option value="main">supervisord</option>
+            <% for _,item in pairs(self.list) do %>
+            <option value="<%=item[2]:gsub('/etc/supervisord/program/', ''):gsub('.ini', '')%>">
+                <%=item[2]:gsub('/etc/supervisord/program/', ''):gsub('.ini', '')%>
+            </option>
+            <% end %>
+        </select>
+    </div>
+</div>
+<textarea class="cbi-input-textarea" id="log-text" rows="30" wrap="off" readonly></textarea>
+<script type="text/javascript">
+    getlog('main')
+    $(".cbi-input-select").change(function (e) {
+        getlog($(this).val())
+    });
+
+    function getlog(name) {
+        XHR.get('<%=url([[admin]], [[services]], [[supervisord]], [[getlog]])%>', {name: name},
+            function (x, data) {
+                if (data.data) {
+                    document.getElementById("log-text").value = data.data;
+                }
+            }
+        )
+    }
+</script>
+<%+cbi/valuefooter%>

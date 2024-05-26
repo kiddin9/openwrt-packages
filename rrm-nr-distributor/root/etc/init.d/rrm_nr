@@ -1,0 +1,45 @@
+#!/bin/sh /etc/rc.common
+#file: /etc/init.d/rrm_nr
+## Based on: https://forum.openwrt.org/t/how-does-rrm-work/32635/68
+
+START=99
+
+NAME=rrm_nr
+USE_PROCD=1
+
+start_service() {
+	#[ ! -f /etc/config/wireless ] && logger -t "${NAME}" -pdaemon.error "/etc/config/wireless does not exist" && exit 1
+	#[ $(grep -q 'wifi-iface' /etc/config/wireless) ] && logger -t "${NAME}" -pdaemon.error "/etc/config/wireless does not have any wifi-iface stanzas" && exit 1
+
+	local rrm_own
+	#todo skip if nr is disabled for interface, skip disabled interface etc.
+	#while [ "$(ubus list hostapd.wlan* | wc -l)" != "$(grep 'wifi-iface' /etc/config/wireless | wc -l)" ]; do
+	#	logger -t "${NAME}" -pdaemon.info "Waiting for all interfaces to initialize"
+	#	sleep 30
+	#done
+
+	OIFS=$IFS
+	IFS=$'\x0a'
+
+	for value in $(ubus list hostapd.wlan*); do
+		rrm_own="${rrm_own}|$(/bin/ubus call ${value} rrm_nr_get_own | /usr/bin/jsonfilter -e '$.value')"
+	done
+
+	IFS=$OIFS
+
+	procd_open_instance
+	procd_set_param command /bin/sh "/usr/bin/rrm_nr"
+	#https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=5247
+	procd_add_mdns "rrm_nr" "udp" "5247" "${rrm_own:1}" 
+	procd_close_instance
+}
+
+boot(){
+	sleep 30
+	start
+}
+
+service_triggers()
+{
+	procd_add_reload_trigger wireless
+}

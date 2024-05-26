@@ -1,0 +1,13 @@
+#!/bin/sh
+chmod +x /etc/init.d/advancedplus
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@advancedplus[-1]
+	add ucitrack advancedplus
+	set ucitrack.@advancedplus[-1].init=advancedplus
+	commit ucitrack
+EOF
+# sed -i 's/cbi.submit\"] = true/cbi.submit\"] = \"1\"/g' /usr/lib/lua/luci/dispatcher.lua
+[ "x$(uci -q get advancedplus.@basic[0].mode)" = "x" ]  && /etc/config/advancedplus reset 
+[ -s /usr/lib/lua/luci/view/themes/argon/sysauth.htm ] && sed -i 's,media .. \"\/b,resource .. \"\/b,g' /usr/lib/lua/luci/view/themes/argon/sysauth.htm
+rm -f /tmp/luci-indexcache
+exit 0

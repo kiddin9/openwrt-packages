@@ -1,0 +1,138 @@
+#!/bin/sh
+
+skin="Kucat"
+
+is_x86_64() {
+    DISTRIB_ARCH=$(cat /etc/openwrt_release | grep "DISTRIB_ARCH" | cut -d "'" -f 2)
+    if [ "$DISTRIB_ARCH" = "x86_64" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+remove_check_signature() {
+    local opkg_conf="/etc/opkg.conf"
+    sed -i '/option check_signature/d' "$opkg_conf"
+}
+
+is_iStore() {
+    [ -s "/www/luci-static/istore/index.js" ] && return 0  || return 1
+}
+
+is_vip() {
+     DISTRIB_FREE=$(cat /etc/openwrt_release | grep "Vip" | cut -d " " -f 2 | cut -d "-" -f 1)
+    if [ "$DISTRIB_FREE" = "Vip" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+is_free() {
+     DISTRIB_FREE=$(cat /etc/openwrt_release | grep "Free" | cut -d " " -f 2 | cut -d "-" -f 1)
+    if [ "$DISTRIB_FREE" = "Free" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+istore_install(){
+    if is_iStore; then
+        echo "已经内置iStore应用商店,无须安装！"
+     else
+       echo "正在安装iStore应用商店...."
+	remove_check_signature
+        opkg update
+        opkg remove git-lfs
+        setup_software_source 1
+	ISTORE_REPO=https://istore.linkease.com/repo/all/store
+	FCURL="curl --fail --show-error"
+	curl -V >/dev/null 2>&1 || {
+  	  echo "prereq: install curl"
+  	  opkg info curl | grep -Fqm1 curl || opkg update
+  	  opkg install curl
+	}
+	IPK=$($FCURL "$ISTORE_REPO/Packages.gz" | zcat | grep -m1 '^Filename: luci-app-store.*\.ipk$' | sed -n -e 's/^Filename: \(.\+\)$/\1/p')
+	[ -n "$IPK" ] || exit 1
+	$FCURL "$ISTORE_REPO/$IPK" | tar -xzO ./data.tar.gz | tar -xzO ./bin/is-opkg >/tmp/is-opkg
+	chmod 755 /tmp/is-opkg
+	/tmp/is-opkg update
+	# /tmp/is-opkg install taskd
+	/tmp/is-opkg opkg install --force-reinstall luci-lib-taskd luci-lib-xterm
+	/tmp/is-opkg opkg install --force-reinstall luci-app-store || exit $?
+	[ -s "/etc/init.d/tasks" ] || /tmp/is-opkg opkg install --force-reinstall taskd
+	[ -s "/usr/lib/lua/luci/cbi.lua" ] || /tmp/is-opkg opkg install luci-compat >/dev/null 2>&1
+            uci set system.@system[0].hostname='iStoreOS'
+            uci commit system
+            /etc/init.d/system reload
+            if is_x86_64; then
+                extra_info="with iStoreOS Style"
+		echo "src/gz is_store https://istore.linkease.com/repo/all/store" >/etc/opkg/customfeeds.conf
+		if is_vip; then
+	        	echo "src/gz dllkids https://op.dllkids.xyz/packages/x86_64" >>/etc/opkg/customfeeds.conf
+		fi
+                current_revision=$(grep "DISTRIB_REVISION" /etc/openwrt_release | cut -d "'" -f 2)
+                if [[ $current_revision != *"$extra_info"* ]]; then
+                    new_revision="${current_revision} ${extra_info}"
+                    sed -i "s/DISTRIB_REVISION=.*$/DISTRIB_REVISION='$new_revision'/" /etc/openwrt_release
+                fi
+            else
+                echo "src/gz is_store https://istore.linkease.com/repo/all/store" >/etc/opkg/customfeeds.conf
+		if is_vip; then
+                  local total_lines=$(opkg print-architecture | wc -l)
+                  local architecture=""
+                  local source="https://op.dllkids.xyz/packages/"
+                  if [ "$total_lines" -eq 4 ]; then
+                     architecture=$(opkg print-architecture | awk 'NR==4{print $2}')
+                     echo "No.4 architecture info===="${architecture}
+                     echo "src/gz custom_dllkids "${source}${architecture} >>/etc/opkg/customfeeds.conf
+                   elif [ "$total_lines" -eq 3 ]; then
+                     architecture=$(opkg print-architecture | awk 'NR==3{print $2}')
+                     echo "No.3 architecture info===="${architecture}
+                     echo "src/gz custom_dllkids "${source}${architecture} >>/etc/opkg/customfeeds.conf
+                   else
+                      echo "未知的返回结果行数: $total_lines"
+                   fi
+		fi
+                if ! grep -q " like iStoreOS" /tmp/sysinfo/model; then
+                    sed -i '1s/$/ like iStoreOS/' /tmp/sysinfo/model
+                fi
+            fi
+        uci set luci.main.mediaurlbase='/luci-static/Kucat'
+        uci commit
+        opkg update
+	rm -rf /tmp/is-opkg
+        echo "iStore应用商店安装完成,需要重启OPENWRT才能生效！"
+    fi
+}
+
+drv_install(){
+    if is_vip; then
+        echo "开始安装Docker安装完成..."
+        bash /etc/kmodreg docker
+        echo "Docker安装完成,需要重启OPENWRT才能生效！"
+    else
+            echo "目前此功能仅限VIP版本提供！"
+    fi
+}
+
+docker_install(){
+    if is_vip; then
+        echo "开始安装所有驱动..."
+        bash /etc/kmodreg drv 
+        echo "所有驱动完成,需要重启OPENWRT才能生效！"
+    else
+        echo "目前此功能仅限VIP版本提供！"
+    fi
+}
+
+case $1 in
+    istore) 
+        istore_install ;;  
+    drv) 
+        drv_install ;;  
+    docker) 
+        docker_install;;  
+    esac

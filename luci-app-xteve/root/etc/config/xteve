@@ -1,0 +1,4 @@
+config main
+	option 'port' '34400'
+	option 'config_path' ''
+

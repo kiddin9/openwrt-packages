@@ -1,0 +1,11 @@
+{
+	"luci-app-htreader": {
+		"description": "Grant UCI access for luci-app-htreader",
+		"read": {
+			"uci": [ "htreader" ]
+		},
+		"write": {
+			"uci": [ "htreader" ]
+		}
+	}
+}

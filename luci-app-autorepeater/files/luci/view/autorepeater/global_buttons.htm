@@ -1,0 +1,90 @@
+
+<%+cbi/valueheader%>
+<%-
+	local values = self:formvalue(section)
+	if not values then
+		values = self:cfgvalue(section) or {self.default}
+	end
+
+	local function serialize_json(x, cb)
+		local rv, push = nil, cb
+		if not push then
+			rv = { }
+			push = function(tok) rv[#rv+1] = tok end
+		end
+
+		if x == nil then
+			push("null")
+		elseif type(x) == "table" then
+			push("[")
+			for k = 1, #x do
+				if k > 1 then
+					push(",")
+				end
+				serialize_json(x[k], push)
+			end
+			push("]")
+		else
+			push('"%s"' % tostring(x):gsub('["%z\1-\31\\]',
+				function(c) return '\\u%04x' % c:byte(1) end))
+		end
+
+		if not cb then
+			return table.concat(rv, "")
+		end
+	end
+-%>
+
+<script type="text/javascript">//<![CDATA[
+	// event handler on changed
+	function onbtup_date(id,value) {
+		cbi_d_update(id);
+		var obj = document.getElementById("<%=cbid%>.help");
+		if ( !obj ) { return; }	// security check
+		XHR.get('<%=luci.dispatcher.build_url("admin", "services", "autorepeater", "bthandler")%>/' + value, null,
+			function(x) {
+				var value=""
+				if (x.responseText == "_nohandler_")
+					value = "<%:-no handler--%>";
+				else if (x.responseText == "_nosection_")
+					value = "<%:- notset --%>";
+				else if (x.responseText == "_skiped_")
+					value = "<%:- skiped --%>";
+				else
+					value = x.responseText;
+				obj.innerHTML = '<%:Current function%>: <font color="red"><i>' + value + '</i></font>';
+			}
+		);
+	}
+//]]></script>
+
+<select class="cbi-input-list" onchange="onbtup_date(this.id,this.value)"
+	<%=
+	attr("name", cbid) .. attr("id", cbid) .. attr("value", self:cfgvalue(section) or self.default) .. ifattr(self.size, "size")
+	%>
+></select>
+<script type="text/javascript">//<![CDATA[
+	(function() {
+		var values = <%=serialize_json(values)%>;
+		var keylist = <%=serialize_json(self.keylist)%>;
+		var vallist = <%=serialize_json(self.vallist)%>;
+		var parent = document.getElementById("<%=cbid%>");
+			for (var j = 0; j < keylist.length; j++) {
+				var opt = document.createElement("option");
+				opt.value = keylist[j];
+				if (opt.value == values) {
+					opt.selected = "selected";
+				}
+				opt.appendChild(document.createTextNode(vallist[j]));
+				parent.appendChild(opt);
+			}
+	}());
+//]]></script>
+<br />
+<div class="cbi-value-description">
+	<span class="cbi-value-helpicon"><img src="<%=resource%>/cbi/help.gif" alt="<%:help%>" /><%=self.description%></span>
+	<br />
+	<span id="<%=cbid%>.help" class="cbi-value-helpicon"><%=self.alias_function%></span>
+</div>	<!-- div class="cbi-value-description" -->
+</div>	<!-- div class="cbi-value-field" -->
+</div>	<!-- div class="cbi-value cbi-value-last" -->

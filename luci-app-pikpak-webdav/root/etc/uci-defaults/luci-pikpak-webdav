@@ -1,0 +1,11 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@pikpak-webdav[-1]
+	add ucitrack pikpak-webdav
+	set ucitrack.@pikpak-webdav[-1].init=pikpak-webdav
+	commit ucitrack
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0

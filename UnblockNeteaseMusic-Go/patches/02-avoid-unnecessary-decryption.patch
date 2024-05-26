@@ -1,0 +1,29 @@
+From 6c009953d357d1cc03478cf65fc05701fb1966d6 Mon Sep 17 00:00:00 2001
+From: ameansone <ameansone@outlook.com>
+Date: Sun, 5 Dec 2021 19:18:20 +0800
+Subject: [PATCH] fix(processor): avoid unnecessary decryption
+
+---
+ processor/processor.go | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/processor/processor.go b/processor/processor.go
+index 8d09dbf..011571b 100644
+--- a/processor/processor.go
++++ b/processor/processor.go
+@@ -177,9 +177,13 @@ func RequestAfter(request *http.Request, response *http.Response, netease *Netea
+ 			if netease.Forward {
+ 				aeskey = linuxApiKey
+ 			}
+-			decryptECBBytes, encrypted := crypto.AesDecryptECB(decryptECBBytes, []byte(aeskey))
+-			netease.Encrypted = encrypted
+ 			result := utils.ParseJson(decryptECBBytes)
++			netease.Encrypted = false;
++			if result == nil {
++				decryptECBBytes, encrypted := crypto.AesDecryptECB(decryptECBBytes, []byte(aeskey))
++				netease.Encrypted = encrypted
++				result = utils.ParseJson(decryptECBBytes)
++			}
+ 			netease.JsonBody = result
+ 
+ 			modified := false

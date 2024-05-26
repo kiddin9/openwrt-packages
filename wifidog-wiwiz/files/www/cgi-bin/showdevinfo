@@ -1,0 +1,7 @@
+#!/usr/bin/lua
+require("luci.sys")
+require("luci.util")
+
+local s = luci.util.exec("echo \"_wiwiz_get_devinfo('$(cat /dev_info | cut -d ' ' -f 1)', '$(cat /dev_info | cut -d ' ' -f 2)', '$(cat /dev_info | cut -d ' ' -f 3)', '$(ifconfig br-lan | grep HWaddr | awk '{ print $5}')');\"")
+print("Content-type: application/javascript\n")
+print(s)

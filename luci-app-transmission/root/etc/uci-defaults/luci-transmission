@@ -1,0 +1,6 @@
+
+rm -rf /etc/seccomp/transmission-daemon.json
+
+sed -i "s/reload_service(/reload_service1(/" /etc/init.d/transmission
+
+exit 0

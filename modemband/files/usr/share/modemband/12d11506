@@ -1,0 +1,60 @@
+_DEVICE=/dev/ttyUSB1
+
+getinfo() {
+	O=$(sms_tool -d $_DEVICE at "at+cgmi")
+	VENDOR=$(echo "$O" | awk '/^[a-zA-Z0-9]/ && !/at\+cgmi/{print $0}' | xargs)
+	O=$(sms_tool -d $_DEVICE at "at+cgmm")
+	PRODUCT=$(echo "$O" | awk '/^[a-zA-Z0-9]/ && !/at\+cgmm/{print $0}' | xargs)
+	echo "$(echo ${VENDOR:0:1} | tr '[a-z]' '[A-Z]')${VENDOR:1} $PRODUCT"
+}
+
+getsupportedbands() {
+	O=$(sms_tool -d $_DEVICE at "at+cgmm")
+	_NAME=$(echo "$O" | awk '/^[a-zA-Z0-9]/ && !/at\+cgmm/{print tolower($0)}' | xargs)
+	case "$_NAME" in
+	"me906e"* | \
+	"me909u-521")
+		echo "1 2 3 5 7 8 20"
+		;;
+	"me906s"*)
+		echo "1 2 3 5 7 8 20 28"
+		;;
+	"me909s-120")
+		echo "1 2 3 4 5 7 8 20"
+		;;
+	"me909s-821")
+		echo "1 3 8 38 39 40 41"
+		;;
+	"me909s-821a")
+		echo "1 3 5 8 38 39 40 41"
+		;;
+	*)
+		echo "1 3 7 8 20"
+		;;
+	esac
+}
+
+getbands() {
+	O=$(sms_tool -d $_DEVICE at "at^syscfgex?")
+	HEX="0x"$(echo "$O" | awk -F[:,] '/^\^SYSCFGEX:/{print $6}' | xargs)
+	if [ "$HEX" = "0x7FFFFFFFFFFFFFFF" ]; then
+		getsupportedbands
+	else
+		[ "$HEX" = "0x" ] || hextobands "$HEX"
+	fi
+}
+
+setbands() {
+	BANDS="$1"
+
+	if [ "$BANDS" = "default" ]; then
+		HEX="7FFFFFFFFFFFFFFF"
+	else
+		HEX=$(bandstohex "$BANDS")
+	fi
+	if [ "$HEX" != "0" ]; then
+		O=$(sms_tool -d $_DEVICE at "at^syscfgex?")
+		MODE=$(echo "$O" | awk -F[:,] '{print $2}' | xargs)
+		sms_tool -d $_DEVICE at "at^syscfgex=\"${MODE:-030201}\",3FFFFFFF,2,4,$HEX,,"
+	fi
+}

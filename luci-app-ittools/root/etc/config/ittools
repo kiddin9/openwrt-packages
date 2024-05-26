@@ -1,0 +1,3 @@
+config main
+	option 'port' '9070'
+

@@ -1,0 +1,76 @@
+<%#
+Copyright 2019-2020 Michael BD7MQB <bd7mqb@qq.com>
+This is free software, licensed under the GNU GENERAL PUBLIC LICENSE, Version 2.0
+-%>
+<%  if lastheard and #lastheard > 0 then %>
+<table border="0">
+    <tr>
+        <th align="left"><div class="plaintext"><a href="<%=luci.dispatcher.build_url("mmdvm", "livecall")%>" class="item-content item-link">< <%:Live Caller%></a></div></th>
+        <th align="right" width="45%">
+        <% 
+        local lh = lastheard[1]
+        local callsign = lh.callsign
+
+        if not tonumber(callsign) then 
+            if string.find(callsign, "/") then
+                callsign = string.sub(callsign, 1, string.find(callsign, "/")-1)
+            elseif string.find(callsign, "-") then
+                callsign = string.sub(callsign, 1, string.find(callsign, "-")-1)
+            end
+        end
+
+        local user = luci.util.ubus("dmrid", "get_by_callsign", {callsign = callsign}) or {
+            name="Unknown", country="Somewhere"
+        }
+
+        if string.find(lh.mode, "DMR") then
+            local tg = tonumber(string.sub(lh.target, 4))
+            if tg and tg > 90 then
+        %>
+            <div class="plaintext"><a href="https://hose.brandmeister.network/<%=tg%>" target="_blank" class="link external"><i class="f7-icons">volume</i></a></div>
+        <% 
+            end
+        end 
+        %>
+        </th>
+        </tr>
+    <tr>
+        <td class="lh_detail_callsign">
+            <p class="callsign"><%=lh.callsign%></p>
+        </td>
+        <td class="lh_detail_callsign">
+            <p><%=user.name or "Unknown" %></p>
+            <p><%=user.country or "Somewhere" %></p>
+        </td>
+        </tr>
+    <tr>
+        <td class="lh_detail">
+            <p>Source - <%=lh.source%></p>
+            <p><%=lh.mode%> - <%=lh.target%></p>
+        </td>
+        <td class="lh_detail">
+        <p>
+        <% if lh.duration then %>
+        <p>Duration <%=lh.duration%>s</p>
+        <p>Loss <%="%0.1f" % {lh.loss} %>% &nbsp;&nbsp; BER <%="%0.1f" % {lh.ber}%>%</p>
+        <% else 
+            local mmdvm = require("luci.model.mmdvm")
+            local t = os.time() - mmdvm.s2t(lh.timestamp)
+        %>
+        <p>Duration <%=t%>s</p>
+        <p>Transmiting ...</p>
+        <% end %>
+        </p>
+        </td>
+    </tr>
+</table>
+<% end %>
+<h2><%:Gateway Activity%></h2>
+<div id="lh">
+<% luci.template.render("mmdvm/lh", {lastheard = lastheard} ) %>
+</div>
+
+<h2><%:Local RF%></h2>
+<div id="localtx">
+<% luci.template.render("mmdvm/lh", {lastheard = lastheard, localtx = 1} ) %>
+</div>

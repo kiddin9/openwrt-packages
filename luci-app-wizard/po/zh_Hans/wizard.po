@@ -1,0 +1,57 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Wizard"
+msgstr "设置向导"
+
+msgid "Initial Router Setup"
+msgstr "路由器设置向导"
+
+msgid "Net Settings"
+msgstr "网络设置"
+
+msgid "Wireless Settings"
+msgstr "无线设置"
+
+msgid "If you are using this router for the first time, please configure it here."
+msgstr "如果你首次使用这个路由器，请在这里简单设置。"
+
+msgid "Three different ways to access the Internet, please choose according to your own situation."
+msgstr "二种不同的上网方式，请您根据自身情况进行选择。"
+
+msgid "Set the router's wireless name and password. For more advanced settings, please go to the Network-Wireless page."
+msgstr "设置路由器的无线名字和密码，更多高级设置请进入 网络-无线 页面。"
+
+msgid "Leave empty to use ISP DNS"
+msgstr "留空则使用阿里DNS"
+
+msgid "Enter the main router IP"
+msgstr "请输入主路由IP"
+
+msgid "Siderouter"
+msgstr "旁路由模式"
+
+msgid "To turn on this DHCP, you need to turn off the DHCP of the main router, and to turn off this DHCP, you need to manually change the gateway and DNS of all Internet devices to the IP of this bypass router"
+msgstr "开启此DHCP则需要关闭主路由的DHCP, 关闭此DHCP则需要手动将所有上网设备的网关和DNS改为此旁路由的IP"
+
+msgid "Enable IPv6"
+msgstr "启用IPv6"
+
+msgid "Enable/Disable IPv6"
+msgstr "一键开启/关闭 IPv6"
+
+msgid "Firmware Settings"
+msgstr "固件设置"
+
+msgid "Packages Auto Upgrade"
+msgstr "软件包自动更新"
+
+msgid "Firmware Upgrade Notice"
+msgstr "固件更新提醒"
+
+msgid "Persistent cookies"
+msgstr "持久化登录"
+
+msgid "Keep the background login state to avoid the need to log in again every time the browser is closed"
+msgstr "保持后台登录状态,避免每次关闭浏览器后都需要重新登录"
+

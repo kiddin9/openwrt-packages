@@ -1,0 +1,72 @@
+<%#
+Copyright 2019-2020 Michael BD7MQB <bd7mqb@qq.com>
+This is free software, licensed under the GNU GENERAL PUBLIC LICENSE, Version 2.0
+-%>
+<%  if lastheard and #lastheard > 0 then %>
+<table id="livecall">
+        <% 
+        local uci   = require("luci.model.uci").cursor()
+        local lh = lastheard[1]
+        local callsign = lh.callsign
+        if string.find(callsign, "/") then
+            callsign = string.sub(callsign, 1, string.find(callsign, "/")-1)
+        elseif string.find(callsign, "-") then
+        callsign = string.sub(callsign, 1, string.find(callsign, "-")-1)
+        end
+
+        local user = luci.util.ubus("dmrid", "get_by_callsign", {callsign = callsign}) or {
+            name="Unknown", country="Somewhere"
+        }
+
+        local modes = {
+            { name='DMR', status=(uci:get('mmdvm', 'DMR', 'Enable') == '1' and {'ON'} or {'OFF'})[1] },
+            { name='P25', status=(uci:get('mmdvm', 'P25', 'Enable') == '1' and {'ON'} or {'OFF'})[1] },
+            { name='YSF', status=(uci:get('mmdvm', 'System_Fusion', 'Enable') == '1' and {'ON'} or {'OFF'})[1] },
+            { name='NXDN', status=(uci:get('mmdvm', 'NXDN', 'Enable') == '1' and {'ON'} or {'OFF'})[1] },
+            { name='DSTAR', status=(uci:get('mmdvm', 'DStar', 'Enable') == '1' and {'ON'} or {'OFF'})[1] },
+        }
+        if nixio.fs.access("/etc/init.d/dapnetgateway") then
+            table.insert(modes, 
+                { name='POCSAG', status=(uci:get('mmdvm', 'POCSAG', 'Enable') == '1' and {'ON'} or {'OFF'})[1] }
+            )
+        end
+        %>
+    <tr>
+        <td>
+            <div id="back"><a href="<%=luci.dispatcher.build_url('mmdvm', 'dashboard')%>"><< </a></div>
+            <label class="callsign"><%=callsign%></label>
+        </td>
+        <td width="40%">
+            <p><%=user.name or "Unknown"%></p>
+            <p><%=user.country or "Somewhere"%></p>
+        </td>
+        </tr>
+    <tr>
+        <td height="40%">
+            <p>Source - <%=lh.source:upper()%></p>
+            <p class="mode"><%=lh.mode%> - <%=lh.target%></p>
+            <p>
+                <% for _, mode in ipairs(modes) do %>
+                <label class="mode <%=mode.status%>" title="<%=mode.name%> <%=mode.status%>"><%=mode.name%></label>
+                <% end %>
+            </p>
+        </td>
+        <td>
+        <p>
+        <% if lh.duration then %>
+        <p>Duration <%=lh.duration%>s</p>
+        <p>Loss <%="%0.1f" % {lh.loss} %>%</p>
+        <p>BER <%="%0.1f" % {lh.ber}%>%</p>
+        <% else 
+            local mmdvm = require("luci.model.mmdvm")
+            local t = os.time() - mmdvm.s2t(lh.timestamp)
+        %>
+        <p>Duration <%=t%>s</p>
+        <p>Transmiting ...</p>
+        <p>&nbsp;</p>
+        <% end %>
+        </p>
+        </td>
+    </tr>
+</table>
+<% end %>

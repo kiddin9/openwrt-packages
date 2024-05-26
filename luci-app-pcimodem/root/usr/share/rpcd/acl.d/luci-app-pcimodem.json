@@ -1,0 +1,11 @@
+{
+	"luci-app-pcimodem": {
+		"description": "Grant UCI access for luci-app-pcimodem",
+		"read": {
+			"uci": [ "pcimodem" ]
+		},
+		"write": {
+			"uci": [ "pcimodem" ]
+		}
+	}
+}

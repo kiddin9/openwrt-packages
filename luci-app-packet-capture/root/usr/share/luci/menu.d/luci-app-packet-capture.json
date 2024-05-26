@@ -1,0 +1,18 @@
+{
+	"admin/services/packet_capture": {
+		"title": "Packet Capture",
+		"order": 90,
+		"action": {
+			"type": "view",
+			"path": "packet_capture/tcpdump"
+		},
+		"depends" : {
+			"acl": [ "luci-app-packet-capture" ],
+			"uci": { "packet_capture": true },
+			"fs": { "/usr/libexec/packet_capture": "executable",
+				"/usr/libexec/packet_capture_start": "executable",
+				"/usr/libexec/packet_capture_stop": "executable"
+			}
+		}
+	}
+}

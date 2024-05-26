@@ -1,0 +1,51 @@
+<%+header%>
+<div class="cbi-map" id="cbi-pgyvpn">
+	<%+pgyvpn/content%>
+	<%
+		local cbi = require ('luci.model.uci').cursor()
+		local config = require("luci.pgyvpn.config") 
+
+		local base = cbi:get("pgyvpn", "base")
+		local vpn_status = cbi:get("pgyvpn", "base","vpn_status")
+		local login_status = cbi:get("pgyvpn", "base","login_status")
+		local err_code = cbi:get("pgyvpn", "base","err_code")
+		local user = cbi:get("pgyvpn", "base","user")
+		local vpnid = cbi:get("pgyvpn", "base","vpnid")
+		local vpnpwd = cbi:get("pgyvpn", "base","vpnpwd")
+		local md5 = require "md5"
+		local pwd = cbi:get("pgyvpn","base","pwd")
+		local pwd_md5 = md5.sumhexa(pwd)
+
+		if vpnid ~= nil and vpnid ~= "" then
+			user = vpnid
+		end
+
+		if vpnpwd ~= nil and vpnpwd ~= "" then
+			pwd_md5 = vpnpwd
+		end
+		local href_url = config.URL_LINK.CHECK_NET[2]..user.."&amp;auth="..pwd_md5
+	%>
+
+	<% if vpn_status == '99' then %>
+	<meta http-equiv="refresh" content="1" />
+	<% elseif login_status == '1' then %>
+	<fieldset class="cbi-section">
+		<legend>状态</legend>
+		<form action="<%=luci.dispatcher.build_url("admin", "services", "logout")%>" method="post">
+			<table width="100%" cellspacing="10">
+				<tbody>
+					<tr><td width="33%">SN码</td><td><%=user%></td></tr>
+					<tr><td width="33%">组网状态</td><td><% if vpn_status == '1' then %>已组网<% elseif vpn_status == '0' and ( err_code == "0" or err_code == "-6" or err_code == "-7" or err_code == "-11" or err_code == "4294967295" ) then %>未组网<% end %></td></tr>
+				</tbody>
+			</table>
+			<div class="cbi-page-actions">
+				<input class="cbi-button cbi-button-save" type="button" value=<%=config.URL_LINK.CHECK_NET[1]%> onclick="window.open('<%=href_url%>')" size="0" />
+				<input class="cbi-button cbi-button-reset" type="submit" value="退出登录" size="0" />
+			</div>
+		</form>
+	</fieldset>
+	<% else %>
+	<meta http-equiv="refresh" content="1; url=/cgi-bin/luci/admin/services/pgyvpn" />
+	<% end %>
+</div>
+<%+footer%>

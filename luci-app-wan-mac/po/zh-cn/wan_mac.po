@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8"
+
+msgid "Global Settings"
+msgstr "全局设置"
+
+msgid "Select or input Prefix first!"
+msgstr "先选择或者输入前缀！"
+
+msgid "Prefix is a Multicast address!"
+msgstr "前缀是一个多播地址！"
+
+msgid "WAN MAC address"
+msgstr "WAN口MAC地址"
+
+msgid ""
+"Change the MAC address of WAN port. <br>"
+"Note that modifying the MAC address may cause the IP address to change."
+msgstr "修改WAN口的MAC地址。<br>注意修改MAC地址以后可能导致IP地址变化。"
+
+msgid "MAC Address Settings"
+msgstr "MAC地址设置"
+
+msgid "MAC address prefix"
+msgstr "MAC地址前缀"
+
+msgid "Supports \"000000\" format"
+msgstr "支持\"000000\"格式"
+
+msgid "MAC address"
+msgstr "MAC地址"
+
+msgid "Supports \"00:00:00:00:00:00\" format"
+msgstr "支持\"00:00:00:00:00:00\"格式"
+
+msgid "Randomly Generate Using Prefix"
+msgstr "使用前缀随机生成"
+
+msgid "Select a prefix and click the \"Randomly Generate Using Prefix\" button to generate a MAC address"
+msgstr "选择前缀，然后点击“使用前缀随机生成”按钮即可生成MAC地址"

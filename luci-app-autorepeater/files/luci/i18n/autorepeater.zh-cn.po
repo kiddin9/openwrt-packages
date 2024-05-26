@@ -1,0 +1,366 @@
+msgid "AutoRepeater"
+msgstr "无线 ATRP"
+
+msgid "Auto Repeater"
+msgstr "无线自动中继器"
+
+msgid "Associating"
+msgstr "连接配置"
+
+msgid "Allows SSDP service port:[TCP/1900 commonly] in byc change firewall settings, to perform PNP devices discovery correctly."
+msgstr "若想正常进行UPnP设备搜寻，通常情况下需要开放端口[TCP/1900]"
+
+msgid "minimum value '1'"
+msgstr "最小值 '1'"
+
+msgid "minimum value 5 minutes == 300 seconds"
+msgstr "最小值 5 分钟： 300 秒"
+
+msgid "*DO NOT* delete interfaces by system default network mangement package, it can delete the wireless interface relevant settings permanently"
+msgstr "一定不要通过系统网络管理来删除接口，否则会同时丢失相关无线配置。"
+
+msgid "- notset -"
+msgstr "- 未设置 -"
+
+msgid "- skiped -"
+msgstr "- 忽略 -"
+
+msgid "-no handler-"
+msgstr "-未接管-"
+
+msgid "-notset-"
+msgstr "-未设置-"
+
+msgid "<not-valid>"
+msgstr "<无效>"
+
+msgid "AP Toggle Button"
+msgstr "热点开关"
+
+msgid "Alive Checking"
+msgstr "连通检查"
+
+msgid "Allows SSDP service port:[TCP/1900 commonly] in byc change firewall settings, to perform PNP devices discovery correctly."
+msgstr "Allows SSDP service port:[TCP/1900 commonly] in byc change firewall settings, to perform PNP devices discovery correctly."
+
+msgid "Assocication Strength"
+msgstr "信号质量过滤"
+
+msgid "Assocication Trying Order"
+msgstr "连接次序"
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Auto Repeater Autostart disabled"
+msgstr "Auto Repeater 开机自启已关闭"
+
+msgid "Auto Repeater helps you turn your router as a repeater, join a wireless station by scan station ssid or bssid first."
+msgstr "请设置好需要扩展的备用无线列表，Auto Repeater 将助你自动扩展其中的某个可用的无线信号"
+
+msgid "Basic"
+msgstr "基本配置"
+
+msgid "Below a list of configuration tips for your system to run Auto Repeater without limitations"
+msgstr "关注以下注意事项，发挥最大潜能"
+
+msgid "Below is a list of station scanning configurations and their broadcasting state.<br /><strong>Will trying to associate the *MATCHING* stations by signal strength or saved order. (change by golbal settings)<br /></strong>"
+msgstr "最近一次扫描，匹配出来的附近热点状态表。<br /><strong>将按全局设定的连接次序（按信号质量或列表顺序）尝试匹配连接。<br /></strong>"
+
+msgid "By Saved"
+msgstr "按列表顺序"
+
+msgid "By Signal Strength"
+msgstr "按信号强度"
+
+msgid "By saved order or strength"
+msgstr "按列表顺序或信号强度"
+
+msgid "Check Interval"
+msgstr "检查间隔"
+
+msgid "Check this option to delete the existing networks from this radio."
+msgstr "删除此无线网络配置"
+
+msgid "Configure here the details for selected broadcating station."
+msgstr "无线热点备选列表"
+
+msgid "Configure here the details for station searching services including miniupnpc application."
+msgstr "备选热点列表和端口映射的相关配置"
+
+msgid "Currently Auto Repeater updates are not started at boot or on interface events."
+msgstr "Auto Repeater 开机自启关闭中。"
+
+msgid "Current function"
+msgstr "当前功能"
+
+msgid "Configuration -:"
+msgstr "当前配置 -："
+
+msgid "Port Mapping and station scanning configurations for interface -:"
+msgstr "端口映射和备选热点配置 -："
+
+msgid "DO *NOT* Touch any thing here, if you don't know what's going to happen."
+msgstr "如果你不清楚是干什么用的，*千万* 别碰这里的设置"
+
+msgid "Domain to PING internet connecting status after station associated,<br />to confirm it is not needed to try next station.<br />use local IPv4-Address to disable it's routing, such as: 192.168.1.1"
+msgstr "指定域名，用来检测（PING）万维网连通情况，<br />可通过设置为本地机器IP（如：127.0.0.1）来跳过此项检查。"
+
+msgid "Dangerous! Gona to rewrite hardware button functions, you need to fix that back manually."
+msgstr "危险，会改写原按钮功能，并不会自动复原！"
+
+msgid "Defines which ssid or bssid station to connecting to"
+msgstr "要扩展的无线名称或设备MAC"
+
+msgid "Description for port mapping"
+msgstr "端口映射应用信息"
+
+msgid "Description/LastMapped/Failed"
+msgstr "端口应用/上次/失败与否"
+
+msgid "Detemine by scanning"
+msgstr "由扫描结果来定"
+
+msgid "Device Configuration"
+msgstr "硬件配置"
+
+msgid "Directory contains Log files for searching history"
+msgstr "历史记录文件的目录。"
+
+msgid "Directory contains PID and other status information for searching history."
+msgstr "运行进程ID和扫描状态信息目录。"
+
+msgid "Fail/Success"
+msgstr "成功与否"
+
+msgid "Failsafe"
+msgstr "容错"
+
+msgid "Flowing the link left to change firewall settings."
+msgstr "点左边链接进入防火墙配置。"
+
+msgid "Flowing the link left to change interfaces settings."
+msgstr "点左边链接进入接口配置。"
+
+msgid "Flowing the link left to enable Auto Repeater Auto start."
+msgstr "点左边链接进入自动启动配置。"
+
+msgid "Force Interval"
+msgstr "强制重连间隔"
+
+msgid "Force XML root url"
+msgstr "指定设备描述文件的路径"
+
+msgid "Further more, try smcroute to relay SSDP packages in such as:/smcroute -d;smcroute -a wlan0 0.0.0.0 239.255.255.250 br-lan;ip mroute/, if you inner devices wanna get the services located in another subnet."
+msgstr "多啰嗦一句： try smcroute to relay SSDP packages in such as:/smcroute -d;smcroute -a wlan0 0.0.0.0 239.255.255.250 br-lan;ip mroute/, if you inner devices wanna get the services located in another subnet."
+
+msgid "Global Enabled"
+msgstr "全局开关"
+
+msgid "Out of login connecting status page."
+msgstr "用于记录连接历史的页面名称。"
+
+msgid "Html logfile"
+msgstr "前端记录"
+
+msgid "If this station is disabled it could not be connected automatically.<br />Neither from LuCI interface nor from console"
+msgstr "如关闭，将有可能无法通过无线进行连接来修改配置。"
+
+msgid "Interval to check for internate connection<br />Values below 5 minutes == 300 seconds are not supported"
+msgstr "连接上热点后，进行万维网连通检查的时间间隔（不支持少于5分钟）。"
+
+msgid "Interval to force stations broadcast checking<br />Setting this parameter to 0 will force the script to only run once<br /><strong>*NOT* less than 3 minutes(station monitor routing), or you can loss connect via Wi-Fi AP if there are no available station exists<br /></strong>Values lower 'Check Interval' except '0' are not supported"
+msgstr "强制热点重扫的时间间隔（除零以外，不能少于检查间隔的设定）<br />当此值为零时，Auto Repeater 进入单次运行模式。<br /><strong>建议不少于热点扫描处理的估计时间花费，否则在没有可用备选热点时，导致路由陷入不停扫描中，无法通过无线连接进行重新配置。</strong>"
+
+msgid "Interval to force stations broadcast checking"
+msgstr "热点强制扫描的时间间隔"
+
+msgid "It is *NOT* recommended for casual users to change settings on this page."
+msgstr "不建议小白改动这里所有的设置。"
+
+msgid "Key/Encryption"
+msgstr "密码/加密方式"
+
+msgid "Last Status"
+msgstr "上次"
+
+msgid "Log Viewer"
+msgstr "运行日志"
+
+msgid "MAC Changer"
+msgstr "MAC变换器"
+
+msgid "MAC address for faking, macchanger bin needed."
+msgstr "这里填需要模拟的MAC地址，请先安装好 macchanger。"
+
+msgid "Mapping"
+msgstr "端口映射"
+
+msgid "Matching String"
+msgstr "匹配内容"
+
+msgid "Max failed times for trying"
+msgstr "多少次尝试"
+
+msgid "Maximum Rate"
+msgstr "质量最好"
+
+msgid "Minimum Rate"
+msgstr "质量最差"
+
+msgid "Minimum signal strength to association"
+msgstr "将忽略信号质量小于此数的备用热点。"
+
+msgid "Minimum signal strength to searching"
+msgstr "搜索到的信号里，仅保留强度不小于该值的热点作为备选的连接列表（0～100）。"
+
+msgid "Minimum value '30'"
+msgstr "小于 30 应该不太好吧"
+
+msgid "Not forget to forward the delivered ports from upper router to the specified devices in LAN if you want it."
+msgstr "别忘记进行相应的端口转发配置：将传递进来的流量转发到路由下的某个设备。"
+
+msgid "Number of fails to stop port map trying"
+msgstr "尝试端口映射的次数"
+
+msgid "Number of maxmum seconds of wating station's DHCP to lease a IP"
+msgstr "在此时间内（秒），若仍然无法从热点DHCP获得IP，将尝试下一个可用已知热点。"
+
+msgid "Option one[security risk]: Upper router UPnP SSDP by miniupnpc automatically. Stop miniupnpd to enable SSDP packages in. SSDP package *NEED* Alow *in* by changing firewall forward rules first.[wan/UDP->lan/239.255.255.250/forward] And make sure wan input traffic select *accept* in General/Zones settings."
+msgstr "方式一[存在安全风险]：自动搜索可用UPnP设备。SSDP package *NEED* Alow *in* by changing firewall forward rules first.[wan/UDP->lan/239.255.255.250/forward] And make sure wan input traffic select *accept* in General/Zones settings."
+
+msgid "Option two[recomend]: Skip upper router UPnP SSDP by providing the XML root description searching urls in global settings."
+msgstr "方式二[推荐]：于全局设置里，选择关闭UPnP设备自动扫描，通过手动指定的设备描述文件路径进行尝试。"
+
+msgid "Parsing"
+msgstr "转换"
+
+msgid "Port Mapping List"
+msgstr "端口映射列表"
+
+msgid "Randomly"
+msgstr "随机"
+
+msgid "Real Security"
+msgstr "实际加密方式"
+
+msgid "Review"
+msgstr "查看效果"
+
+msgid "Routed subnets are invisible from upper devices typically, and miniupnpd will drop UPnP SSDP packages[by 239.255.255.250/UDP] not from the same subnet."
+msgstr "通常情况下，子网设备对上级设备不可见，而且 miniupnpd 会丟弃[来自239.255.255.250/UDP的] UPnP设备寻找的非同网段数据包。"
+
+msgid "Run \"/etc/init.d/autorepeater start\" once atleast then reboot this device, will brings this settings for you typically"
+msgstr "讲道理的话，执行1次 \"/etc/init.d/autorepeater start\" 后再手动重启可以自动帮你设置好。"
+
+msgid "Scannign strength error"
+msgstr "信号质量有误"
+
+msgid "Scanning Type"
+msgstr "匹配方式"
+
+msgid "Scanning Strength"
+msgstr "信号质量太少不连"
+
+msgid "Matching/RealBSSID"
+msgstr "匹配方式/实际MAC"
+
+msgid "Signal Strength"
+msgstr "信号质量"
+
+msgid "SSID"
+msgstr "热点名称"
+
+msgid "BSSID"
+msgstr "热点MAC"
+
+msgid "Set this value not *None* to switch Wi-Fi AP On/Off by specified button."
+msgstr "选择功能键作为用于无线开／关。"
+
+msgid "Specify a button to toggle Wi-Fi AP permanently, trigger by press the button shortly."
+msgstr "改写按钮，短按时可切换无线热点的开和关。"
+
+msgid "Take \"A\" Band First"
+msgstr "5G信号优先"
+
+msgid "The allowed characters are: <code>A-Z</code>, <code>a-z</code>, "
+msgstr "可支持的字符 <code>A-Z</code>, <code>a-z</code>, "
+
+msgid "The power led will blinking as entering failsafe mode if AP Toggle Off by switch."
+msgstr "无线AP以此方式强制关闭时，指示灯会像进入了恢复模式那样闪个不停。"
+
+msgid "The station association will retry once after the DHCP timeout"
+msgstr "若获取IP超时，将会在此时间后进行再一次的尝试。"
+
+msgid "This functions helps to bring specified outer port (setted in mapping list) requests from uper router to this device by installed miniupnpc."
+msgstr "此功能通过脚本执行 upnpc 命令，将上级路由端口映射到本路由。"
+
+msgid "To enable the station configuration, there must be a enabled sta mode Wi-Fi device. And the device be in external zone to brings the traffic in."
+msgstr "配置前请先设置好无线扩展模式，或尝试重启。"
+
+msgid "To use miniupnpc port mapping activate this option."
+msgstr "启用端口映射"
+
+msgid "Trying to assocate \"A\" band station in the first place"
+msgstr "5G信号优先"
+
+msgid "Trying to map this port number on upper router PNP"
+msgstr "由PNP映射此端口"
+
+msgid "Turn On/Off Wi-Fi station searching globally."
+msgstr "无线扫描总开关"
+
+msgid "UPnP port mapping through upper router not supported"
+msgstr "上级路由不支持 UPnP 端口穿透"
+
+msgid "UPnP port mapping to go-through upper router supported"
+msgstr "上级路由不支持 UPnP 端口穿透"
+
+msgid "Wi-Fi Scanning List"
+msgstr "备用热点列表"
+
+msgid "Wi-Fi parsing script:"
+msgstr "热点信息解读脚本："
+
+msgid "Wireless wan Interfaces"
+msgstr "无线wan接口"
+
+msgid "Wireless WAN Interfaces needed"
+msgstr "请配置无线WAN接口"
+
+msgid "Wireless network is disabled"
+msgstr "无线网络已关闭"
+
+msgid "Wireless network is enabled"
+msgstr "无线网络已开启"
+
+msgid "XML root description url"
+msgstr "设备描述文件路径"
+
+msgid "You should install miniupnpc package for PNP port mapping."
+msgstr "请先安装 miniupnpc 包以进行 PNP 端口映射。"
+
+msgid "buttons using procd"
+msgstr "procd 按钮功能"
+
+msgid "bypass discovery process by providing the XML root description url, after no available UPnP discovered."
+msgstr "自动搜寻UPnP设备失败后，按指定设备描述文件的路径进行尝试。"
+
+msgid "bypass miniupnpc UPnP device discovery activate this option."
+msgstr "关闭UPnP设备自动搜寻"
+
+msgid "minimum value '0'"
+msgstr "最小值：0"
+
+msgid "minimum value '20'"
+msgstr "最小值：20"
+
+msgid "Values lower 'Check Interval' except '0' are not supported"
+msgstr "不允许小于「检查间隔」"
+
+msgid "Timeout"
+msgstr "超时"
+
+msgid "Timing"
+msgstr "计时设置"
+

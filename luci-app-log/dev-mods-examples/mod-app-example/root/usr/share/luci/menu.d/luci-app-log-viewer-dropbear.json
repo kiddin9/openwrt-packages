@@ -1,0 +1,10 @@
+{
+	"admin/status/log-viewer/dropbear": {
+		"title": "Dropbear",
+		"order": 3,
+		"action": {
+			"type": "view",
+			"path": "log-viewer/dropbear"
+		}
+	}
+}

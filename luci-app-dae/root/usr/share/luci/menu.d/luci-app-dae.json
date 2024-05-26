@@ -1,0 +1,39 @@
+{
+	"admin/services/dae": {
+		"title": "dae",
+		"action": {
+			"type": "firstchild"
+		},
+		"depends": {
+			"acl": [ "luci-app-dae" ],
+			"fs": {
+				"/etc/init.d/dae": "executable"
+			},
+			"uci": { "dae": true }
+		}
+	},
+	"admin/services/dae/settings": {
+		"title": "Settings",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "dae/settings"
+		}
+	},
+	"admin/services/dae/config": {
+		"title": "Configuration",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "dae/config"
+		}
+	},
+	"admin/services/dae/log": {
+		"title": "Log",
+		"order": 30,
+		"action": {
+			"type": "view",
+			"path": "dae/log"
+		}
+	}
+}

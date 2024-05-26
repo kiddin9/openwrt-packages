@@ -1,0 +1,44 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "Heimdall is an elegant solution to organise all your web applications."
+msgstr "Heimdall 是组织所有 Web 应用程序的优雅解决方案。"
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "HTTP Port"
+msgstr "HTTP 端口"
+
+msgid "HTTPS Port"
+msgstr "HTTPS 端口"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Heimdall status:"
+msgstr "Heimdall 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Heimdall is running"
+msgstr "Heimdall 运行中"
+
+msgid "Heimdall is not running"
+msgstr "Heimdall 未运行"
+
+msgid "Open Heimdall"
+msgstr "打开 Heimdall"

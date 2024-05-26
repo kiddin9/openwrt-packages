@@ -1,0 +1,51 @@
+<% css = [[
+	#log_text {
+		padding: 10px;
+		text-align: left;
+		height: 500px;
+		overflow: auto;
+	}
+	#log_text pre {
+		word-break: break-all;
+		margin: 0;
+	}
+	.description {
+		color: #ffffff;
+		background-color: #8460ff;
+	}
+]]
+%>
+
+<%+header%>
+
+<div class="cbi-map">
+	<h2 name="content"><%:Broadband%> - <%:Log Data%></h2>
+	<fieldset class="cbi-section">
+		<fieldset class="cbi-section-node">
+			<div id="log_text"><img src="<%=resource%>/icons/loading.gif" alt="<%:Loading...%>" style="vertical-align:middle" /><%:Collecting data...%></div>
+			<div style="text-align:right"><small><%:Auto Refresh%></small></div>
+		</fieldset>
+	</fieldset>
+	<br/>
+	<a href="https://github.com/Diciya/luci-app-broadbandacc"><%:Thank you, BUG feedback: GitHub%></a>
+</div>
+
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<script type="text/javascript">//<![CDATA[
+	var log_id = document.getElementById('log_text');
+	XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "broadband", "logdata")%>', null, function(x, data) {
+		if ( log_id && data ) {
+			log_id.innerHTML = String.format(
+				'<pre>%s%s%s%s</pre>',
+				'<span class="description"><strong><%:importantlog:%></strong></span><br/>',
+				'<%:During the valid acceleration period, the local dial-up can be used to speed up the network without interruption. If you use any other form to connect to the network, there may be a maximum speed increase failure of 10 minutes when the dial-up ip of the main router changes.%><br/><%:Example: The operator may automatically close the pppoe channel every week, and the router’s re-dial will cause the ip to change. Using local dial-up can speed up without interruption, and using other forms of networking will cause a maximum speed-up failure of 10 minutes within a week.%><br/>',
+				'<br/><span class="description"><strong><%:log file:%></strong></span><br/>',
+				data.client || '<%:No log data.%>'
+			);
+		} else if ( log_id ) {
+			log_id.innerHTML = '<strong><%:Error get log data.%></strong>';
+		}
+	});
+//]]></script>
+
+<%+footer%>

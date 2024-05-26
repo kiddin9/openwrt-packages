@@ -1,0 +1,218 @@
+<%+header%>
+
+<%
+require("luci.sys")
+require("luci.model.uci")
+
+local uci = luci.model.uci.cursor()
+local log_file = uci:get("phtunnel", "log", "path")
+
+if not log_file or log_file == "" then
+	log_file = "/var/log/oraybox/phtunnel.log"
+end
+%>
+<style type="text/css">
+.oray_lable {
+	margin-right: 5px;
+}
+</style>
+
+<script type="text/javascript">
+function reload_this_page() {
+	window.location.reload()
+}
+
+function create_xml_http_request() {
+	var xml_http
+	try {
+		xml_http = new XMLHttpRequest()
+	} catch (e) {
+		try {
+			xml_http = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+			try {
+				xml_http = new ActiveXObject("Msxml2.XMLHTTP");
+			}
+			catch (e)
+			{
+			}
+		}
+	}
+	return xml_http
+}
+
+function get_login_info() {
+	var xml_http = create_xml_http_request()
+	if (!xml_http) {
+		alert('Error : no xml http request')
+		return
+	}
+
+	var url = window.location.href.replace("phtunnel/status", "phtunnel/inner_status")
+	xml_http.open("GET", url)
+	xml_http.send(null)
+	xml_http.onreadystatechange = function() {
+		if (xml_http.readyState == 4 && xml_http.status == 200) {
+			if (xml_http.responseText.length > 0) {
+				var response_json = JSON.parse(xml_http.responseText)
+				if (response_json.url.length > 0)
+					reload_this_page()
+			}
+		}
+	}
+}
+
+function load_qr_img_success_process() {
+	document.getElementById("qrimg").innerHTML = "Scan this Image"
+}
+
+function load_qr_img_failed_process() {
+	document.getElementById("qrimg").innerHTML = "load qrcode image failed"
+}
+
+function log_off() {
+	var xml_http = create_xml_http_request()
+	if (!xml_http) {
+		alert('Error : no xml http request')
+		return
+	}
+
+	var url = window.location.href.replace("phtunnel/status", "phtunnel/log_off")
+	xml_http.open("GET", url)
+	xml_http.send(null)
+	xml_http.onreadystatechange = function() {
+		if (xml_http.readyState == 4 && xml_http.status == 200) {
+			if (xml_http.responseText.length > 0) {
+				var response_json = JSON.parse(xml_http.responseText)
+				if (response_json.code == 0) {
+					alert("log off ok")
+					reload_this_page()
+					return
+				}
+				alert("log off failed : " + response_json.error_msg)
+			}
+		}
+	}
+}
+
+function createInput(type, name, value) {
+	var input = document.createElement("input")
+	input.type = type
+	input.name = name
+	input.value = value
+	return input
+}
+
+var logpath = "<%=log_file%>";
+function downloadLogFile() {
+	var sid = "<%=luci.dispatcher.context.authsession%>";
+	var scriptname = '<%=luci.http.getenv("SCRIPT_NAME")%>';
+	var cgi_base = scriptname.replace(/\/[^\/]+$/, '');
+
+	var form = document.createElement('form');
+	form.method = 'post';
+	form.action = '' + cgi_base + '/cgi-download';
+	form.enctype = 'application/x-www-form-urlencoded';
+
+	var sidInput = createInput('hidden', 'sessionid', sid);
+	var pathInput = createInput('hidden', 'path', logpath);
+	var filenameInput = createInput('hidden', 'filename', 'phtunnel.log');
+	form.appendChild(sidInput);
+	form.appendChild(pathInput);
+	form.appendChild(filenameInput);
+
+	document.body.appendChild(form);
+	form.submit();
+	document.body.removeChild(form);
+}
+
+</script>
+
+<%
+require("luci.phtunnel")
+local utl = require "luci.util"
+
+local function fileExists(path)
+	local file = io.open(path, "rb")
+	if file then file:close() end
+	return file ~= nil
+end
+
+local function grant_download_permission()
+	local dsp = require "luci.dispatcher"
+	local sid = dsp.context.authsession
+	local access, _ = utl.ubus("session", "access",
+		{ubus_rpc_session = sid,
+		 scope = "file",
+		 object = log_file,
+		 ["function"] = "read"})
+
+	if type(access) == "table" and access.access == false then
+		local acl = {}
+		acl[1] = {}
+		acl[1][1] = log_file
+		acl[1][2] = "read"
+		utl.ubus("session", "grant", { ubus_rpc_session = sid, scope = "file", objects = acl})
+	end
+end
+
+local function display_download_log()
+	if fileExists(log_file) then
+		print('<a href="javascript:void(0)" onclick="downloadLogFile(this)">Download Log File</a><br/>')
+		grant_download_permission()
+	end
+end
+
+--输出二
+local function display_qrimage(sn, pwd)
+	local qrcode, qrcodeimg, ttl = luci.phtunnel.get_qrimage(sn, pwd)
+	if qrcode and qrcodeimg then
+		print("<img src='" .. qrcodeimg .. "' onload=\"load_qr_img_success_process();setInterval(reload_this_page, " .. ((ttl and ttl or 300) * 1000) .. ")\" onerror=\"load_qr_img_failed_process()\" onabort=\"load_qr_img_failed_process()\" /><div id='qrimg'></div>")
+	end
+end
+
+local function main()
+	local base_info_code, device_sn, device_pwd, device_status, public_ip = luci.phtunnel.get_base_info()
+	if not base_info_code then
+		print("phtunnel is not running")
+		return
+	end
+
+	if base_info_code ~= 0 then
+		print("get sn failed and code = " .. base_info_code)
+		return
+	end
+
+	--输出基本信息
+	print('<b class="oray_lable">SN:</b>' .. (device_sn and device_sn or "no sn") .. "<br/>")
+	print('<b class="oray_lable">Device Status:</b>' .. (device_status and luci.phtunnel.convert_status(device_status) or "no status") .. "<br/>")
+	print('<b class="oray_lable">Public IP:</b>' .. (public_ip and public_ip or "no public ip") .. "<br/>")
+
+	--登录信息查看
+	local login_info_code, url, bind_account = luci.phtunnel.get_login_info()
+	if not login_info_code then
+		print("get manager url failed")
+		return
+	end
+
+	if login_info_code ~= 0 then
+		print("get manger url failed and code = " .. login_info_code)
+		return
+	end
+
+	if not url or url == "" then
+		display_qrimage(device_sn, device_pwd)
+		print("<script type=\"text/javascript\">setInterval(get_login_info, 3000)</script>")
+		return
+	end
+
+	print("<b>bind account</b>:<font color=red>" .. (bind_account and bind_account or "<b>*</b>") .. "</font>")
+	print("(<a href='#' onclick='log_off();return(false)'>log off</a>)</br>");
+	print("<a href='" .. (url and url or '#') .. "' target=_blank>manager link</a></br>");
+end
+
+main()
+display_download_log()
+%>
+
+<%+footer%>

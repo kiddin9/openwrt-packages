@@ -1,0 +1,20 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -40,7 +40,7 @@ configure_file (
+ 
+ include_directories("${PROJECT_BINARY_DIR}")
+ 
+-add_executable(SpeedTest ${SOURCE_FILES})
++add_executable(speedtestpp ${SOURCE_FILES})
+ 
+ INCLUDE (CheckIncludeFiles)
+ find_package(CURL REQUIRED)
+@@ -53,6 +53,6 @@ else()
+ endif()
+ 
+ include_directories(${CURL_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIR})
+-target_link_libraries(SpeedTest ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES} -lpthread ${OPENSSL_LIBRARIES})
++target_link_libraries(speedtestpp ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES} -lpthread ${OPENSSL_LIBRARIES})
+ 
+-install(TARGETS SpeedTest RUNTIME DESTINATION bin)
++install(TARGETS speedtestpp RUNTIME DESTINATION bin)

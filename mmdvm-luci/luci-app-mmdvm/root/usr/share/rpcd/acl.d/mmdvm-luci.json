@@ -1,0 +1,11 @@
+{
+	"mmdvm-luci": {
+		"description": "Grant access to LuCI app mmdvm",
+		"read": {
+			"uci": [ "mmdvm" ]
+		},
+		"write": {
+			"uci": [ "mmdvm" ]
+		}
+	}
+}

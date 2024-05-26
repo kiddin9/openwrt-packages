@@ -1,0 +1,89 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:18
+msgid "Add instance"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:24
+msgid "Bind address"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:38
+msgid "Bind threads to CPUs"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:41
+msgid "Disconnect slow clients"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:64
+msgid "Do IGMP/MLD leave+join every X seconds. Leave <em>0</em> to disable."
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:20
+msgid "Enable"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:29
+msgid "For multicast receive."
+msgstr ""
+
+#: applications/luci-app-msd_lite/root/usr/share/rpcd/acl.d/luci-app-msd_lite.json:3
+msgid "Grant UCI access for luci-app-msd_lite"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:63
+msgid "IGMP/MLD rejoin time"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:34
+msgid "Leave 0 or <em>empty</em> to auto detect."
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:12
+#: applications/luci-app-msd_lite/root/usr/share/luci/menu.d/luci-app-msd_lite.json:3
+msgid "Multi Stream daemon Lite"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:54
+msgid "Multicast receive socket buffer size."
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:59
+msgid "Multicast receive timeout."
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:44
+msgid "Pre cache size"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:53
+msgid "Receive buffer size"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:58
+msgid "Receive timeout"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:48
+msgid "Ring buffer size"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:28
+msgid "Source interface"
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:49
+msgid "Stream receive ring buffer size."
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:13
+msgid ""
+"The lightweight version of Multi Stream daemon (msd) Program for organizing "
+"IP TV streaming on the network via HTTP."
+msgstr ""
+
+#: applications/luci-app-msd_lite/htdocs/luci-static/resources/view/msd_lite.js:33
+msgid "Worker threads"
+msgstr ""

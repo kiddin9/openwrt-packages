@@ -1,0 +1,9 @@
+diff --git a/Makefile b/Makefile
+index 0809184..1905a15 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,4 +1,4 @@
+-SUBDIRS = NXDNGateway NXDNParrot NXDNReflector
++SUBDIRS = NXDNGateway NXDNParrot
+ CLEANDIRS = $(SUBDIRS:%=clean-%)
+ INSTALLDIRS = $(SUBDIRS:%=install-%)

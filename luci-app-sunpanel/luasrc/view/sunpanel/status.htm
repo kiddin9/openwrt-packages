@@ -1,0 +1,27 @@
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(5, '<%=url("admin/services/sunpanel_status")%>', null,
+		function(x, st)
+		{
+			var tb = document.getElementById('sunpanel_status');
+			if (st && tb)
+			{
+				if (st.running)
+				{
+					tb.innerHTML = '<br/><em style=\"color:green\"><%:The SunPanel service is running.%></em>'
+						+ "<br/><br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open SunPanel%> \" onclick=\"window.open('http://" + window.location.hostname + ":" + st.port + "/')\"/>" ;
+				}
+				else
+				{
+					tb.innerHTML = '<br/><em style=\"color:red\"><%:The SunPanel service is not running.%></em>';
+				}
+			}
+		}
+	);
+//]]></script>
+
+<fieldset class="cbi-section">
+	<legend><%:SunPanel Status%></legend>
+	<p id="sunpanel_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>

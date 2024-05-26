@@ -1,0 +1,12 @@
+[Unit]
+Description=OLED ssd1306 display service
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/ssd1306 --config=/etc/ssd1306.cfg
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target

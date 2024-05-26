@@ -1,0 +1,25 @@
+version: "3"
+
+networks:
+  excalidrawnet:
+
+services:
+  frontend:
+    image: janson/excalidraw:IMAGE_VER_VAR
+    ports:
+      - PORT_VAR:80
+    networks:
+      - excalidrawnet
+
+  storage:
+    image: janson/excalidraw-storage-backend:IMAGE_VER_VAR
+    restart: always
+    environment:
+      - PORT=8081
+    networks:
+      - excalidrawnet
+
+  room:
+    image: janson/excalidraw-room:IMAGE_VER_VAR
+    networks:
+      - excalidrawnet

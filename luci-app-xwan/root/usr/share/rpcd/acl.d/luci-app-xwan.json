@@ -1,0 +1,11 @@
+{
+	"luci-app-xwan": {
+		"description": "Grant UCI access for luci-app-xwan",
+		"read": {
+			"uci": [ "xwan" ]
+		},
+		"write": {
+			"uci": [ "xwan" ]
+		}
+	}
+}

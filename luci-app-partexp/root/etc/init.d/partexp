@@ -1,0 +1,366 @@
+#!/bin/sh /etc/rc.common
+
+#
+# Copyright (C) 2021-2022  sirpdboy  <herboy2008@gmail.com> https://github.com/sirpdboy/partexp
+
+# This is free software, licensed under the Apache License, Version 2.0 .
+#
+
+START=99
+USE_PROCD=1
+
+EXTRA_COMMANDS="autopart"
+
+LOCK=/var/lock/partexp.lock
+LOGD=/etc/partexp
+LOG=/etc/partexp/partexp.log
+
+limit_log() {
+	local logf=$1
+	[ ! -f "$logf" ] && return
+	local sc=100
+	[ -n "$2" ] && sc=$2
+	local count=$(grep -c "" $logf)
+	if [ $count -gt $sc ];then
+		let count=count-$sc
+		sed -i "1,$count d" $logf
+	fi
+}
+
+init_env() {
+[ -d "$LOGD" ] || mkdir -p $LOGD
+[ ! -f "$LOG" ] && echo " " > $LOG
+
+}
+
+
+gen_log()(
+	log "---------------自动分区扩展挂载开始执行------------------ "
+)
+
+log(){
+	echo -e  " $(date +'%Y-%m-%d %H:%M:%S') $*"
+}
+
+
+get_config() {
+        config_get target_function $1 target_function 1
+	config_get target_disk $1 target_disk 1
+	config_get_bool keep_config $1 keep_config 1
+	config_get_bool auto_format $1 auto_format 1
+}
+
+nfdisk(){
+#Start partition
+		fdisk /dev/$a << EOF >/dev/null 2> /dev/null
+n
+p
+
+
+
+wq
+EOF
+
+}
+
+usamba(){
+s=$1
+s2=$2
+	[ -e "/etc/config/$s" ] && {
+	msum=$(grep -c "config sambashare" /etc/config/$s)
+	for i in $(seq 0 $((msum)))
+	do
+			pdev=`uci -q get $s.@sambashare[$i].path `
+			[ "$pdev" = "$s2" ] && {
+					uci delete $s.@sambashare[$i] 
+					uci commit $s
+					log "分区/dev/$b被挂载$MOUNT共享使用，删除$s共享成功！"  
+					sleep 5
+					/etc/init.d/$s restart
+			}
+	done
+	}
+}
+
+fdiskB(){
+	a=$1
+	b=$1$2
+	log "检测$a是否分区..."
+	isP=`fdisk -l /dev/$a |grep -v "bytes"|grep "/dev/$b" `
+	sleep 2
+	isfdisk=0
+	if [ ! "$isP" ];then
+		nfdisk
+		sleep 2
+		isfdisk=1
+		
+	else
+		isfdisk=2
+	fi
+
+	isP=`fdisk -l /dev/$a |grep -v "bytes" | grep "/dev/$b"`
+	if [ "$isP" -a "$isfdisk" = 1 ] ;then
+	   log "分区$b建立成功！"
+	elif  [ "$isP" -a "$isfdisk" = 2 ] ;then
+	    log "检测目标分区$b已存在."
+	else
+	   log "分区$b建立失败，没有足够的空间操作失败！"
+	   expquit 1
+	fi
+	sleep 1
+	[ -e "/etc/config/dockerd" ] && /etc/init.d/dockerd stop  >/dev/null 2> /dev/null 
+	block detect > /etc/config/fstab
+	isD=` block info "/dev/$b" `
+	if [ "$isD" ];then
+	  MOUNT='';eval $(block info "/dev/$b" | grep -o -e "MOUNT=\S*")
+
+	  log "检测/dev/$b是不是被共享..."
+	  if [ "x$MOUNT" != 'x' ] ; then
+		usamba samba4 $MOUNT
+		usamba samba $MOUNT
+		sleep 5
+		umount $MOUNT || block umount /dev/$b
+		sleep 5
+		MOUNT='';eval $(block info "/dev/$b" | grep -o -e "MOUNT=\S*")
+		if [ "x$MOUNT" != 'x'  ] ;then
+		     log "分区/dev/$b挂载$MOUNT使用中,自动删除失败！请手动删除共享或者取消其它插件的占用权限再重试！" 
+		     expquit 1 
+		fi
+	  else
+	    log "检测目标设备$b未被共享..."
+	  fi
+	fi
+	#isD=`block info /dev/$b | awk -F 'TYPE=' '{print $2}'| sed 's,\",,g' ` 
+	TYPE='';eval $(block info "/dev/$b" | grep -o -e "TYPE=\S*")
+	if [ "$target_function" = "/" -o "$target_function" = "/overlay" ] ; then 
+	    mkfs.ext4 -L extroot /dev/$b  >/dev/null 2> /dev/null 
+	    log  "设备/dev/$b格式化成功！"
+	elif [ "$auto_format" = "1" -o "$isfdisk" = "1" ] ; then
+	    mkfs.ext4 -F /dev/$b  >/dev/null 2> /dev/null
+	    log  "设备/dev/$b格式化成功！"
+	elif [ "$TYPE" ];then
+	    log  "设备/dev/$b无需格式化！"
+	else
+	    log  "设备/dev/$b未格式化，无法正常使用！"
+	    expquit 1
+	fi
+
+	[ -d "/mnt/$b" ] || mkdir -p /mnt/$b
+	MOUNT='';eval $(block info "/dev/$b" | grep -o -e "MOUNT=\S*") 
+	if [  "x$MOUNT" != 'x'  ] ;then
+	     umount /mnt/$b || block umount /dev/$b
+	     MOUNT='';eval $(block info "/dev/$b" | grep -o -e "MOUNT=\S*") 
+	     if [ "$MOUNT" ] ; then
+	     	log "检测设备/dev/$b被占用,请检查设备硬件或中止其他插件等占用权限再重试！" 
+		expquit 1
+	     fi
+	fi
+	TYPE='';eval $(block info "/dev/$b" | grep -o -e "TYPE=\S*") 
+	log "检测设备/dev/$b分区是$TYPE格式！" 
+	if [ "$TYPE" = "ntfs" ];then
+	   if [ `which ntfs-3g ` ] ;then
+	     mount -t ntfs-3g /dev/$b /mnt/$b   >/dev/null 2> /dev/null
+	   elif  [ `which ntfs3 ` ]  ;then
+	      mount -t ntfs3 /dev/$b /mnt/$b   >/dev/null 2> /dev/null
+	   else
+	     log "不支持NTFS分区挂载，请安装ntfs-3g或者ntfs3支持服务"
+	     expquit 1
+	   fi
+	else
+	   mount /dev/$b  /mnt/$b  >/dev/null 2> /dev/null
+	fi
+	UUID='';eval $(block info /dev/$b | grep -o -e "UUID=\S*")
+	if [ ! "$UUID" ] ; then 
+	     log "获取/dev/$b设备UUID信息失败！"
+	     expquit 1
+	else
+	     log "获取/dev/$b设备UUID信息:$UUID成功" 
+	fi
+
+	if [ "$target_function" = "/" ] ; then
+			    mkdir -p /tmp/introot
+			    mount --bind / /tmp/introot
+			    tar -C /tmp/introot -cvf - . | tar -C /mnt/$b -xf -
+			    umount /tmp/introot || block umount /tmp/introot
+			    umount /mnt/$b || block umount /dev/$b
+			    block detect > /etc/config/fstab
+			    OVERLAY=`uci -q get fstab.@mount[0].target `
+			    if [ "$OVERLAY" == "/overlay" -o "$OVERLAY" == "/dev/loop0" ] ;then
+			         uci -q set fstab.@mount[0].uuid="${UUID}"
+			         uci -q set fstab.@mount[0].target='/'
+			         uci -q set fstab.@mount[0].enabled='1'
+			    fi
+			    log "保留数据根目录扩展/dev/$b成功！"
+
+			    sleep 5
+			    log "设备重启才能生效"
+			    expquit 2
+
+	elif [ "$target_function" = "/overlay" ] ; then
+	 	if [ "$keep_config" = "1" ] ; then
+		
+			    # cp -a -f /overlay/*  /mnt/$b/  || cp -a -f /rom/overlay/*  /mnt/$b/
+			    tar -C /overlay -cvf - . | tar -C /mnt/$b/ -xf -  || tar -C /rom/overlay -cvf - . | tar -C /mnt/$b/ -xf - 
+			    umount /mnt/$b || block umount /dev/$b
+			    block detect > /etc/config/fstab
+			    OVERLAY=`uci -q get fstab.@mount[0].target `
+			    if [ "$OVERLAY" == "/overlay" -o "$OVERLAY" == "/dev/loop0" ] ;then
+			         uci -q set fstab.@mount[0].uuid="${UUID}"
+			         uci -q set fstab.@mount[0].target='/overlay'
+			         uci -q set fstab.@mount[0].enabled='0'
+			    fi
+			    msum=$(grep -c "'mount'" /etc/config/fstab)
+			    for i in $(seq 0 $((msum-1)))
+			    do
+				zuuid=`uci -q get fstab.@mount[$i].uuid `
+				[ $? -ne 0 ] && break
+				if [ "$zuuid" = "$UUID" ] ; then
+				    uci -q set fstab.@mount[$i].target="/overlay"
+				    uci -q set fstab.@mount[$i].enabled='1'
+			    	 fi
+			    done
+			    uci set fstab.@global[0].delay_root="15"
+			    uci commit fstab
+			    log "保留数据overlay扩展/dev/$b成功！"
+			    sleep 5
+			    log "设备重启才能生效"
+			    expquit 2
+
+		else
+			    
+			    umount /mnt/$b || block umount /dev/$b
+			    block detect > /etc/config/fstab
+			    OVERLAY=`uci -q get fstab.@mount[0].target `
+			    if [ "$OVERLAY" == "/overlay" -o "$OVERLAY" == "/dev/loop0" ] ;then
+			         uci -q set fstab.@mount[0].uuid="${UUID}"
+			         uci -q set fstab.@mount[0].target='/overlay'
+			         uci -q set fstab.@mount[0].enabled='0'
+			    fi
+			    msum=$(grep -c "'mount'" /etc/config/fstab)
+			    for i in $(seq 0 $((msum-1)))
+			    do
+				zuuid=`uci -q get fstab.@mount[$i].uuid `
+				[ $? -ne 0 ] && break
+				if [ "$zuuid" = "$UUID" ] ; then
+				    uci -q set fstab.@mount[$i].target="/overlay"
+				    uci -q set fstab.@mount[$i].enabled='1'
+			    	 fi
+			    done
+			    uci set fstab.@global[0].delay_root="15"
+			    uci commit fstab
+			    log "不保留数据overlay扩展/dev/$b成功！"
+			    
+			    sleep 5
+			    log "设备重启才能生效"
+			    expquit 2
+
+		fi
+	elif [ "$target_function" = "/lnoverlay" ] ; then
+		umount /mnt/$b || block umount /dev/$b
+		
+		block detect > /etc/config/fstab
+		mkdir -p $target_function
+		msum=$(grep -c "'mount'" /etc/config/fstab)
+		for i in $(seq 0 $((msum-1)))
+		do
+			zuuid=`uci -q get fstab.@mount[$i].uuid `
+			[ $? -ne 0 ] && break
+			if [ "$zuuid" = "$UUID" ] ; then
+			    uci -q set fstab.@mount[$i].target="/mnt/$b"
+			    uci -q set fstab.@mount[$i].enabled='1'
+			 fi
+		done
+		uci commit fstab
+		ln -sf /mnt/$b /overlay
+		log "设备/dev/$b挂载/mnt/$b软链到/overlay扩容成功！" 
+		log "设备重启才能生效"
+		expquit 2
+	else 
+		umount /mnt/$b || block umount /dev/$b
+		
+		block detect > /etc/config/fstab
+		mkdir -p $target_function
+		msum=$(grep -c "'mount'" /etc/config/fstab)
+		for i in $(seq 0 $((msum-1)))
+		do
+			zuuid=`uci -q get fstab.@mount[$i].uuid `
+			[ $? -ne 0 ] && break
+			if [ "$zuuid" = "$UUID" ] ; then
+			  
+			    [ "$target_function" = "/opt" ] && uci -q set fstab.@mount[$i].target="$target_function" || uci -q set fstab.@mount[$i].target="/mnt/$b"
+			    
+			    uci -q set fstab.@mount[$i].enabled='1'
+			 fi
+		done
+		uci commit fstab
+		[ "$target_function" = "/opt" ] && log "挂载/dev/$b到$target_function成功！" ||  log "挂载/dev/$b到/mnt/$b成功！" 
+		log "设备重启才能生效"
+		expquit 2
+
+	fi
+}
+
+autopart() {
+    # [ -f $LOCK ] && exit
+    config_load partexp
+    config_foreach get_config global
+    init_env
+    # touch $LOCK
+    gen_log
+    log "此次执行操作功能：$target_function ，目标盘：/dev/$target_disk"
+    isP=`fdisk -l /dev/$target_disk |grep "Disk /dev/$target_disk"`
+    if [ "$isP" = "" ];then
+         log "没有检测到/dev/$target_disk目标设备！操作失败！" 
+	 expquit 1
+    else
+    		isB="$(sed -n -e "\|\s/boot\s.*$|{s///p;q}" /etc/mtab)"
+    		isb=`fdisk -l | grep /dev/$target_disk | grep -v "bytes" | wc -l`
+    		if [ "$isb" = 0 -o "$isb" = 1 ] ;then
+    		     isb=1
+		     
+    		     log "检测到设备/dev/$target_disk分区数为$isb个！" 
+    		elif [ "$isb" = 3 -o "$isb" = 4 ] ;then
+    		      isb=3
+		      
+    		     log "检测到设备/dev/$target_disk分区数为$isb个！" 
+    		else
+    		     log "检测到设备/dev/$target_disk分区数$isb个,请备份数据后删除分区重新操作！" 
+    		     expquit 1
+    		fi
+    		log  "检测到操作目标设备:/dev/$target_disk$isb!"
+		case "$target_disk" in
+		sd*)
+		        [ "$isB" = "/dev/${target_disk}1" -a "$target_function" = "/overlay" ] && fdiskB $target_disk 3 || fdiskB $target_disk $isb
+			;;
+		nvme*)
+			[ "$isB" = "/dev/${target_disk}p1" -a "$target_function" = "/overlay" ] && fdiskB $target_disk p3 || fdiskB $target_disk p$isb
+			;;
+		mmc*)
+			[ "$isB" = "/dev/${target_disk}p1" -a "$target_function" = "/overlay" ] && fdiskB $target_disk p3 || fdiskB $target_disk p$isb
+			;;
+		*)
+			log "目标设备/dev/$target_disk暂不支持！请联系作者sirpdboy！"
+			expquit 1
+			;;
+		esac
+		
+    fi
+    rm -f $LOCK
+}
+
+start() {
+[ x$x = x1 ] && exit || autopart
+
+}
+
+boot() {
+x=1
+}
+
+expquit() {
+	rm -f $LOCK
+	[ -e "/etc/config/dockerd" ] && /etc/init.d/dockerd restart  >/dev/null 2> /dev/null 
+	sleep 5
+	[ $1 == 2 ] && log "重启中...\n" &&reboot 
+	exit $1
+}

@@ -1,0 +1,44 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "LANraragi is Open source server for archival of comics/manga."
+msgstr "LANraragi 是一个开源的电子书、漫画管理平台。"
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "Content path"
+msgstr "资源路径"
+
+msgid "HTTP Port"
+msgstr "HTTP 端口"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "LANraragi status:"
+msgstr "LANraragi 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "LANraragi is running"
+msgstr "LANraragi 运行中"
+
+msgid "LANraragi is not running"
+msgstr "LANraragi 未运行"
+
+msgid "Open LANraragi"
+msgstr "打开 LANraragi"
+
+msgid "Default Password:"
+msgstr "默认密码："

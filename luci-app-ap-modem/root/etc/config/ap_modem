@@ -1,0 +1,8 @@
+config ap_modem 'config'
+    option enabled '0'
+
+config interface 'lan'
+    # list ipaddr '192.168.31.254'
+
+config interface 'wan'
+    # list ipaddr '192.168.1.254'

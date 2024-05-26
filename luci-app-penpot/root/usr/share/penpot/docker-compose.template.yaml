@@ -1,0 +1,73 @@
+---
+version: "3.5"
+
+networks:
+  penpot:
+
+services:
+  penpot-frontend:
+    image: "penpotapp/frontend:latest"
+    ports:
+      - <%=http_port%>:80
+
+    volumes:
+      - <%=config_path%>/data/asserts:/opt/data
+
+    env_file:
+      - config.env
+
+    depends_on:
+      - penpot-backend
+      - penpot-exporter
+
+    networks:
+      - penpot
+
+  penpot-backend:
+    image: "penpotapp/backend:latest"
+    volumes:
+      - <%=config_path%>/data/asserts:/opt/data
+
+    depends_on:
+      - penpot-postgres
+      - penpot-redis
+
+    env_file:
+      - config.env
+
+    networks:
+      - penpot
+
+  penpot-exporter:
+    image: "penpotapp/exporter:latest"
+    env_file:
+      - config.env
+    environment:
+      # Don't touch it; this uses internal docker network to
+      # communicate with the frontend.
+      - PENPOT_PUBLIC_URI=http://penpot-frontend
+    networks:
+      - penpot
+
+  penpot-postgres:
+    image: "postgres:14"
+    restart: always
+    stop_signal: SIGINT
+
+    environment:
+      - POSTGRES_INITDB_ARGS=--data-checksums
+      - POSTGRES_DB=<%=db_name%>
+      - POSTGRES_USER=<%=db_username%>
+      - POSTGRES_PASSWORD=<%=db_password%>
+
+    volumes:
+      - <%=config_path%>/data/postgres:/var/lib/postgresql/data
+
+    networks:
+      - penpot
+
+  penpot-redis:
+    image: redis:7
+    restart: always
+    networks:
+      - penpot

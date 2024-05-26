@@ -1,0 +1,80 @@
+msgid "OpenVPN Client"
+msgstr "OpenVPN 客户端"
+
+msgid "Client List"
+msgstr "客户端列表"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "NOT RUNNING"
+msgstr "未运行"
+
+msgid "RUNNING"
+msgstr "运行中"
+
+msgid "Start/Stop"
+msgstr "启动/关闭"
+
+msgid "start"
+msgstr "启动"
+
+msgid "stop"
+msgstr "关闭"
+
+msgid "Enabled"
+msgstr "启用"
+
+msgid "Server IP/Host"
+msgstr "服务器IP/域名"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "Protocol"
+msgstr "协议"
+
+msgid "Type"
+msgstr "类型"
+
+msgid "LZO compression"
+msgstr "LZO 压缩"
+
+msgid "No pull route"
+msgstr "不拉取路由"
+
+msgid "Static Routes"
+msgstr "静态路由"
+
+msgid "Auth"
+msgstr "身份认证"
+
+msgid "None"
+msgstr "无"
+
+msgid "User/Pass"
+msgstr "用户/密码"
+
+msgid "Username"
+msgstr "用户名"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "Proxy"
+msgstr "代理"
+
+msgid "Proxy Server"
+msgstr "代理服务器"
+
+msgid "Proxy Port"
+msgstr "代理端口"
+
+msgid "Proxy Username"
+msgstr "代理用户名"
+
+msgid "Proxy Password"
+msgstr "代理密码"
+
+msgid "Extra Config"
+msgstr "额外配置"

@@ -1,0 +1,90 @@
+# Huawei modems
+function modem_data(){
+	MANUF=$(echo "$O" | grep -i $FAMILY)
+        MODEL=$(echo "$O" | grep -A1 -i $FAMILY | tail -1)
+        DEVICE="$MANUF $MODEL"
+	FW=$(echo "$O" | grep -A2 -i $FAMILY | tail -1)
+	ICCID=$(echo "$O" | awk '/ICCID/{print $2}')
+	IMSI=$(echo "$O" | grep -A1 -i ICCID |tail -1)
+	IMEI=$(echo "$O" | grep -A2 -i ICCID |tail -1)
+	LAC=$(echo "$O" |awk -F[,\ ] '/^\+CGREG/{gsub("\"","");print $4}')
+        CID=$(echo "$O" |awk -F[,\ ] '/^\+CGREG/{gsub("\"","");print $5}')
+	LAC_NUM=$(printf %d 0x$LAC)
+        CID_NUM=$(printf %d 0x$CID)
+	# Huawei any modern models
+	TECH=$(echo "$O" | awk -F[,] '/^\^SYSINFOEX/ {print $9}' | sed 's/"//g')
+	if [ "x$TECH" != "x" ]; then
+		MODE=$(echo "$TECH" | sed 's/-//g')
+	fi
+	# Huawei and older models
+	if [ "x$MODE" = "x-" ] || [ "x$TECH" = "x" ]; then
+		TECH=$(echo "$O" | awk -F[,] '/^\^SYSINFO/ {print $7}')
+		case $TECH in
+			17*) MODE="HSPA+ (64QAM)";;
+			18*) MODE="HSPA+ (MIMO)";;
+			1*) MODE="GSM";;
+			2*) MODE="GPRS";;
+			3*) MODE="EDGE";;
+			4*) MODE="UMTS";;
+			5*) MODE="HSDPA";;
+			6*) MODE="HSUPA";;
+			7*) MODE="HSPA";;
+			9*) MODE="HSPA+";;
+			*) MODE="-";;
+		esac
+	fi
+	EARFCN=$(echo "$O" | awk -F[,\ ] '/^\^HFREQINFO/ {print $4}')
+	BWDx=$(echo "$O" | awk -F[,\ ] '/^\^HFREQINFO/ {print $6}')
+	RSRx=$(echo "$O" | awk -F[,:] '/^\^LTERSRP:/ {print $2}')
+	if [ "x$RSRx" != "x" ]; then
+		RSRP=$RSRx
+		RSRQ=$(echo "$O" | awk -F[,:] '/^\^LTERSRP:/ {print $3}')
+	elif [ "x$RSRx" = "x" ]; then
+		ECIO=$(echo "$O" | awk -F[,:] '/^\^CSNR:/ {print $3}')
+		SINR=$ECIO
+	fi
+	TECH=$(echo "$O" | awk -F[,:] '/^\^HCSQ:/ {print $2}' | sed 's/[" ]//g')
+	if [ "x$TECH" != "x" ]; then
+		PARAM1=$(echo "$O" | awk -F[,:] '/^\^HCSQ:/ {print $3}')
+		PARAM2=$(echo "$O" | awk -F[,:] '/^\^HCSQ:/ {print $4}')
+		PARAM3=$(echo "$O" | awk -F[,:] '/^\^HCSQ:/ {print $5}')
+		PARAM4=$(echo "$O" | awk -F[,:] '/^\^HCSQ:/ {print $6}')
+	
+		case "$TECH" in
+			WCDMA*)
+				CSQ_RSSI=$(awk 'BEGIN {print -121 + '$PARAM1'}')
+				RSCP=$(awk 'BEGIN {print -121 + '$PARAM2'}')
+				ECIO=$(awk 'BEGIN {print -32.5 + '$PARAM3'/2}')
+				SINR=$ECIO
+			;;
+			LTE*)
+				PCI=$(echo "$O" | awk -F [,] '/MONSC/{print $6}')
+				ENBx=$(echo $CID | sed -e 's/..$//')
+        		        CELL=$(printf %d 0x${CID: -2})
+	                	ENBID=$(printf %d 0x$ENBx)
+				CSQ_RSSI=$(awk 'BEGIN {print -121 + '$PARAM1'}')
+				RSRP=$(awk 'BEGIN {print -141 + '$PARAM2'}')
+				SINR=$(awk 'BEGIN {print -20.2 + '$PARAM3'/5}')
+				RSRQ=$(awk 'BEGIN {print -20 + '$PARAM4'/2}')
+			;;
+		esac
+	fi
+	CHIPTEMP=$(echo "$O" | awk -F[,] '/^\^CHIPTEMP/ {print $4}')
+	# 65535 -> Not supported currently
+	if [ $CHIPTEMP -eq 65535 ]; then
+		# CHIPTEMP for Huawei ME909u series
+		CHIPTEMP=$(echo "$O" | awk -F[,] '/^\^CHIPTEMP/ {printf "%.0f\n", $6 * 0.1}')
+	fi
+	case $BWDx in
+		1400) BWDL=0 ;;
+		3000) BWDL=1 ;;
+		5000) BWDL=2 ;;
+		10000) BWDL=3 ;;
+		15000) BWDL=4 ;;
+		20000) BWDL=5 ;;
+	esac
+	if [ $(uci -q get modeminfo.@general[0].decimail) = "1" ]; then
+                LAC=$LAC_NUM
+                CID=$CID_NUM
+        fi
+}

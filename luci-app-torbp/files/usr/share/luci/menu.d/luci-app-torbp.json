@@ -1,0 +1,14 @@
+{
+	"admin/services/torbp": {
+		"title": "Tor bridges proxy",
+		"action": {
+			"type": "cbi",
+			"path": "torbp",
+			"post": { "cbi.submit": true }
+		},
+		"depends": {
+			"acl": [ "luci-app-torbp" ],
+			"uci": { "torbp": true }
+		}
+	}
+}

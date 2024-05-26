@@ -1,0 +1,11 @@
+{
+	"luci-app-codeserver": {
+		"description": "Grant UCI access for luci-app-codeserver",
+		"read": {
+			"uci": [ "codeserver" ]
+		},
+		"write": {
+			"uci": [ "codeserver" ]
+		}
+	}
+}

@@ -1,0 +1,5 @@
+# Generic modem data
+modem_data(){
+	REGST=$(echo "$O" | awk -F[,] '/\+CREG/ {print $2}')
+	generic_data
+}

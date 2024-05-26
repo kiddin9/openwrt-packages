@@ -1,0 +1,29 @@
+#!/bin/sh
+# /etc/hotplug.d/iface/91-ipv6nat-test
+
+enable=$(uci get nat6-helper.@nat6-helper[0].enabled)
+interface_public=$(uci get nat6-helper.@nat6-helper[0].name)
+ip6tables_status=$(/usr/sbin/ip6tables-save -t nat | grep "v6NAT")
+res=`ip -6 route | grep "default from"`
+gateway=`echo $res | awk '{print $5}'`
+interface=`echo $res | awk '{print $7}'`
+log_file="/ipv6nat-test.log"
+
+
+echo -e "\n------------------------------------------------\n" >> $log_file 2>&1
+
+echo -e "$(date +"%Y-%m-%d %H:%M:%S") The shell continues" >> $log_file 2>&1
+echo -e "$(date +"%Y-%m-%d %H:%M:%S") enable status: \"$enable\"" >> $log_file 2>&1
+echo -e "$(date +"%Y-%m-%d %H:%M:%S") interface_public: \"$interface_public\"" >> $log_file 2>&1
+
+echo -e "$(date +"%Y-%m-%d %H:%M:%S") INTERFACE: \"$INTERFACE\"" >> $log_file 2>&1
+echo -e "$(date +"%Y-%m-%d %H:%M:%S") ACTION: \"$ACTION\"" >> $log_file 2>&1
+echo -e "$(date +"%Y-%m-%d %H:%M:%S") ip6tables: \"$ip6tables_status\"" >> $log_file 2>&1
+
+echo -e "$(date +"%Y-%m-%d %H:%M:%S") res: \"$res\"" >> $log_file 2>&1
+echo -e "$(date +"%Y-%m-%d %H:%M:%S") gateway: \"$gateway\"" >> $log_file 2>&1
+echo -e "$(date +"%Y-%m-%d %H:%M:%S") interface: \"$interface\"" >> $log_file 2>&1
+
+
+echo -e "\n------------------------------------------------\n" >> $log_file 2>&1
+

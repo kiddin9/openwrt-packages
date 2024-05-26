@@ -1,0 +1,32 @@
+
+config general
+	option startup_delay '0'
+
+config transparent_proxy
+	list main_server 'nil'
+	option udp_relay_server 'nil'
+	option local_port '1234'
+
+config http_proxy
+	list server 'nil'
+	option local_port '8080'
+
+config socks_proxy
+	list server 'nil'
+	option local_port '1080'
+
+config port_forward
+	list server 'nil'
+	option local_port '5300'
+	option destination '8.8.4.4:53'
+
+config servers
+	option alias 'sample'
+	option server '127.0.0.1'
+	option server_port '8388'
+	option timeout '60'
+	option password 'barfoo!'
+	option encrypt_method 'aes-256-gcm'
+
+config access_control
+	option self_proxy '1'

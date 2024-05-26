@@ -1,0 +1,150 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"X-Generator: Poedit 2.0.6\n"
+
+msgid "Alert"
+msgstr "Тревога"
+
+msgid "All"
+msgstr "Все"
+
+msgid "Apply"
+msgstr "Применить"
+
+msgid "Apply message filter as regular expression"
+msgstr "Применять фильтр сообщений как регулярное выражение"
+
+msgid "Apply timestamp filter as regular expression"
+msgstr "Применять фильтр даты как регулярное выражение"
+
+msgid "Auto refresh"
+msgstr "Автообновление"
+
+msgid "Critical"
+msgstr "Критическая ситуация"
+
+msgid "Debug"
+msgstr "Отладка"
+
+msgid "Dismiss"
+msgstr "Закрыть"
+
+msgid "Download log"
+msgstr "Скачать журнал"
+
+msgid "Edit"
+msgstr "Изменить"
+
+msgid "Emergency"
+msgstr "Чрезвычайная ситуация"
+
+msgid "Entries"
+msgstr "Записи"
+
+msgid "Error"
+msgstr "Ошибка"
+
+msgid "Facility"
+msgstr "Категория"
+
+msgid "Facilities"
+msgstr "Категории"
+
+msgid "Filter is regexp"
+msgstr "Фильтр - рег.выражение"
+
+msgid "Filter settings"
+msgstr "Настройки фильтра"
+
+msgid "Get all entries"
+msgstr "Все записи"
+
+msgid "Get more entries"
+msgstr "Больше записей"
+
+msgid "Host"
+msgstr "Хост"
+
+msgid "Hosts"
+msgstr "Хосты"
+
+msgid "Info"
+msgstr "Информация"
+
+msgid "Invalid regular expression"
+msgstr "Неправильное регулярное выражение"
+
+msgid "Kernel Log"
+msgstr "Журнал ядра"
+
+msgid "Last entries"
+msgstr "Последние записи"
+
+msgid "Level"
+msgstr "Уровень"
+
+msgid "Log"
+msgstr "Лог"
+
+msgid "Log Viewer"
+msgstr "Просмотр лога"
+
+msgid "Logging levels"
+msgstr "Уровни логирования"
+
+msgid "Logread not found"
+msgstr "Logread не найден"
+
+msgid "Message"
+msgstr "Сообщение"
+
+msgid "Message filter"
+msgstr "Фильтр сообщений"
+
+msgid "No entries available..."
+msgstr "Нет доступных записей..."
+
+msgid "Notice"
+msgstr "Сообщение"
+
+msgid "Refresh log"
+msgstr "Обновить лог"
+
+msgid "Sorting entries"
+msgstr "Сортировка записей"
+
+msgid "System Log"
+msgstr "Системный журнал"
+
+msgid "Timestamp"
+msgstr "Время"
+
+msgid "Timestamp filter"
+msgstr "Фильтр даты"
+
+msgid "Type a search pattern..."
+msgstr "Введите шаблон для поиска..."
+
+msgid "Unable to load log data:"
+msgstr "Невозможно загрузить данные лога:"
+
+msgid "Unsupported log format"
+msgstr "Неподдерживаемый формат лога"
+
+msgid "Warning"
+msgstr "Внимание"
+
+msgid "ascending"
+msgstr "по возрастанию"
+
+msgid "descending"
+msgstr "по убыванию"

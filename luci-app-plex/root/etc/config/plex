@@ -1,0 +1,6 @@
+config main
+	option 'hostnet' '0'
+	option 'claim_token' ''
+	option 'port' '32400'
+	option 'config_path' ''
+

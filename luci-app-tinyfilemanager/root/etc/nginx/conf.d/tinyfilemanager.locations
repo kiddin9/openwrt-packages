@@ -1,0 +1,33 @@
+location = /tinyfilemanager/ {
+	fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+	if (!-f $document_root$fastcgi_script_name) {
+		return 404;
+	}
+
+	# Mitigate https://httpoxy.org/ vulnerabilities
+	fastcgi_param HTTP_PROXY "";
+
+	#error_log /dev/null;
+	fastcgi_connect_timeout 300s;
+	fastcgi_read_timeout 300s;
+	fastcgi_send_timeout 300s;
+	fastcgi_buffer_size 32k;
+	fastcgi_buffers 4 32k;
+	fastcgi_busy_buffers_size 32k;
+	fastcgi_temp_file_write_size 32k;
+	client_body_timeout 10s;
+	send_timeout 60s; # default, increase if experiencing a lot of timeouts.
+	output_buffers 1 32k;
+	fastcgi_index index.php;
+	include fastcgi_params;
+
+	# Only throw it at PHP-FPM if file exists (prevents PHP exploits).
+	fastcgi_pass	127.0.0.1:1026;  # or: unix:/var/run/php-fpm.sock;
+	# fastcgi_pass	unix:/var/run/php8-fpm.sock;
+
+	# SCRIPT_FILENAME parameter is used for PHP FPM determining
+	#  the script name. If it is not set in fastcgi_params file,
+	# i.e. /etc/nginx/fastcgi_params or in the parent contexts,
+	# please comment off following line:
+	fastcgi_param  SCRIPT_FILENAME   $document_root$fastcgi_script_name;
+}

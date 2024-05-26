@@ -1,0 +1,56 @@
+msgid "NPS Client"
+msgstr "NPS 内网穿透客户端"
+
+msgid "Nps is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."
+msgstr "NPS 是一种快速反向代理,可帮助您将 NAT 或防火墙后的本地服务器公开到 Internet"
+
+msgid "IPv4 address or Domain Name"
+msgstr "服务器域名或 IPv4 地址"
+
+msgid "vkey"
+msgstr "唯一验证密钥(vkey)"
+
+msgid "Enable Compression"
+msgstr "压缩传输"
+
+msgid "Enable Encryption"
+msgstr "加密传输"
+
+msgid "The contents will be compressed to speed up the traffic forwarding speed, but this will consume some additional cpu resources."
+msgstr "启用压缩传输内容会加快流量转发速度,但是会额外消耗 CPU 资源"
+
+msgid "Encrypted the communication between Npc and Nps, will effectively prevent the traffic intercepted."
+msgstr "启用加密传输客户端与服务端之间的通信内容,会有效防止流量被拦截"
+
+msgid "Basic Setting"
+msgstr "基本设置"
+
+msgid "Protocol Type"
+msgstr "协议类型"
+
+msgid "Server Address"
+msgstr "服务端地址"
+
+msgid "TCP Protocol"
+msgstr "TCP"
+
+msgid "KCP Protocol"
+msgstr "KCP"
+
+msgid "Max Connection Limit"
+msgstr "连接数限制"
+
+msgid "Maximum number of connections (Not necessary)"
+msgstr "最大连接数限制 (可选,非必须)"
+
+msgid "Rate Limit"
+msgstr "速度限制"
+
+msgid "Client rate limit (Not necessary)"
+msgstr "客户端速度限制 (可选,非必须)"
+
+msgid "Flow Limit"
+msgstr "流量限制"
+
+msgid "Client flow limit (Not necessary)"
+msgstr "客户端流量限制 (可选,非必须)"

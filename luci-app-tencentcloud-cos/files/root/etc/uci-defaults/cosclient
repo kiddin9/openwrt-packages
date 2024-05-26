@@ -1,0 +1,11 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@cosclient[-1]
+	add ucitrack cosclient
+	set ucitrack.@cosclient[-1].init=cosclient
+	commit ucitrack
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0

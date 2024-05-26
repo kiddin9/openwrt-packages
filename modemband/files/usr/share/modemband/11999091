@@ -1,0 +1,47 @@
+_DEVICE=/dev/ttyUSB2
+
+getinfo() {
+	echo "Sierra Wireless EM7465"
+}
+
+getsupportedbands() {
+	sms_tool -d $_DEVICE at 'AT!ENTERCND="A710"' >/dev/null 2>&1
+	O=$(sms_tool -d $_DEVICE at 'AT!BAND=?')
+	HEX=$(echo "$O" | awk '/^00, All bands/{printf "0x%s%s\n", $6, $5}')
+	[ "$HEX" = "0x" ] || hextobands "$HEX"
+}
+
+getbands() {
+	sms_tool -d $_DEVICE at 'AT!ENTERCND="A710"' >/dev/null 2>&1
+	O=$(sms_tool -d $_DEVICE at 'AT!BAND?')
+	HEX=$(echo "$O" | awk -F, '/^[0-9a-fA-F][0-9a-fA-F],/{print $3}' | awk '{printf "0x%s%s\n", $3, $2}')
+	[ "$HEX" = "0x" ] || hextobands "$HEX"
+}
+
+setbands() {
+	BANDS="$1"
+
+	if [ "$BANDS" = "default" ]; then
+		sms_tool -d $_DEVICE at 'AT!ENTERCND="A710"' >/dev/null 2>&1
+		sms_tool -d $_DEVICE at 'AT!BAND=00' >/dev/null 2>&1
+	else
+		HEX=$(bandstohex "$BANDS")
+		if [ "$HEX" != "0" ]; then
+			sms_tool -d $_DEVICE at 'AT!ENTERCND="A710"' >/dev/null 2>&1
+			O=$(sms_tool -d $_DEVICE at 'AT!BAND?')
+			HEXGW=$(echo "$O" | awk -F, '/^[0-9a-fA-F][0-9a-fA-F],/{print $3}' | awk '{print $1}')
+			LEN=${#HEX}
+			if [ $LEN -gt 16 ]; then
+				CNT=$((LEN - 16))
+				HEXL2=${HEX:0:CNT}
+				HEXL1=${HEX:CNT}
+			else
+				HEXL1=$HEX
+				HEXL2=0
+			fi
+			sms_tool -d $_DEVICE at 'AT!BAND=10,"Custom bands",'$HEXGW','$HEXL1','$HEXL2
+			sms_tool -d $_DEVICE at 'AT!BAND=10'
+			sms_tool -d $_DEVICE at 'AT!RESET'
+		fi
+	fi
+}

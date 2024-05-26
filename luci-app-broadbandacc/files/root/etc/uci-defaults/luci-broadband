@@ -1,0 +1,28 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@broadband[-1]
+	add ucitrack broadband
+	set ucitrack.@broadband[-1].init=broadband
+	commit ucitrack
+EOF
+
+general=$(uci -q get broadband.@general[-1])
+if [ -z "$general" ]; then
+	uci -q add broadband general
+fi
+if [ "$general"x != "general"x ]; then
+	uci -q batch <<-EOF >/dev/null
+		rename broadband.@general[-1]="general"
+		commit broadband
+	EOF
+fi
+
+# Set the desired values for the general configuration
+uci set broadband.general.enabled='0'
+uci set broadband.general.logging='0'
+uci set broadband.general.network='wan'
+uci commit broadband
+
+rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
+exit 0

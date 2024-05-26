@@ -1,0 +1,14 @@
+wifidog (1.0.0-1) stable; urgency=low
+
+  * New init.d file.
+  * Inclu
+  * debian/rules: Configuration and init.d file added.
+  * Bump version in anticipation for release
+
+ -- Guillaume Beaudoin <isf@soli.ca>  Sun, 29 Aug 2004 23:14:12 -0400
+
+wifidog (0.2.0-1) stable; urgency=low
+
+  * Initial Package
+
+ -- Philippe April <philippe@philippeapril.com>  Wed, 21 Jul 2004 15:22:50 -0500

@@ -1,0 +1,37 @@
+{
+  "admin/nas": {
+    "title": "NAS",
+    "order": 44,
+    "action": {
+      "type": "firstchild",
+      "recurse": true
+    }
+  },
+  "admin/nas/tinyfilemanager": {
+    "title": "Tiny File Manager",
+    "order": 10,
+    "action": {
+      "type": "firstchild"
+    },
+    "depends": {
+      "acl": [ "luci-app-tinyfilemanager" ],
+      "uci": { "tinyfilemanager": true }
+    }
+  },
+  "admin/nas/tinyfilemanager/tinyfilemanager": {
+    "title": "Tiny File Manager",
+    "order": 1,
+    "action": {
+      "type": "view",
+      "path": "tinyfilemanager/main"
+    }
+  },
+  "admin/nas/tinyfilemanager/config": {
+    "title": "Config",
+    "order": 2,
+    "action": {
+      "type": "view",
+      "path": "tinyfilemanager/config"
+    }
+  }
+}

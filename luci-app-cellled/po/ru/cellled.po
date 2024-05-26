@@ -1,0 +1,56 @@
+"Language: ru\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: Konstantine Shevlyakov <shevlakov@132lan.ru>\n"
+
+msgid "Application for showing cellular RSSI LEDs"
+msgstr "Отображение сигнала сотовой сети RSSI"
+
+msgid "Select Data service'"
+msgstr "Выберите тип данных"
+
+msgid "Select Data port"
+msgstr "Выберите порт данных"
+
+msgid "Timeout interval data(sec)"
+msgstr "Интервал обновления данных (сек)"
+
+msgid "Use RGB Led"
+msgstr "Используется RGB Led"
+
+msgid "Enable if Support PWM LED"
+msgstr "Включить ШИМ, если доступно"
+
+msgid "Red LED"
+msgstr "Красный"
+
+msgid "Greed LED"
+msgstr "Зеленый"
+
+msgid "Blue LED"
+msgstr "Синий"
+
+msgid "Signal strength values"
+msgstr "Значения силы сигнала"
+
+msgid "Min.value %"
+msgstr "Мин.значение %"
+
+msgid "Max.value %"
+msgstr "Макс.значение %"
+
+msgid "Quality"
+msgstr "Качество"
+
+msgid "Poor"
+msgstr "Ничтожное"
+
+msgid "Bad"
+msgstr "Плохое"
+
+msgid "Fair"
+msgstr "Среднее"
+
+msgid "Good"
+msgstr "Хорошее"
+

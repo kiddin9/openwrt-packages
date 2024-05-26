@@ -1,0 +1,364 @@
+#!/bin/sh /etc/rc.common
+# Copyright 2023-2024 sirpdboy team <herboy2008@gmail.com>
+
+START=99
+STOP=15
+EXTRA_COMMANDS='reset'
+EXTRA_HELP="        reset   Reset to default settings"
+
+ipt=$(command -v iptables-legacy || command -v iptables)
+ip6t=$(command -v ip6tables-legacy || command -v ip6tables)
+
+reset() {
+rm -rf /etc/config/advancedplus
+cat <<EOF  >/etc/config/advancedplus
+
+config basic
+	option gossr 'bypass'
+	option gouser 'advancedplus'
+	option gohome 'overview'
+	option fontmode '0'
+	option font_d '1.1rem'
+	option font_z '0.92rem'
+	option font_x '0.875rem'
+	option bklock '1'
+	option setbar '1'
+	option dayword '0'
+	option background '0'
+	option bgqs '1'
+	option mode 'light'
+	option primary_rgbbody '248,248,248'
+	option primary_rgbm '20,109,179'
+	option primary_rgbm_ts '0.9'
+	option primary_opacity '0'
+	option primary_rgbs_ts '0.1'
+	option primary_rgbs '28,66,188'
+	option bkuse '0'
+
+config theme
+	option primary_rgbbody '33,45,60'
+	option primary_rgbs '76,157,69'
+	option remarks '隔栏经典蓝色'
+	option mode 'light'
+	option primary_rgbs_ts '0.1'
+	option primary_opacity '0'
+	option primary_rgbm_ts '0.9'
+	option primary_rgbm 'blue'
+	option use '1'
+	option bkuse '0'
+
+config theme
+	option primary_rgbbody '33,45,60'
+	option mode 'light'
+	option primary_rgbs '76,157,69'
+	option primary_rgbm_ts '0.9'
+	option primary_opacity '0'
+	option primary_rgbm 'green'
+	option bkuse '0'
+	option primary_rgbs_ts '0'
+	option remarks '无隔栏清爽绿'
+	option use '0'
+
+config theme
+	option primary_rgb_ts '0.3'
+	option primary_rgbm '26,131,97'
+	option primary_rgbs '76 157 69'
+	option bkuse '1'
+	option remarks '无隔栏绿'
+	option primary_rgbm_ts '0.6'
+	option primary_opacity '6'
+	option mode 'light'
+	option primary_rgbs_ts '0'
+	option use '0'
+
+config theme
+	option primary_rgbm '66,139,139'
+	option primary_rgbs 'rgb(55,103,128)'
+	option mode 'light'
+	option primary_opacity '0'
+	option primary_rgbs_ts '0.1'
+	option primary_rgbm_ts '1'
+	option remarks '隔栏无背景蓝'
+	option bkuse '0'
+	option use '0'
+
+config theme
+	option primary_rgbm '50 67 77'
+	option primary_rgbs 'rgb(64, 68, 70)'
+	option primary_opacity '0'
+	option mode 'dark'
+	option primary_rgbs_ts '0'
+	option remarks '灰无隔栏无背景'
+	option bkuse '0'
+	option primary_rgbm_ts '1'
+	option use '0'
+
+config theme
+	option bkuse '1'
+	option mode 'dark'
+	option primary_rgbm '50 66 77'
+	option primary_rgbs '55 80 90'
+	option primary_rgbm_ts '0.7'
+	option remarks '炫灰隔栏模糊'
+	option primary_rgbs_ts '0.5'
+	option primary_opacity '4'
+	option use '0'
+
+config theme
+	option mode 'light'
+	option primary_rgbm '74,161,133'
+	option primary_rgbs '76 157 69'
+	option primary_rgbs_ts '0.2'
+	option remarks '炫绿隔栏模糊'
+	option primary_rgbm_ts '0.7'
+	option bkuse '1'
+	option use '1'
+	option primary_opacity '4'
+
+EOF
+}
+
+cpumodeset()
+{
+for i in 0 1 2 3 ;do
+   echo $1 > /sys/devices/system/cpu/cpufreq/policy$i/scaling_governor
+done
+}
+
+tsoset() {
+ tautocore=/etc/init.d/autocore
+ [ -f $tautocore ] || return
+ if [ "x$(uci -q get advancedplus.@basic[0].tsoset)" = "x1" ]  ;then
+     sed -i 's/tso on/tso off/g' $tautocore
+     $tautocore restart
+else
+     sed -i 's/tso off/tso on/g' $tautocore
+     $tautocore restart
+fi
+}
+sethttps() {
+    uhttp=`uci -q get uhttpd.main.listen_https | awk -F ' ' '{printf $1}'`
+    if [ "x$(uci -q get advancedplus.@basic[0].uhttps)" = "x1" ] ; then
+	     [  $uhttp ] || {
+	         sed -i "/listen_https/d" /etc/config/uhttpd
+	         /etc/init.d/uhttpd stop
+	         uci -q add_list uhttpd.main.listen_https='0.0.0.0:443'
+	         uci -q add_list uhttpd.main.listen_https='[::]:443'
+	         uci commit uhttpd
+	         /etc/init.d/uhttpd restart
+	    }
+    else
+        [  $uhttp ] && 
+	{  
+	     /etc/init.d/uhttpd stop
+	    sed -i "/listen_https/d" /etc/config/uhttpd
+	    uci commit uhttpd
+	    /etc/init.d/uhttpd restart
+	}
+    fi
+}
+
+setnetwizard(){
+    if [ "x$(uci -q get advancedplus.@basic[0].wizard)" == "x1" ] ; then
+	     touch /etc/config/netwizard_hide
+	     uci -q set netwizard.default.showhide="1"
+	     uci commit netwizard
+    else
+	     uci -q set netwizard.default.showhide="0"
+	     uci commit netwizard
+	     rm -rf /etc/config/netwizard_hide
+    fi
+}
+
+set_firewall_wan() {
+    if [ "x$(uci -q get advancedplus.@basic[0].set_firewall_wan)" = "x1" ] ; then
+    ## 设置防火墙wan 打开
+    uci -q set firewall.@zone[1].input='ACCEPT'
+    uci commit firewall
+    /etc/init.d/firewall reload
+    else
+    uci -q set firewall.@zone[1].input='REJECT'
+    uci commit firewall
+    /etc/init.d/firewall reload
+    fi
+}
+
+set_ttyd() {
+    if [ "x$(uci -q get advancedplus.@basic[0].set_ttyd)" = "x1" ] ; then
+    uci delete ttyd.@ttyd[0].interface
+    uci commit
+    /etc/init.d/firewall reload
+    else
+    uci -q set ttyd.@ttyd[0].interface='@lan'
+    uci commit
+    /etc/init.d/firewall reload
+    fi
+}
+
+dhcp_domain() {
+    if [ "x$(uci -q get advancedplus.@basic[0].dhcp_domain)" = "x1" ] ; then
+        local domain_name="time.android.com"
+        local domain_ip="203.107.6.88"
+        existing_records=$(uci show dhcp | grep "dhcp.@domain\[[0-9]\+\].name='$domain_name'")
+        if [ -z "$existing_records" ]; then
+        uci add dhcp domain
+        uci -q set "dhcp.@domain[-1].name=$domain_name"
+        uci -q set "dhcp.@domain[-1].ip=$domain_ip"
+        uci commit dhcp
+        fi
+    else
+       existing_records=$(uci show dhcp | grep "dhcp.@domain\[[0-9]\+\].name='$domain_name'")
+       if [ -z "$existing_records" ]; then
+       uci delete dhcp.@domain[-1].name
+       uci delete dhcp.@domain[-1].ip
+       uci commit dhcp
+       fi
+    fi
+}
+advancedset(){
+dev=`ifconfig | grep "Point-to-Point" | cut -d " " -f1`
+[ ! $dev ] && dev=` uci -q get network.wan.device ` || dev=` uci -q get network.wan.device ` 
+[ ! $dev ] && dev=br-lan
+setnetwizard
+sethttps
+dhcp_domain
+set_ttyd
+set_firewall_wan
+tsoset
+    [ "x$(uci -q get advancedplus.@basic[0].qos)" = "x1" ] && \usr\bin\qoshome
+    if [ "x$(uci -q get advancedplus.@basic[0].ttl)" = "x1" ] ; then
+        $ipt -t mangle -A PREROUTING -p tcp --tcp-flags RST RST -i $dev -j DROP
+        $ipt -t mangle -A PREROUTING -i ${dev} -j TTL --ttl-inc 1
+        $ipt -t mangle -A POSTROUTING -o ${dev} -j TTL --ttl-set 64
+    fi
+    #cpumode=`uci -q get advancedplus.@basic[0].cpumode`
+    #[ ! $cpumode ] || cpumodeset $cpumode   /usr/bin/zsh
+    if [ "$(which zsh)" ]; then
+    sed -i "\/bin\/zsh/d" /etc/profile
+    [ "x$(uci -q get advancedplus.@basic[0].usshmenu)" = "x1" ] || echo '/usr/bin/zsh'  >> /etc/profile
+    fi
+    uci commit netwizard 
+}
+
+kucatset(){
+sum=$(grep -c 'theme' /etc/config/advancedplus)
+useset=0
+for i in $(seq 0 $((sum-1)))
+do
+    use=$(uci -q get advancedplus.@theme[$i].use )
+    
+    if [ "x$use" == "x1" ]; then
+	mode=`uci -q get advancedplus.@theme[$i].mode`
+	primary_rgbm=`uci -q get advancedplus.@theme[$i].primary_rgbm`
+	uci set advancedplus.@basic[0].mode=${mode}
+	case "$primary_rgbm" in
+		blue)
+			uci set advancedplus.@basic[0].primary_rgbm='20,109,179'
+			uci set advancedplus.@basic[0].bkuse=`uci -q get advancedplus.@theme[$i].bkuse`
+			uci set advancedplus.@basic[0].primary_rgbm_ts='0.9'
+			uci set advancedplus.@basic[0].primary_opacity='0'
+			uci set advancedplus.@basic[0].primary_rgbs_ts=`uci -q get advancedplus.@theme[$i].primary_rgbs_ts`
+			uci set advancedplus.@basic[0].primary_rgbs='28,66,188'
+ 			[ $mode = dark ] && uci set advancedplus.@basic[0].primary_rgbbody='33,45,60' || uci set advancedplus.@basic[0].primary_rgbbody='248,248,248'
+		;;
+		green)
+			uci set advancedplus.@basic[0].bkuse=`uci -q get advancedplus.@theme[$i].bkuse`
+			uci set advancedplus.@basic[0].primary_rgbm_ts='0.9'
+			uci set advancedplus.@basic[0].primary_opacity='0'
+			uci set advancedplus.@basic[0].primary_rgbm='26,131,97'
+			uci set advancedplus.@basic[0].primary_rgbs_ts=`uci -q get advancedplus.@theme[$i].primary_rgbs_ts`
+			uci set advancedplus.@basic[0].primary_rgbs='76,157,69'
+ 			[ $mode = dark ] && uci set advancedplus.@basic[0].primary_rgbbody='33,45,60' || uci set advancedplus.@basic[0].primary_rgbbody='248,248,248'
+		;;
+		orange)
+			uci set advancedplus.@basic[0].bkuse=`uci -q get advancedplus.@theme[$i].bkuse`
+			uci set advancedplus.@basic[0].primary_rgbm_ts='0.9'
+			uci set advancedplus.@basic[0].primary_opacity='0'
+			uci set advancedplus.@basic[0].primary_rgbm='163,71,6'
+			uci set advancedplus.@basic[0].primary_rgbs_ts=`uci -q get advancedplus.@theme[$i].primary_rgbs_ts`
+			uci set advancedplus.@basic[0].primary_rgbs='142,93,8'
+ 			[ $mode = dark ] && uci set advancedplus.@basic[0].primary_rgbbody='33,45,60' || uci set advancedplus.@basic[0].primary_rgbbody='248,248,248'
+		;;
+		red)
+			uci set advancedplus.@basic[0].bkuse=`uci -q get advancedplus.@theme[$i].bkuse`
+			uci set advancedplus.@basic[0].primary_rgbm_ts='0.9'
+			uci set advancedplus.@basic[0].primary_opacity='0'
+			uci set advancedplus.@basic[0].primary_rgbm='143,32,13'
+			uci set advancedplus.@basic[0].primary_rgbs_ts=`uci -q get advancedplus.@theme[$i].primary_rgbs_ts`
+			uci set advancedplus.@basic[0].primary_rgbs='243,119,72'
+ 			[ $mode = dark ] && uci set advancedplus.@basic[0].primary_rgbbody='33,45,60' || uci set advancedplus.@basic[0].primary_rgbbody='248,248,248'
+		;;
+		black)
+			uci set advancedplus.@basic[0].bkuse=`uci -q get advancedplus.@theme[$i].bkuse`
+			uci set advancedplus.@basic[0].primary_rgbm_ts='0.8'
+			uci set advancedplus.@basic[0].primary_opacity='0'
+			uci set advancedplus.@basic[0].primary_rgbm='25,25,26'
+			uci set advancedplus.@basic[0].primary_rgbs_ts=`uci -q get advancedplus.@theme[$i].primary_rgbs_ts`
+			uci set advancedplus.@basic[0].primary_rgbs='55,80,90'
+ 			[ $mode = dark ] && uci set advancedplus.@basic[0].primary_rgbbody='33,45,60' || uci set advancedplus.@basic[0].primary_rgbbody='248,248,248'
+		;;
+		gray)
+			uci set advancedplus.@basic[0].bkuse=`uci -q get advancedplus.@theme[$i].bkuse`
+			uci set advancedplus.@basic[0].primary_rgbm_ts='0.7'
+			uci set advancedplus.@basic[0].primary_opacity='5'
+			uci set advancedplus.@basic[0].primary_rgbm='50,67,77'
+			uci set advancedplus.@basic[0].primary_rgbs_ts=`uci -q get advancedplus.@theme[$i].primary_rgbs_ts`
+			uci set advancedplus.@basic[0].primary_rgbs='64,68,70'
+ 			[ $mode = dark ] && uci set advancedplus.@basic[0].primary_rgbbody='33,45,60' || uci set advancedplus.@basic[0].primary_rgbbody='248,248,248'
+		;;
+		bluets)
+			uci set advancedplus.@basic[0].bkuse=`uci -q get advancedplus.@theme[$i].bkuse`
+			uci set advancedplus.@basic[0].primary_rgbm_ts='0.6'
+			uci set advancedplus.@basic[0].primary_opacity='3'
+			uci set advancedplus.@basic[0].primary_rgbm='66,139,139'
+			uci set advancedplus.@basic[0].primary_rgbs_ts=`uci -q get advancedplus.@theme[$i].primary_rgbs_ts`
+			uci set advancedplus.@basic[0].primary_rgbs='55,103,128'
+ 			[ $mode = dark ] && uci set advancedplus.@basic[0].primary_rgbbody='33,45,60' || uci set advancedplus.@basic[0].primary_rgbbody='248,248,248'
+		;;
+		*)
+			uci set advancedplus.@basic[0].bkuse=`uci -q get advancedplus.@theme[$i].bkuse`
+			uci set advancedplus.@basic[0].primary_rgbm_ts=`uci -q get advancedplus.@theme[$i].primary_rgbm_ts`
+			uci set advancedplus.@basic[0].primary_opacity=`uci -q get advancedplus.@theme[$i].primary_opacity`
+			uci set advancedplus.@basic[0].primary_rgbm=`echo $primary_rgbm | sed 's#(##; s#)##g; s#rgb##g; s#\,\ #\,#g;s#\ #\,#g;'`
+			uci set advancedplus.@basic[0].primary_rgbs=`uci -q get advancedplus.@theme[$i].primary_rgbs | sed 's#(##; s#)##g; s#rgb##g; s#\,\ #\,#g;s#\ #\,#g;'`
+			uci set advancedplus.@basic[0].primary_rgbs_ts=`uci -q get advancedplus.@theme[$i].primary_rgbs_ts`
+ 			[ $mode = dark ] && uci set advancedplus.@basic[0].primary_rgbbody='33,45,60' || uci set advancedplus.@basic[0].primary_rgbbody='248,248,248'
+ 		;;
+	esac
+	useset=1
+	break
+    fi
+done
+if [ "x$useset" == "x0" ] ; then
+	uci set advancedplus.@basic[0].mode='auto'
+	uci set advancedplus.@basic[0].primary_rgbm='74,161,133'
+	uci set advancedplus.@basic[0].primary_rgbs_ts='0.1'
+	uci set advancedplus.@basic[0].primary_rgbs='225,112,88'
+	uci set advancedplus.@basic[0].bkuse='1'
+	uci set advancedplus.@basic[0].primary_rgbm_ts='0.7'
+	uci set advancedplus.@basic[0].primary_opacity='5'
+ 	[ $mode == dark ] && uci set advancedplus.@basic[0].primary_rgbbody='33,45,60' || uci set advancedplus.@basic[0].primary_rgbbody='248,248,248'
+fi
+if [ "x$(uci -q get advancedplus.@basic[0].fontmode)" = "x1" ] ; then
+	uci set advancedplus.@basic[0].font_d='1.3rem'
+	uci set advancedplus.@basic[0].font_z='1.1rem'
+	uci set advancedplus.@basic[0].font_x='0.92rem'
+else
+	uci set advancedplus.@basic[0].font_d='1.1rem'
+	uci set advancedplus.@basic[0].font_z='0.92rem'
+	uci set advancedplus.@basic[0].font_x='0.875rem'
+fi
+uci commit advancedplus
+}
+
+start() {
+    [ "x$(uci -q get advancedplus.@basic[0].mode)" = "x" ]  && /etc/config/advancedplus reset 
+    kucatset
+    advancedset
+    rm -rf /tmp/luci-*
+}
+
+stop() {
+rm -rf /tmp/luci*
+}
+

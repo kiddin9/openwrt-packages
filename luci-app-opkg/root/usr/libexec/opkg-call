@@ -1,0 +1,94 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+
+action=$1
+shift
+
+case "$action" in
+	list-installed)
+		cat /usr/lib/opkg/status
+	;;
+	list-available)
+		lists_dir=$(sed -rne 's#^lists_dir \S+ (\S+)#\1#p' /etc/opkg.conf /etc/opkg/*.conf 2>/dev/null | tail -n 1)
+		find "${lists_dir:-/usr/lib/opkg/lists}" -type f '!' -name '*.sig' | xargs -r gzip -cd
+	;;
+	install|update|upgrade|upgradeall|remove)
+		(
+			opkg="opkg"
+
+			while [ -n "$1" ]; do
+				case "$1" in
+					--autoremove|--force-overwrite|--force-removal-of-dependent-packages)
+						opkg="$opkg $1"
+						shift
+					;;
+					-*)
+						shift
+					;;
+					*)
+						break
+					;;
+				esac
+			done
+
+			if flock -x 200; then
+				if [ $action == "upgradeall" ]; then
+					opkg update </dev/null >/tmp/opkg.out 2>/tmp/opkg.err
+					code=$?
+					if [ $code == 0 ]; then
+						. /etc/profile.d/opkg.sh
+						if [[ "$(cat `opkg export au`)" ]] && lock -n /var/lock/opkg-upgrade; then
+						 opkg upgr </dev/null >>/tmp/opkg.out 2>>/tmp/opkg.err
+						 code=$?
+						 lock -u /var/lock/opkg-upgrade
+						else
+							echo "🎉 所有软件包已是最新~" >>/tmp/opkg.out
+							code=0
+						fi
+					fi
+				else
+					$opkg $action "$@" </dev/null >/tmp/opkg.out 2>/tmp/opkg.err
+					code=$?
+				fi
+				pkgn="$(echo $@ | cut -d - -f 3-)"
+				case "$action" in
+					install|upgrade)
+					if [ "$(opkg list-installed | cut -f 1 -d ' ' | grep -w $@)" ]; then
+							rm -f /tmp/opkg.err
+							([ -f /etc/profile.d/opkg.sh ] && . /etc/profile.d/opkg.sh && opkg save) &
+					fi
+					;;
+					remove)
+						if [ ! "$(opkg list-installed | cut -f 1 -d ' ' | grep -w $@)" ]; then
+							rm -f /tmp/opkg.err
+							([ -f /etc/profile.d/opkg.sh ] && . /etc/profile.d/opkg.sh && opkg save) &
+						fi
+					;;
+				esac
+				stderr=$(cat /tmp/opkg.err)
+				[ -n "$stderr" ] || {
+					echo "🎉 已完成, 请关闭本窗口~" >>/tmp/opkg.out
+					code=0
+				}
+				stdout=$(cat /tmp/opkg.out)
+			else
+				code=255
+				stderr="Failed to acquire lock"
+			fi
+
+			json_init
+			json_add_int code $code
+			[ -n "$stdout" ] && json_add_string stdout "$stdout"
+			[ -n "$stderr" ] && json_add_string stderr "$stderr"
+			json_dump
+		) 200>/tmp/opkg.lock
+
+		rm -f /tmp/opkg.lock /tmp/opkg.err /tmp/opkg.out
+	;;
+	*)
+		echo "Usage: $0 {list-installed|list-available}"       >&2
+		echo "       $0 {install|upgrade|upgradeall|remove} pkg[ pkg...]" >&2
+		exit 1
+	;;
+esac

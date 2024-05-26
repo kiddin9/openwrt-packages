@@ -1,0 +1,61 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+LOGGER="logger -t [AutoUpdate]"
+
+Script_File="$(command -v autoupdate)"
+Script_Cmd="$Script_File -u"
+
+start() {
+	local basic_list="enable proxy proxy_type advanced_settings github flag logpath week minute hour"
+	for i in $(echo $basic_list);do
+		local eval $i="$(uci_get_by_type autoupdate 0 $i)"
+	done;unset i
+	if [ ! "${Script_File}" ]
+	then
+		${LOGGER} "Unable to access autoupdate,exit ..."
+		stop
+		exit 1
+	else
+		chmod 777 ${Script_File} 2> /dev/null
+	fi
+	if [ "$enable" == 1 ]
+	then
+		[ "$week" == 7 ] && week='*'
+		[ "$proxy" == 1 ] && Script_Cmd="$Script_Cmd -P $proxy_type"
+		Script_Cmd="$Script_Cmd $advanced_settings"
+		${LOGGER} "Creating corn_task [$minute $hour * * $week $Script_Cmd] ..."
+		echo "$minute $hour * * $week $Script_Cmd		## AutoUpdate crontab" >> /etc/crontabs/root
+		/etc/init.d/cron restart
+	else
+		${LOGGER} "AutoUpdate Service is disabled ..."
+		stop
+	fi
+	${LOGGER} "Setting Github URL to $github ..."
+	${LOGGER} "Setting Flag to $flag ..."
+	${LOGGER} "Setting Log Path to $logpath ..."
+	$Script_File -C $github > /dev/null 2>&1
+	$Script_File --flag $flag > /dev/null 2>&1
+	$Script_File --log -path $logpath > /dev/null 2>&1
+}
+
+stop() {
+	${LOGGER} "Removing all corn tasks ..."
+	sed -i '/## AutoUpdate crontab/d' /etc/crontabs/root 2> /dev/null
+	/etc/init.d/cron restart
+}
+
+disable() {
+	${LOGGER} "Closing AutoUpdate Service ..."
+	uci set autoupdate.@autoupdate[0].enable="0" 2> /dev/null
+	stop
+}
+
+service_triggers() {
+	procd_add_reload_trigger "autoupdate"
+}
+
+uci_get_by_type() {
+	local ret=$(uci get autoupdate.@$1[$2].$3 2>/dev/null)
+	echo ${ret:=$4}
+}

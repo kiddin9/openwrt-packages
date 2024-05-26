@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+[ -d /var/bin ] || mkdir -p /var/bin
+[ -f /var/bin/lingti ] || cp /usr/bin/lingti /var/bin/lingti
+
+start() {
+	state=`pgrep -f "/var/bin/lingti"`
+	if [ ! -z "$state" ]; then
+		restart
+	else
+		/var/bin/lingti &
+	fi
+	echo "LingTiGameAcc Started..."
+}
+
+stop() {
+	kill -9 `pgrep -f "/var/bin/lingti"` 2>/dev/null
+	echo "LingTiGameAcc Stopped ..."
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+	echo "Restarted."
+}

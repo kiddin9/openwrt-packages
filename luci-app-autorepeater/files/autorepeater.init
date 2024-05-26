@@ -1,0 +1,29 @@
+#!/bin/sh /etc/rc.common
+START=90
+STOP=10
+
+. /usr/lib/autorepeater/autorepeater_functions.sh
+boot() {
+	[ -f "/etc/config/dhcp.fs" ] || cat /etc/config/dhcp > /etc/config/dhcp.fs
+	[ -f "/etc/config/wireless.fs" ] || cat /etc/config/wireless > /etc/config/wireless.fs
+	start
+	#return 0
+}
+reload() {
+	#killall -1 autorepeater_updater.sh 2>/dev/null
+	stop_daemon_for_all_autorepeater_sections 2>/dev/null
+	return 0
+}
+restart() {
+	stop
+	sleep 1
+	start
+}
+start() {
+	start_daemon_for_all_autorepeater_sections
+}
+stop() {
+	#killall autorepeater_updater.sh 2>/dev/null
+	stop_daemon_for_all_autorepeater_sections 2>/dev/null
+	return 0
+}

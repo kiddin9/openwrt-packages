@@ -1,0 +1,397 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: luci-app-natmap\n"
+"Language: ja\n"
+
+#: natmap.js:62
+msgid "General Settings"
+msgstr "一般設定"
+
+#: natmap.js:63
+msgid "Forward Settings"
+msgstr "転送設定"
+
+#: natmap.js:64
+msgid "Notify Settings"
+msgstr "通知設定"
+
+#: natmap.js:65
+msgid "Link Settings"
+msgstr "リンク設定"
+
+#: natmap.js:66
+msgid "Custom Settings"
+msgstr "カスタム設定"
+
+#: natmap.js:78
+msgid "Name"
+msgstr "名前"
+
+#: natmap.js:87
+msgid "Protocol"
+msgstr "プロトコル"
+
+#: natmap.js:90 natmap.js:256
+msgid "TCP"
+msgstr "TCP"
+
+#: natmap.js:91 natmap.js:257
+msgid "UDP"
+msgstr "UDP"
+
+#: natmap.js:97
+msgid "Restrict to address family"
+msgstr "アドレスを家族に限定する"
+
+#: natmap.js:100
+msgid "IPv4 and IPv6"
+msgstr "IPv4 と IPv6"
+
+#: natmap.js:101
+msgid "IPv4 only"
+msgstr "IPv4のみ"
+
+#: natmap.js:102
+msgid "IPv6 only"
+msgstr "IPv6のみ"
+
+#: natmap.js:108
+msgid "Wan Interface"
+msgstr "WANインターフェース"
+
+#: natmap.js:117
+msgid "Keep-alive interval"
+msgstr "キープアライブ間隔"
+
+#: natmap.js:127
+msgid "STUN server"
+msgstr "STUNサーバー"
+
+#: natmap.js:138
+msgid "HTTP server"
+msgstr "HTTPサーバー"
+
+#: natmap.js:139
+msgid "For TCP mode"
+msgstr "TCPモードの場合"
+
+#: natmap.js:145
+msgid "Bind port"
+msgstr "バインドポート"
+
+#: natmap.js:156
+msgid "Enable Forward"
+msgstr "転送を有効にする"
+
+#: natmap.js:170
+msgid "Forward mode"
+msgstr "順方向モード"
+
+#: natmap.js:173
+msgid "firewall dnat"
+msgstr "firewall dnat"
+
+#: natmap.js:174
+msgid "natmap"
+msgstr "natmap"
+
+#: natmap.js:175
+msgid "ikuai"
+msgstr "ikuai"
+
+#: natmap.js:183
+msgid "Forward target"
+msgstr "前方ターゲット"
+
+#: natmap.js:195
+msgid "Forward target port"
+msgstr "転送ターゲットポート"
+
+#: natmap.js:196
+msgid "0 will forward to the out port get from STUN"
+msgstr "0 は STUN から取得した出力ポートに転送します"
+
+#: natmap.js:208
+msgid "Target_Interface"
+msgstr "ターゲットインターフェース"
+
+#: natmap.js:218
+msgid "Ikuai Web URL"
+msgstr "Ikuai URL"
+
+#: natmap.js:220 natmap.js:607 natmap.js:646
+msgid "such as http://127.0.0.1:8080 or http://ikuai.lan:8080.if use host,must close Rebind protection in DHCP and DNS"
+msgstr "http://127.0.0.1:8080 や http://ikuai.lan:8080 など。ホストを使用する場合は、DHCP と DNS の再バインド保護を閉じる必要があります。"
+
+#: natmap.js:231
+msgid "Ikuai Username"
+msgstr "育愛ユーザー名"
+
+#: natmap.js:241
+msgid "Ikuai Password"
+msgstr "育愛パスワード"
+
+#: natmap.js:251
+msgid "Ikuai Mapping Protocol"
+msgstr "イクアイマッピングプロトコル"
+
+#: natmap.js:252
+msgid "such as tcp or udp or tcp+udp"
+msgstr "tcp、udp、tcp+udp など"
+
+#: natmap.js:255
+msgid "TCP+UDP"
+msgstr "TCP+UDP"
+
+#: natmap.js:264
+msgid "Ikuai Mapping Wan Interface"
+msgstr "Ikuai マッピング Wan インターフェース"
+
+#: natmap.js:265
+msgid "such as adsl_1 or wan"
+msgstr "adsl_1 や wan など"
+
+#: natmap.js:276 natmap.js:458 natmap.js:683
+msgid "Advanced Settings"
+msgstr "高度な設定"
+
+#: natmap.js:286 natmap.js:471 natmap.js:697
+msgid "Max Retries"
+msgstr "最大再試行回数"
+
+#: natmap.js:287 natmap.js:472 natmap.js:698
+msgid "max retries,default 0 means execute only once"
+msgstr "最大再試行数、デフォルトの 0 は 1 回だけ実行することを意味します"
+
+#: natmap.js:297 natmap.js:482 natmap.js:708
+msgid "Retry Interval"
+msgstr "再試行間隔"
+
+#: natmap.js:298 natmap.js:483 natmap.js:709
+msgid "Retry Interval, unit is seconds, default 0 is 3 seconds"
+msgstr "再試行間隔、単位は秒、デフォルトは 0 で 3 秒です"
+
+#: natmap.js:307
+msgid "Enable Notify"
+msgstr "通知を有効にする"
+
+#: natmap.js:315
+msgid "Notify channel"
+msgstr "通知チャネル"
+
+#: natmap.js:319
+msgid "Telegram Bot"
+msgstr "Telegram Bot"
+
+#: natmap.js:320
+msgid "PushPlus"
+msgstr "PushPlus"
+
+#: natmap.js:321
+msgid "ServerChan"
+msgstr "ServerChan"
+
+#: natmap.js:322
+msgid "Gotify"
+msgstr "Gotify"
+
+#: natmap.js:329
+msgid "Chat ID"
+msgstr "チャットID"
+
+#: natmap.js:332
+msgid "Get chat_id"
+msgstr "chat_id を取得する"
+
+#: natmap.js:334 natmap.js:352 natmap.js:374 natmap.js:390 natmap.js:426
+msgid "Click here"
+msgstr "ここをクリック"
+
+#: natmap.js:337
+msgid "<br />If you want to send to a group/channel, please create a non-Chinese group/channel (for easier chatid lookup, you can rename it later).<br />Add the bot to the group, send a message, and use https://api.telegram.org/bot token /getUpdates to obtain the chatid."
+msgstr "<br />グループ/チャンネルに送信したい場合は、中国語以外のグループ/チャンネルを作成してください (チャット ID の検索を容易にするため、後で名前を変更できます)。<br />ボットをグループに追加し、メッセージを送信します。メッセージを取得し、https://api.telegram.org/bot token /getUpdates を使用してチャット ID を取得します。"
+
+#: natmap.js:350
+msgid "Get Bot"
+msgstr "ボットを入手"
+
+#: natmap.js:354
+msgid "<br />Send a message to the created bot to initiate a conversation."
+msgstr "<br />作成したボットにメッセージを送信して会話を開始します。"
+
+#: natmap.js:363
+msgid "http proxy"
+msgstr "httpプロキシ"
+
+#: natmap.js:372 natmap.js:388 natmap.js:424
+msgid "Get Instructions"
+msgstr "手順を確認する"
+
+#: natmap.js:385
+msgid "ServerChan sendkey"
+msgstr "ServerChan 送信キー"
+
+#: natmap.js:393
+msgid "<br />Since the asynchronous push queue is used, only whether the put into the queue is successful is detected."
+msgstr "<br />非同期プッシュキューを使用しているため、キューへの投入が成功したかどうかのみが検出されます。"
+
+#: natmap.js:404
+msgid "ServerChan Advanced Settings"
+msgstr "ServerChan の詳細設定"
+
+#: natmap.js:414
+msgid "Self-built Server Url"
+msgstr "自己構築サーバー URL"
+
+#: natmap.js:416
+msgid "such as http://127.0.0.1:8080 or http://ikuai.lan:8080"
+msgstr "http://127.0.0.1:8080 や http://ikuai.lan:8080 など"
+
+#: natmap.js:422
+msgid "Gotify url"
+msgstr "Gotify URL"
+
+#: natmap.js:446
+msgid "Gotify priority"
+msgstr "優先順位を獲得する"
+
+#: natmap.js:492
+msgid "Enable link setting"
+msgstr "リンク設定を有効にする"
+
+#: natmap.js:496
+msgid "Service"
+msgstr "サービス"
+
+#: natmap.js:499
+msgid "Emby"
+msgstr "Emby"
+
+#: natmap.js:500
+msgid "qBittorrent"
+msgstr "qBittorrent"
+
+#: natmap.js:501
+msgid "Transmission"
+msgstr "Transmission"
+
+#: natmap.js:502
+msgid "Cloudflare Origin Rule"
+msgstr "Cloudflare Origin Rule"
+
+#: natmap.js:503
+msgid "Cloudflare Redirect Rule"
+msgstr "Cloudflare Redirect Rule"
+
+#: natmap.js:574
+msgid "API Key"
+msgstr "API Key"
+
+#: natmap.js:565
+msgid "EMBY URL"
+msgstr "EMBY URL"
+
+#: natmap.js:583
+msgid "Update HTTPS Port"
+msgstr "HTTPSポートを更新する"
+
+#: natmap.js:584
+msgid "Set to False if you want to use HTTP"
+msgstr "HTTP を使用する場合は False に設定します。"
+
+#: natmap.js:594
+msgid "Update host with IP"
+msgstr "IPを使用してホストを更新する"
+
+#: natmap.js:605
+msgid "Web UI URL"
+msgstr "ウェブUIのURL"
+
+#: natmap.js:614 natmap.js:653
+msgid "Username"
+msgstr "ユーザー名"
+
+#: natmap.js:619 natmap.js:658
+msgid "Password"
+msgstr "パスワード"
+
+#: natmap.js:624 natmap.js:663
+msgid "Allow IPv6"
+msgstr "IPv6 を許可する"
+
+#: natmap.js:633 natmap.js:672
+msgid "IPv6 Address"
+msgstr "IPv6アドレス"
+
+#: natmap.js:644
+msgid "RPC URL"
+msgstr "RPC URL"
+
+#: natmap.js:722
+msgid "Enable custom script's config"
+msgstr "カスタムスクリプトの設定を有効にする"
+
+#: natmap.js:731
+msgid "custom script"
+msgstr "カスタムスクリプト"
+
+#: natmap.js:732
+msgid "custom script path,such as /etc/natmap/custom.sh"
+msgstr "カスタム スクリプト パス (/etc/natmap/custom.sh など)"
+
+#: natmap.js:741
+msgid "External IP"
+msgstr "外部IP"
+
+#: natmap.js:748
+msgid "External Port"
+msgstr "外部ポート"
+
+#: natmap.js:758
+msgid "enable"
+msgstr "有効にする"
+
+#: natmap.js:57
+msgid "NatMap Settings"
+msgstr "NatMap Settings"
+
+#: natmap.js:510
+msgid "Cloudflare Token"
+msgstr "Cloudflare Token"
+
+#: natmap.js:521
+msgid "Cloudflare Zone ID"
+msgstr "Cloudflare Zone ID"
+
+#: natmap.js:533
+msgid "Origin Rule Name"
+msgstr "Origin Rule Name"
+
+#: natmap.js:544
+msgid "Redirect Rule Name"
+msgstr "Redirect Rule Name"
+
+#: natmap.js:347
+msgid "Telegram Token"
+msgstr "Telegram Token"
+
+#: natmap.js:370
+msgid "PushPlus Token"
+msgstr "PushPlus Token"
+
+#: natmap.js:436
+msgid "Gotify Token"
+msgstr "Gotify Token"
+
+#: natmap.js:554
+msgid "Redirect Rule Target URL"
+msgstr "重定方向规则目标URL"
+
+#: natmap.js:567
+msgid "such as http://127.0.0.1:8080 or http://ikuai.lan:8080.if use host,must close Rebind protection in DHCP/DNS"
+msgstr "例: http://127.0.0.1:8080 または http://ikuai.lan:8080。IP ではなくホスト アドレスを使用する場合は、DHCP/DNS 内の再設定保護を解除する必要があります。"
+

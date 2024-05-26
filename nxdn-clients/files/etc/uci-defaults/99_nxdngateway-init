@@ -1,0 +1,16 @@
+#!/bin/sh
+
+[ ! -f /etc/config/mmdvm ] && touch /etc/config/mmdvm
+[ -z `uci -q get mmdvm.NXDN.Enable` ] && {
+	uci set mmdvm.NXDN=mmdvmhost
+	uci set mmdvm.NXDN.Enable=0
+	uci commit mmdvm
+}
+
+ENABLE=$(uci -q get mmdvm.NXDN.Enable)
+if [ "$ENABLE" != "1" ]; then
+    /etc/init.d/nxdngateway stop && /etc/init.d/nxdngateway disable
+    /etc/init.d/nxdnparrot stop && /etc/init.d/nxdnparrot disable
+fi
+
+exit 0

@@ -1,0 +1,4 @@
+{
+	"config": "weburl",
+	"init": [ "weburl" ]
+}

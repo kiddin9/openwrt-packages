@@ -1,0 +1,11 @@
+{
+	"luci-app-drawio": {
+		"description": "Grant UCI access for luci-app-drawio",
+		"read": {
+			"uci": [ "drawio" ]
+		},
+		"write": {
+			"uci": [ "drawio" ]
+		}
+	}
+}

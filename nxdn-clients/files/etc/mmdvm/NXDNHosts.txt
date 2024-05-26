@@ -1,0 +1,523 @@
+# NXDNHosts.txt
+#
+# The format of this file is the number of the Talk Group followed by the host name or address and port
+#
+
+# 112 Emergencias EA
+112 nxdn.pa7lim.nl 41400
+
+# 138 Thailand
+138 nxdn138.freeddns.org 41400
+
+# 149 Thailand
+149	nxdn.pwk.ac.th	41400
+
+# 202 HELLAS Zone
+202 hellaszone.com 41400
+
+# 204 Netherlands
+204 nxdn.repeaters-haaglanden.nl 41400
+
+# 214 RED SPAIN
+214 nxdn214.xreflector.es 41400
+
+# 226 Romania YO NXDN Network
+226	nxdn.dstar-yo.ro	41400
+
+# 260 HBLink  Poland
+260 nxdn.hblink.pl 41400
+
+# 302 P25 Canada
+302	p25canada.hopto.org	41400
+
+# 420 Super Freq
+420 nxdn.superfreqdigital.com 41400
+
+# 530 New Zealand
+530 zldigitalreflectors.hopto.org	41400
+
+# 545 XLX545E PA
+545 70.44.20.24	41401
+
+# 707 RuralMN Reflector
+707	707nxdn.kd0ioe.com  41400
+
+# 730 Chile NXDN Reflector to BM TG 730
+730	sdradio.cl  41400
+
+# 822 Thailand NXDN to BM TG 520822
+822	nxdn.dstarthailand.com	41400
+
+# 841 Team Wave NXDN Bridge
+841 nxdn.mx0wvv.org 41400
+
+# 910 Washington DC - Virginia - Maryland
+910	nxdn910.freeddns.org	41400
+
+# 911 Cop Talk, Multimode TG for Police and First Responders
+911	nxdn.k2cop.com	41400
+
+# 914 Latin America
+914	914.nxdn.es	41400
+
+# 987 Centro America
+987 nxdn.pa7lim.nl 41400
+
+# 1007 Harley-Hangout TGIF TG-1007 Bridge
+1007	43773.kb5rir.com	41400
+
+# 1200 Florida
+1200	florida.nxref.org	41400
+
+# 2140 Treehouse NXDN
+2140	nxdn.pa7lim.nl 41400
+
+# 2141 EA-DISTRITO 1 NXDN
+2141	nxdn.pa7lim.nl 41400
+
+# 2142 EA-DISTRITO 2 NXDN
+2142	nxdn.pa7lim.nl 41400
+
+# 2143 EA-DISTRITO 3 NXDN
+2143	nxdn.pa7lim.nl 41400
+
+# 2144 EA-DISTRITO 4 NXDN
+2144	nxdn.pa7lim.nl 41400
+
+# 2145 EA-DISTRITO 5 NXDN
+2145	nxdn.pa7lim.nl 41400
+
+# 2146 EA-DISTRITO 6 NXDN
+2146	nxdn.pa7lim.nl 41400
+
+# 2147 Andalucia Room
+2147	2147.nxdn.es	41400
+
+# 2148 EA-DISTRITO 8 NXDN
+2148	nxdn.pa7lim.nl 41400
+
+# 2149 EA-DISTRITO 9 NXDN
+2149	nxdn.pa7lim.nl 41400
+
+# 2225  IT Tuscany
+2225	80.211.99.134	41400
+
+# 2231  IT Multiprotocollo Sardegna
+2231	nxdn.is0.org	41400
+
+# 2241 IT TUSCANY MULTIP
+2241	nxdn.grupporadiofirenze.net	41400
+
+# 2249 IT SICILIA
+2249	nxdn.digitalsicilia.it	41400
+
+# 2263 Bucharest YO3 NXDN Network
+2263	nxdn.dstar-yo.ro	41403
+
+# 2265 Baia Mare YO5 NXDN Network
+2265	nxdn.dstar-yo.ro	41405
+
+# 2345 CQ-North UK
+2345  nxdn.cqnorth.org.uk 41400
+
+# 2503 RU DMR
+2503	nxdn.r1ik.ru	41400
+
+# 2700 Melbourne FL
+2700	2700nxdn.ddns.net	41400
+
+# 2724 YSF-NRSI-EI
+2724	dmr.nrsi.ie	41400
+
+# 3023 Ontario Crosslink
+3023    ontxlink.hopto.org 41400
+
+# 3142 Pennsylvania
+3142	3.215.215.169	41402
+
+# 3160 K6JWN Crossroads
+3160	nxdn.k6jwn.org	41400
+
+# PRadise
+3300	nxdn3300.from-pr.com	41400
+
+# 3400 W2BTN Group
+3400	w2btn.dmrnet.net	41400
+
+# 5057 VK7 TAS
+5057    45.248.50.37    41400
+
+# 5621 HamFurs MultiMode Bridge
+5621  ord1.w3fur.radio  41400
+
+# 7144 Chiriqui Link Panama
+7144	nxdn.pa7lim.nl 41400
+
+# 7160 Peru Digital
+7160	nxdn.dmr-peru.net	41400
+
+# 7225 Multiprotocolo Argentina
+7225	argnxdn.ddnsfree.com	41400
+
+# 7227 ARGENTINA LINK
+7227 nxdn.pa7lim.nl 41400
+
+# 7309 CHILE-LINK NXDN Reflector to BM TG 73099
+7309	sdradio.cl	41401
+
+# 7487 Uruguay Link 
+7487 uruguay.nxdn.es 41400
+
+# 9480 ICQPODCAST - ICQ DIGITAL GROUP
+9480	46.101.36.246 41400
+
+# 9846 NXDN Portal to WW8GM YSF network www.gmarc.org 
+9846	nxdn.dudetronics.com	41401
+
+# 10200 North America
+10200   dvswitch.org    42400
+
+# 10201 North America TAC
+10201 10201.dyndns.org  41400
+
+# 10301 HBLINK Espana
+10301	ea5gvk.duckdns.org	41400
+
+# 10303 Italian speaking
+10303	185.203.118.8	41400
+
+# 10304 REM-ADER Spain Group
+10304	176.31.161.9	41400
+
+# 10400 Pacific
+10400	pacific.nxref.org	41400
+
+# 10922 CQ-UK
+10922	81.150.10.62	41400
+
+# 11069 KK6RQ's NXDN Reflector
+11069	area52.zapto.org	41400
+
+# 17000 M17 Project
+17000	107.191.48.144	41400
+
+# 20000 Europe, German speaking
+20000	89.185.97.38	41400
+
+# 20201 NXDN Athens GR HBLink
+20201	stargate-dmr.net	41400
+
+# 20222 NXDN HELLAS-FRN
+20222 nxdn-frn.ddns.net 41400
+
+# 20328 NXDN German Pegasus Project 
+20328	nxdn.projekt-pegasus.net	41400
+
+# 20330 NXDN German DE-RAMSES Project 
+20330	81.169.173.132	41400
+
+# 20333 NXDN LausitzLink Germany 
+20333	nxdn02.bzsax.de	41400
+
+# 20421 DL-Nordwest (dl-nordwest.com) by 9V1LH/DG1BGS and DK5BS
+20421	dl-nordwest.com	41400
+
+# 20424 Rijmond regio Rotterdam
+20424 nxdn.pa7lim.nl  41400
+
+# 20945 Deutschland DL1BH
+20945	dl1bh.ddns.net	41400
+
+# 21407 NXDN MALLORCA
+21407	nxdn.pa7lim.nl 41400
+
+# 21410 NXDN SPAIN
+21410	nxdn21410.nxdn.es	41400
+
+# 21418 NXDN RC Veleta
+21418	nxdn.pa7lim.nl	41400
+
+# 21426 FreeSTAR SPAIN
+21426 nxdn.pa7lim.nl 41400
+
+# 21430 EA5URM-Murcia
+21430	ea5urm-murcia.duckdns.org 41400
+
+# 21465 ADER Multimode
+21465	aderdigital.ddns.net	41400
+
+# 21468 Canarias NXDN
+21468 nxdn.pa7lim.nl 41400
+
+# 21909 PRIDE - Multi-mode HUB & Reflector
+21909	hub.kimberlychase.com	41400
+
+# 22200 IT HBLINK ITALY
+22200	nxdn.hblink.it	41400
+
+# 22202 IT SARDINIA
+22202	87.106.152.249	41400
+
+# 22220 IT ItalyNet Conference
+22220	198.245.55.177	41400
+
+# 22221 HBLINK IT-DMR REGIONALE LOMBARDIA
+22221	dagobah.hblink.it	41400
+
+# 22245 IT PIEDMONT GDO
+22245	nxdngdo.duckdns.org	41400
+
+# 22252 IT MULTIPROTOCOL NETWORK
+22252	46.226.178.80	41400
+
+# 22258 D2ALP HBLink Italia
+22258	94.177.173.53	41400
+
+# 22292 IT MP XLX039/B BM2222
+22292	hblink.dmrbrescia.it	41400
+
+# 22488 Italy Centro
+22488	185.203.119.229	41400
+
+# 22825 Swiss NXDN Reflerctor
+22825	212.237.33.114	41400
+
+# 23426 FreeSTAR UK
+23426	nxdn.freestar.network	41400
+
+# 23491 NXDN Cambridge
+23491	nxdn-cambridge.dyndns.org	41400
+
+# 23511 LEFARS Multi-Reflector
+23511 xlxlef.gb7hh.co.uk 41400
+
+# 23530 Yorkshire UK, https://dvswitch.uk/nxdn
+23530	194.146.44.13	41400
+
+# 23551 NXDN Scotland
+23551	nxdnscotland.ddns.net	41400
+
+# 23595 OZ-DMR_CHAT
+23595	nxdn.oz-dmr.uk	41400
+
+# 25000 NX Core
+25000	173.166.94.77	41400
+
+# 25577 UA Azimuth
+25577	178.136.234.51	41400
+
+# 25617 Russia Kavkaz
+25617   kavkaz.qrz.ru  41400
+
+# 25641 Russia NXDN Net
+25641	194.182.85.217	41400
+
+# 26000 Poland
+26000	185.174.14.75	41400
+
+# 26078 Poland HBLink Network
+26078	nxdn.hblink.kutno.pl	41400
+
+# 26079 NXDN Poland local Group Reflector
+26079	nxdn-sp7.noip.pl	41400
+
+# 26085 Poland DMR+
+26085	91.245.81.2	41400
+
+# 26200 Deutschland
+26200	135.125.204.81	41400
+
+# 26810 Portuguese speakers
+26810	nxcore.brandmeister.pt	41400
+
+# 28299 America-Ragchew
+28299	arcnxdn.duckdns.org	41400
+
+# 29999 AllStarLink Bridge
+29999	64.154.38.103	41400
+
+# 30639 NorCal-Bridge / Multimode-NXDN
+30639	nfonorcalnxdn.dyndns.org	41400
+
+# 31010 Alabama-Link
+31010	alabamalink.radiotechnology.xyz	41400
+
+# 31031 XLX310 Multimode Reflector
+31031	ref.xlx310.com	41400
+
+# 31059 Vidalia Net NXDN
+31059 vidalianet.cbridge.net  41400
+
+# 31081 Colorado Fun Machine WE0FUN Bridge to C4FM, DMR, DStar, P25 and AllStarLink (Analog) http://www.we0fun.com
+31081	nxdn.we0fun.com	41400
+
+# 31088 Colorado HD
+31088	54.191.50.212	41400
+
+# 31092 Connecticut Chat
+31092	nxdn.alecwasserman.com	41400
+
+# 31121 First Coast FL
+31121   dvse.dmrnet.net    41400
+
+# 31137 Kingsland Digital Link
+31137   74.91.119.94    41400
+
+# 31171 Illinois Link
+31171	illink.radiotechnology.xyz  41400
+
+# 31188 Southern Indiana
+31188	w9windigital.org	41400
+
+# 31226 WorldWide Dx System
+31226	198.245.53.107	41400
+
+# 31238 Foxhole Radio Bridged Network
+31238	nxdn.foxhole.radio	41400
+
+# 31257 NEARC
+31257	nxdn.w0jay.com	41400
+
+# 31264 XLX625 The BROniverse www.wa8bro.com
+31264	nxdn.dudetronics.com	41400
+
+# 31266 DGTLCOM Great Lakes Digital Common Interlink (P25/DMR/YSF/NXDN/DSTAR)
+31266 dgtlcom.dyndns.org 41400
+
+# 31340 Central New Jersey
+31340	cnjham.msmts.com	41400
+
+# 31403 Oklahoma Link
+31403	3.208.70.29	41400
+
+# 31425 XLX545A Pennsylvania Cross Mode
+31425	70.44.20.24	41400
+
+# 31426 XLX545A Pennsylvania Cross Mode (alt)
+31426	3.215.215.169	41400
+
+# 31444 Rhode Island Digital Link
+31444	18.219.32.21	41400
+
+# 31581 KD2UQK Long Island, NY - NXDN Reflector
+31581	kd2uqk.ham-radio-op.net	41400
+
+# 31582 KO4UYJ Milton, Fl - NXDN Reflector
+31582	ko4uyj.com	41400
+
+# 31665 TGIF Network
+31665	tgif.network	41400
+
+# 31672 Pi-Star
+31672	nxdn-31672.pistar.uk	41400
+
+# 31777 DX-LINK SYSTEM,
+31777	8.9.4.102	41400
+
+# 31983 K8JTK Hub Multimode ILS/DVMIS (K8JTK.org)
+31983	NXDNReflector31983.K8JTK.org	41400
+
+# 32103 CW-Ops Academy
+32103	cwops.dyndns.org	41400
+
+# 33015 KP4CA Digital Network
+33015	kp4ca-nxdn.ddns.net	41400
+
+# 33581 OMISS Group
+33581	omiss.dyndns.org	41400
+
+# 37030 SKYNET
+37030 skynet.nxdn.es 41400
+
+# 37224 Haiti NXDN
+37224	44.98.254.130	41400
+
+# 37500 Belarus Digital MultiMode Network
+37500	xlx375.bfrr.by	41400
+
+# 40721 Fusion Canada Fr /Wires-x /Ysf /Nxdn Network
+40721	158.69.169.205	41400
+
+# 43389 SouthEast Link
+43389	nxdn.lmarc.net	41400
+
+# 44000 Japan
+44000	nxdn44000.f5.si	41400
+
+# 44120 Managed by JA2CCV
+44120	nxdn.owari.biz	41400
+
+# 44155 XLX298 YSF-NAGOYA BRIDGE NAGOYA JAPAN
+44155	xrf298.mydns.jp	41400
+
+# 45000 Korea
+45000	nxdn.dvham.com	41400
+
+# 46000 China
+46000	120.234.41.144	41400
+
+# 46001 NXDN Link TG46001, China
+46001 46001.freedmr.club 41400
+
+# 46004 NXDN Link TG46004, Zone 4, China
+46004 46004.freedmr.club 41401
+
+# 46010 NXDN Link TG46010, Beijing, China
+46010	46010.freedmr.club	41402
+
+# 46055 NXDN Link TG46055, Zhejiang, China
+46055 46055.freedmr.club 41403
+
+# 46516 NXDN Link TG46516, Xuzhou, China
+46516 46516.freedmr.club 41404
+
+# 50525 DMR TG50525 bridge
+50525	50525.nxref.org	41400
+
+# 50535 PrideNet multimode bridge
+50535	p25tg50535.vkradio.com	41400
+
+# 50599 BM NXCore bridge
+50599	nxdn.duckdns.org	41490
+
+# 52000 Thailand DTDXA XLX520N
+52000	nxdn.dtdxa.com	41400
+
+# 52032 Surin Amateur Radio Association (HS3AS) ,Thailand,XLX149C
+52032	hs3as.pwk.ac.th	41404
+
+# 52149 XLX149 D Thailand
+52149	nxdn149d.pwk.ac.th	41408
+
+# 52910 XLX Nexus
+52910	nxdn910x.mywire.org	41400
+
+# 53099 New Zealand, 53099 linked to BM TG 53099
+53099	203.86.206.49	41400
+
+# 56987 Mother Owl - Multi-mode HUB & Reflector
+56987	server.captsmokey.com	41400
+
+# 62869 W3FUR - Pride Radio Group Multi-mode HUB & Reflector
+62869 lax1.w3fur.radio 41400
+
+# 63600 Latvian Digital MultiMode Network
+63600	xlx.ham.lv	41400
+
+# 64003 ELITE Group
+64003 51.77.213.200 41400
+
+# 65000 World Wide
+65000 176.9.1.168 41400
+
+# 65100 NXDN - 2007DXGROUP
+65100 89.46.75.115  41400
+
+# 65206 XLX210 YSF-BELGIUM M17BEL Bridges http://freedmr.be/nxdn
+65206 161.97.169.233  41400
+
+# 65208 French-NXDN
+65208	nxdn.f5dan.fr  41400
+
+# 65209 VARG http://www.varg.club
+65209	3.215.215.169	41410

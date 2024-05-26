@@ -1,0 +1,104 @@
+msgid "AutoUpdate"
+msgstr "固件更新"
+
+msgid "AutoUpdate LUCI supports scheduled upgrade & one-click firmware upgrade"
+msgstr "固件更新 LUCI 支持定时更新固件 & 一键更新固件"
+
+msgid "Scheduled Upgrade"
+msgstr "定时更新"
+
+msgid "Manually Upgrade"
+msgstr "手动更新"
+
+msgid "Manually upgrade Firmware or Script"
+msgstr "手动更新固件或脚本"
+
+msgid "Upgrade Log"
+msgstr "更新日志"
+
+msgid "Preference Mirror Speedup"
+msgstr "镜像加速"
+
+msgid "Mirror Station"
+msgstr "镜像站"
+
+msgid "Automatic selection (Recommend)"
+msgstr "自动选择 (推荐)"
+
+msgid "GitHub Proxy"
+msgstr "GitHub Proxy - Ghproxy"
+
+msgid "CF Workers"
+msgstr "Cloudflare Workers"
+
+msgid "Preference Mirror for speeding up download"
+msgstr "优先使用镜像站加速下载"
+
+msgid "Advanced Settings"
+msgstr "高级设置"
+
+msgid "Supported Multi Selection"
+msgstr "支持同时勾选多个选项"
+
+msgid "Skip SHA256 Verify"
+msgstr "跳过固件 SHA256 校验"
+
+msgid "Force Flash Firmware"
+msgstr "强制刷写固件"
+
+msgid "Decompress [img.gz] Firmware"
+msgstr "解压 [img.gz] 格式固件"
+
+msgid "Upgrade without keeping config"
+msgstr "不保留配置"
+
+msgid "Please don't select it unless you know what you're doing!"
+msgstr "请勿随意勾选,除非你知道自己在做什么!"
+
+msgid "Recommend to set the AUTOUPDATE time to an uncommon time"
+msgstr "建议设置定时更新时间为设备不常用的时间"
+
+msgid "Update Day"
+msgstr "更新时间"
+
+msgid "Github Url"
+msgstr "Github 地址"
+
+msgid "For detecting cloud version and downloading firmware"
+msgstr "用于检测固件版本更新以及下载固件的地址"
+
+msgid "Firmware Flag"
+msgstr "固件标签"
+
+msgid "Log Path"
+msgstr "日志路径"
+
+msgid "Do Upgrade"
+msgstr "执行更新"
+
+msgid "Upgrade Firmware"
+msgstr "更新固件"
+
+msgid "Automatically update firmware during the specified time when Enabled"
+msgstr "启用后,将在指定时间段自动检查并更新固件"
+
+msgid "Upgrade without keeping System-Config"
+msgstr "更新固件 (不保留配置)"
+
+msgid "Upgrade with Force Flashing (DANGEROUS)"
+msgstr "更新固件且强制刷入固件 (危险)"
+
+msgid "Upgrade Normally (KEEP CONFIG)"
+msgstr "更新固件 (保留配置)"
+
+msgid "Using the latest Script may solve some compatibility problems"
+msgstr "使用最新脚本也许能解决一些兼容性问题"
+
+msgid "Upgrade Script"
+msgstr "更新脚本"
+
+msgid "Check Updates"
+msgstr "检查更新"
+
+msgid "Please wait for the page to refresh after clicking Check Updates button"
+msgstr "点击检查更新按钮后请等待页面自动刷新"

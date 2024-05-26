@@ -1,0 +1,17 @@
+server {
+  listen 8080; #bind prot 绑定的端口
+  root /www; #directory 网站路径
+  ssl_session_timeout 5m;
+  gzip on;
+  gzip_types text/plain application/json application/javascript application/x-javascript text/css application/xml text/javascript;
+  gzip_proxied  any;
+  gzip_vary on;
+  gzip_comp_level 6;
+  gzip_buffers 16 8k;
+  gzip_http_version 1.0;  
+
+  location / {
+    index  index.html index.htm; #默认文件
+    try_files $uri $uri/ /index.html;
+  }
+}

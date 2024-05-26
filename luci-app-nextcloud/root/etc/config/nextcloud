@@ -1,0 +1,4 @@
+config nextcloud
+	option 'port' '8082'
+	option 'config_path' ''
+	option 'image_name' 'nextcloud'

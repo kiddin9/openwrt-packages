@@ -1,0 +1,92 @@
+<%#
+ Copyright (C) 2017-2018 Jian Chang <aa65535@live.com>
+ Copyright (C) 2020-2023 honwen <https://github.com/honwen>
+Licensed to the public under the GNU General Public License v3.
+-%>
+
+<% include("cbi/map") %>
+
+<script type="text/javascript">//<![CDATA[
+	(function() {
+		window.cbi_combobox = function(id, values, def, man, focus) {
+			var selid = "cbi.combobox." + id;
+			if (document.getElementById(selid)) {
+				return;
+			}
+
+			var obj = document.getElementById(id);
+			var sel = document.createElement("select");
+				sel.id = selid;
+				sel.index = obj.index;
+				sel.className = obj.className.replace(/cbi-input-text/, 'cbi-input-select');
+
+			if (obj.nextSibling) {
+				obj.parentNode.insertBefore(sel, obj.nextSibling);
+			} else {
+				obj.parentNode.appendChild(sel);
+			}
+
+			var dt = obj.getAttribute('cbi_datatype');
+			var op = obj.getAttribute('cbi_optional');
+
+			if (!values[obj.value]) {
+				if (obj.value != "") {
+					var opt = document.createElement("option");
+					opt.value = obj.value;
+					opt.selected = "selected";
+					opt.appendChild(document.createTextNode(obj.value));
+					sel.appendChild(opt);
+				}
+			}
+
+			for (var i in values) {
+				var opt = document.createElement("option");
+				opt.value = i;
+
+				if (obj.value == i) {
+					opt.selected = "selected";
+				}
+
+				opt.appendChild(document.createTextNode(values[i]));
+				sel.appendChild(opt);
+			}
+
+			obj.style.display = "none";
+
+			if (dt)
+				cbi_validate_field(sel, op == 'true', dt);
+
+			cbi_bind(sel, "change", function() {
+				obj.value = sel.options[sel.selectedIndex].value;
+
+				try {
+					cbi_d_update();
+				} catch (e) {
+					//Do nothing
+				}
+			})
+
+			// Retrigger validation in select
+			if (focus !== false) {
+				sel.focus();
+				sel.blur();
+			}
+		};
+
+		var elements = {
+			ss_redir: document.getElementById("_redir_status"),
+			ss_http: document.getElementById("_http_status"),
+			ss_socks: document.getElementById("_socks_status"),
+			ss_tunnel: document.getElementById("_tunnel_status"),
+		};
+		XHR.poll(5, "<%=luci.dispatcher.build_url("admin", "services", "shadowsocks", "status")%>", null, function(xhr, status) {
+			if (xhr.status === 200) {
+				for (var k in elements) {
+					if (elements[k]) {
+						elements[k].textContent = status[k] ? "<%:RUNNING%>" : "<%:NOT RUNNING%>";
+					}
+				}
+			}
+		});
+	}());
+//]]></script>

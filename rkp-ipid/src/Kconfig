@@ -1,0 +1,2 @@
+config RKP_IPID
+	tristate "rkp-ipid"

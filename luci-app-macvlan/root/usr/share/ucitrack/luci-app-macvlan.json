@@ -1,0 +1,4 @@
+{
+	"config": "macvlan",
+	"init": "macvlan"
+}

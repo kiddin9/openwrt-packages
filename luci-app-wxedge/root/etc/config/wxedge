@@ -1,0 +1,3 @@
+config wxedge
+	option 'cache_path' ''
+	option 'image_name' ''

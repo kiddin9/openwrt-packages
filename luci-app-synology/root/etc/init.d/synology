@@ -1,0 +1,89 @@
+#!/bin/sh /etc/rc.common
+ 
+START=99
+STOP=1
+
+EXTRA_COMMANDS="forceStop"
+EXTRA_HELP="force to kill snology pid"
+
+
+
+
+CONFIG="synology"
+
+config_t_get() {
+	local index=0
+	[ -n "$4" ] && index=$4
+	local ret=$(uci get $CONFIG.@$1[$index].$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+
+
+start() {
+	cpu=$(config_t_get machine cpu)
+	smp=$(config_t_get machine smp)
+	m=$(config_t_get machine m)
+	vnc=$(config_t_get machine vnc)
+	qmp=$(config_t_get machine qmp)
+	hda=$(config_t_get machine hda)
+	hdb=$(config_t_get machine hdb)
+	hdc=$(config_t_get machine hdc)
+	hdd=$(config_t_get machine hdd)
+	other=$(config_t_get machine other)
+	if [ -n "$hda" ]; then
+ 		shda="-hda $hda "
+	fi
+	if [ -n "$hdb" ]; then
+ 		shdb="-hdb $hdb "
+	fi
+	if [ -n "$hdc" ]; then
+ 		shda="-hdc $hdc "
+	fi
+	if [ -n "$hdd" ]; then
+ 		shda="-hdd $hdd "
+	fi
+	if [ -n "$other" ]; then
+ 		sother="$other "
+	fi
+	
+	hardisk=$shda$shdb$shdc$shdd$sother
+	cmd="qemu-system-x86_64 -name synology -enable-kvm -cpu $cpu -m ${m}G -smp $smp -vnc :$vnc \
+	$hardisk -device e1000,netdev=br0 -netdev bridge,br=br-lan,id=br0 -qmp tcp:127.0.0.1:$qmp,server,nowait -nographic"
+	exec $cmd
+	sleep 1
+	qemu_pid=$(/usr/bin/pgrep -f 'qemu-system-x86_64 -name synology')
+	/usr/bin/pgrep qemu-system-x86_64 > $qemu_pidfile
+	echo "QEMU: Started VM with PID $qemu_pid."
+}
+
+stop() {
+qmp=$(config_t_get machine qmp)
+nc localhost $qmp <<QMP
+{ "execute": "qmp_capabilities" }
+{ "execute": "system_powerdown" }
+QMP
+# qemu_pid=$(/usr/bin/pgrep qemu-system-x86_64)
+# if [ -n "$qemu_pid" ]; then
+#  	shda="-hdc $hdc "
+# fi
+}
+
+
+forceStop() {
+	qemu_pid=$(/usr/bin/pgrep -f 'qemu-system-x86_64 -name synology')
+	if [ -n "$qemu_pid" ]; then
+	 	kill $qemu_pid
+	fi
+}
+
+
+
+
+
+
+
+
+
+
+

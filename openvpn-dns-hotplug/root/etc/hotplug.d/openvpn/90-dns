@@ -1,0 +1,75 @@
+#!/bin/sh
+# Get DNS, Domain Search via OpenVPN client hotplug script
+# Written by Konstantine Shevlakov at <shevlakov@132lan.ru> 2022
+# OpenWrt 21 file location: /etc/hotplug.d/openvpn
+
+
+# Get NameServers and Domain search
+get_ns(){
+	DNS=$(env |  awk '/dhcp-option DNS/{gsub("'\''", "");print $3}')
+	DOMAIN=$(env |  awk '/dhcp-option DOMAIN/{gsub("'\''", "");print $3}')
+}
+
+# Setting up NameServers and Domain
+set_ns(){
+	if [ "x$CFGIFACE" != "x" ]; then
+		for ns in $DNS; do
+			if [ "x$ns" != "x" ]; then
+				uci -q add_list network.$CFGIFACE.dns=$ns
+			fi
+		done
+		for dn in $DOMAIN; do
+			if [ "x$dn" != "x" ]; then
+				uci -q add_list network.$CFGIFACE.dns_search=$dn
+			fi
+		done
+	fi
+	uci -q commit network
+}
+
+# Delete NameServers and Domain
+unset_ns(){
+	if [ "x$CFGIFACE" != "x" ]; then
+		uci -q delete network.$CFGIFACE.dns
+		uci -q delete network.$CFGIFACE.dns_search
+	fi
+	uci -q commit network
+}
+
+
+# Get interface name in uci 
+UCI_conf=$(uci show openvpn | awk -F [=] '/config/{gsub("'\''", "");print $2}')
+for cfg in $UCI_conf; do
+	if [ $config = $cfg ]; then
+		CFGIFACE=$(uci show network | awk -F [.] -v device=$dev '$0 ~ device {print $2}')
+		PROTO=$(ifstatus $CFGIFACE | jsonfilter -e '@["proto"]')
+		get_ns
+	fi
+done
+
+# Hotplug action
+case $PROTO in 
+	none)
+		# Check peerdns option in uci interface section
+		PEERDNS=$(uci -q get network.$CFGIFACE.peerdns)
+		if [ "x$PEERDNS" != "x" -a $PEERDNS -eq 0 ]; then
+			unset_ns
+			exit 0
+		fi
+		case $ACTION in
+			up)
+				if  [ "$DNS" ]; then
+					unset_ns
+					set_ns
+					reload_config
+					logger -t "`basename $0`" "OpenVPN: adding DNS: $DNS from $INSTANCE" 
+				fi
+			;;
+			down)
+				unset_ns
+				reload_config
+				logger -t "`basename $0`" "OpenVPN: remove NS attributes from $INSTANCE"
+			;;
+		esac
+	;;
+esac

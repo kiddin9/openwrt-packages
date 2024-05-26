@@ -1,0 +1,144 @@
+From f4f5d11b578a1ab2c3d089bbe5453052b43892bb Mon Sep 17 00:00:00 2001
+From: tofuliang <tofuliang@gmail.com>
+Date: Mon, 24 Jan 2022 18:53:11 +0800
+Subject: [PATCH] fix block ad,add web traffic logs
+
+---
+ app.go                 |  1 +
+ config/config.go       |  1 +
+ processor/processor.go | 55 +++++++++++++++++++++++++++++++++---------
+ 3 files changed, 45 insertions(+), 12 deletions(-)
+
+diff --git a/app.go b/app.go
+index 73a6070..1018d75 100644
+--- a/app.go
++++ b/app.go
+@@ -45,6 +45,7 @@ func main() {
+ 		log.Println("EnableLocalVip=", *config.EnableLocalVip)
+ 		log.Println("UnlockSoundEffects=", *config.UnlockSoundEffects)
+ 		log.Println("QQCookieFile=", *config.QQCookieFile)
++		log.Println("LogWebTraffic=", *config.LogWebTraffic)
+ 		if host.InitHosts() == nil {
+ 			//go func() {
+ 			//	//	// terminal: $ go tool pprof -http=:8081 http://localhost:6060/debug/pprof/heap
+diff --git a/config/config.go b/config/config.go
+index 6c07873..a653cdf 100644
+--- a/config/config.go
++++ b/config/config.go
+@@ -31,6 +31,7 @@ var (
+ 	EnableLocalVip     = flag.Bool("lv", false, "enable local vip")
+ 	UnlockSoundEffects = flag.Bool("sef", false, "unlock SoundEffects")
+ 	QQCookieFile       = flag.String("qc", "./qq.cookie", "specify cookies file ,such as : \"qq.cookie\"")
++	LogWebTraffic      = flag.Bool("wl", false, "log request url and response")
+ )
+ 
+ func ValidParams() bool {
+diff --git a/processor/processor.go b/processor/processor.go
+index 8d09dbf..d07b9d3 100644
+--- a/processor/processor.go
++++ b/processor/processor.go
+@@ -6,14 +6,6 @@ import (
+ 	"crypto/md5"
+ 	"encoding/hex"
+ 	"encoding/json"
+-	"github.com/cnsilvan/UnblockNeteaseMusic/cache"
+-	"github.com/cnsilvan/UnblockNeteaseMusic/common"
+-	"github.com/cnsilvan/UnblockNeteaseMusic/config"
+-	"github.com/cnsilvan/UnblockNeteaseMusic/network"
+-	"github.com/cnsilvan/UnblockNeteaseMusic/processor/crypto"
+-	"github.com/cnsilvan/UnblockNeteaseMusic/provider"
+-	"github.com/cnsilvan/UnblockNeteaseMusic/utils"
+-	"golang.org/x/text/width"
+ 	"io"
+ 	"io/ioutil"
+ 	"log"
+@@ -22,6 +14,15 @@ import (
+ 	"regexp"
+ 	"strconv"
+ 	"strings"
++
++	"github.com/cnsilvan/UnblockNeteaseMusic/cache"
++	"github.com/cnsilvan/UnblockNeteaseMusic/common"
++	"github.com/cnsilvan/UnblockNeteaseMusic/config"
++	"github.com/cnsilvan/UnblockNeteaseMusic/network"
++	"github.com/cnsilvan/UnblockNeteaseMusic/processor/crypto"
++	"github.com/cnsilvan/UnblockNeteaseMusic/provider"
++	"github.com/cnsilvan/UnblockNeteaseMusic/utils"
++	"golang.org/x/text/width"
+ )
+ 
+ var (
+@@ -188,6 +189,9 @@ func RequestAfter(request *http.Request, response *http.Response, netease *Netea
+ 			if ok {
+ 				code = codeN.String()
+ 			}
++
++			logResponse(netease)
++
+ 			if strings.EqualFold(netease.Path, "/api/osx/version") {
+ 				modified = disableUpdate(netease)
+ 			} else if strings.Contains(netease.Path, "/usertool/sound/") {
+@@ -197,9 +201,24 @@ func RequestAfter(request *http.Request, response *http.Response, netease *Netea
+ 				for key, resp := range netease.JsonBody {
+ 					if strings.Contains(key, "/usertool/sound/") {
+ 						modified = unblockSoundEffects(resp.(map[string]interface{}))
+-					} else if *config.BlockAds && strings.Contains(netease.Path, "api/ad/") {
++					} else if *config.BlockAds && strings.Contains(key, "api/ad/") {
++						log.Println("block Ad has been triggered(" + key + ").")
+ 						resp = &common.MapType{}
+ 						modified = true
++					} else if *config.BlockAds && strings.EqualFold(key, "/api/v2/banner/get") {
++						newInfo := make(common.SliceType, 0)
++						info := netease.JsonBody[key]
++						for _, data := range info.(common.MapType)["banners"].(common.SliceType) {
++							if banner, ok := data.(common.MapType); ok {
++								if banner["adid"] == nil {
++									newInfo = append(newInfo, banner)
++								} else {
++									log.Println("block banner Ad has been triggered.")
++									modified = true
++								}
++							}
++						}
++						info.(common.MapType)["banners"] = newInfo
+ 					}
+ 				}
+ 			} else if !netease.Web && (code == "401" || code == "512") && strings.Contains(netease.Path, "manipulate") {
+@@ -220,7 +239,9 @@ func RequestAfter(request *http.Request, response *http.Response, netease *Netea
+ 				// log.Println("NeedRepackage")
+ 				modifiedJson, _ := json.Marshal(netease.JsonBody)
+ 				// log.Println(netease)
+-				// log.Println(string(modifiedJson))
++				if *config.LogWebTraffic {
++					log.Println("modified =>\n" + string(modifiedJson))
++				}
+ 				if netease.Encrypted {
+ 					modifiedJson = crypto.AesEncryptECB(modifiedJson, []byte(aeskey))
+ 				}
+@@ -258,14 +279,24 @@ func disableUpdate(netease *Netease) bool {
+ 			if len(value.(common.SliceType)) > 0 {
+ 				modified = true
+ 				jsonBody["updateFiles"] = make(common.SliceType, 0)
++				log.Println("disable update has been triggered.")
+ 			}
+ 		default:
+ 		}
+ 	}
+-	// modifiedJson, _ := json.Marshal(jsonBody)
+-	// log.Println(string(modifiedJson))
+ 	return modified
+ }
++
++func logResponse(netease *Netease) {
++	if *config.LogWebTraffic {
++		reqUrl := netease.Path
++		jsonBody := netease.JsonBody
++		modifiedJson, _ := json.Marshal(jsonBody)
++		sep := "===================================\n"
++		log.Println(sep + reqUrl + " => \n" + string(modifiedJson) + "\n")
++	}
++}
++
+ func localVIP(netease *Netease) bool {
+ 	if !*config.EnableLocalVip {
+ 		return false

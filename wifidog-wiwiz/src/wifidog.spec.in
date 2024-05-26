@@ -1,0 +1,69 @@
+# $Id$
+
+%define name wifidog
+%define lib_name libhttpd
+%define version @VERSION@
+%define release 1mdk
+
+Summary: The WiFi Guard Dog project is a complete and embeedable captive portal solution for wireless community groups or individuals who wish to open a free HotSpot while still preventing abuse of their Internet connection.
+Name: %{name}
+Version: %{version}
+Release: %{release}
+Source: http://download.sourceforge.net/wifidog/%{name}-%{version}.tar.gz
+Group: Applications/System
+License: GPL
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
+Prereq: /sbin/ldconfig
+
+%description
+The WiFi Guard Dog project is a complete and embeedable captive portal solution for wireless community groups or individuals who wish to open a free HotSpot while still preventing abuse of their Internet connection.
+
+%prep
+%setup -q
+
+%build
+%configure
+%make
+
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT%{_prefix}
+
+
+# Will this overide previous config file?
+mkdir -p $RPM_BUILD_ROOT/etc
+cp wifidog.conf $RPM_BUILD_ROOT/etc
+mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
+cp scripts/init.d/wifidog $RPM_BUILD_ROOT/etc/rc.d/init.d
+chmod +x $RPM_BUILD_ROOT/etc/rc.d/init.d/wifidog
+
+%makeinstall
+
+%post
+/sbin/ldconfig
+%_post_service wifidog
+
+%postun
+/sbin/ldconfig
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%files
+%defattr(-,root,root,0755)
+%doc AUTHORS COPYING ChangeLog INSTALL NEWS README FAQ doc/html
+%config /etc/wifidog.conf 
+%config /etc/rc.d/init.d/wifidog
+%{_bindir}/*
+%{_libdir}/*.a
+%{_libdir}/*.la
+%{_libdir}/*.so*
+%{_includedir}/*
+
+%changelog
+* Sun Aug 29 2004 Guillaume Beaudoin <isf@soli.ca>
+- Littles fixes and libofx leftover.
+- Prefix changed to /usr to match init.d script (define removed).
+* Sat Mar 8 2004 Benoit Grégoire <bock@step.polymtl.ca>
+- Created spec file

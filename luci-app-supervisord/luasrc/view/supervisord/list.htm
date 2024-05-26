@@ -1,0 +1,163 @@
+<%local fs = require "nixio.fs"%>
+<%+cbi/valueheader%>
+<div class="cbi-section-node">
+  <table class="cbi-section-table" id="task-list">
+    <tbody>
+    <tr class="cbi-section-table-titles">
+      <th class="cbi-section-table-cell" style="width:120px!important"><%:Name%></th>
+      <th class="cbi-section-table-cell" style="width:120px!important"><%:Versions%></th>
+      <th class="cbi-section-table-cell" style="width:100px!important"><%:Status%></th>
+      <th class="cbi-section-table-cell" style="width:300px!important"><%:Description%></th>
+      <th class="cbi-section-table-cell"><%:Configuration File%></th>
+      <th class="cbi-section-table-cell" style="width:355px!important"><%:Action%></th>
+    </tr>
+    <% for _,item in pairs(self.list) do %>
+    <tr class="cbi-section-table-row" id="<%=item[2]:gsub('/etc/supervisord/program/', ""):gsub('.ini', "")%>-main">
+    <td class="cbi-value-field">
+      <%=item[1]%>
+    </td>
+    <td class="cbi-value-field">
+      <%=item[3]%>
+    </td>
+    <td class="cbi-value-field" id="<%=item[1]%>-status">
+    </td>
+    <td class="cbi-value-field" id="<%=item[1]%>-description">
+    </td>
+    <td class="cbi-value-field">
+      <textarea class="cbi-input-textarea" id="<%=item[1]%>-text" rows="15" wrap="off"><%=fs.readfile(item[2])%></textarea>
+    </td>
+    <td class="cbi-value-field">
+      <input class="cbi-button cbi-input-apply" style="font-size: 100%;background-color: green!important;" type="button" id="<%=item[1]%>-start" disabled
+             onclick="actions('starttask','<%=item[1]%>')" value="<%:Start%>" size="0">
+      <input class="cbi-button cbi-input-remove" style="font-size: 100%;background-color: #333333!important;" type="button" id="<%=item[1]%>-stop" disabled
+             onclick="actions('stoptask','<%=item[1]%>')" value="<%:Stop%>" size="0">
+      <input class="cbi-button cbi-input-apply" style="font-size: 100%;" type="button"
+             onclick="actions('restarttask','<%=item[1]%>')" value="<%:Reboot%>" size="0">
+      <input class="cbi-button cbi-input-remove" style="font-size: 100%;" type="button"
+             onclick="actions('savetask','<%=item[2]:gsub('/etc/supervisord/program/', ''):gsub('.ini', '')%>')" value="<%:Save%>" size="0">
+      <input class="cbi-button cbi-button-remove" style="font-size: 100%;" type="button"
+             onclick="actions('removetask','<%=item[2]:gsub('/etc/supervisord/program/', ''):gsub('.ini', '')%>')" value="<%:Delete%>" size="0">
+    </td>
+    </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <div class="cbi-section-create">
+    <input type="text" class="cbi-section-create-name" id="addtext" value="" maxlength="20" size="0">
+    <input class="cbi-button cbi-button-add" onclick="addtask()" type="button" value="<%:Add%>" size="0">
+  </div>
+</div>
+<script type="text/javascript">
+<% for _,item in pairs(self.list) do -%>
+XHR.poll(5, '<%=url([[admin]], [[services]], [[supervisord]], [[gettask]])%>', {name: '<%=item[1]%>'},
+	function(x, data) {
+		const st = document.getElementById('<%=item[1]%>-status');
+		const des = document.getElementById('<%=item[1]%>-description');
+		if (data) {
+		    st.innerHTML = data.status;
+		    if (data.status == "Exited" || data.status == "Backoff"){
+		        st.style.color="red"
+		        document.getElementById('<%=item[1]%>-start').disabled = false;
+		        document.getElementById('<%=item[1]%>-stop').disabled = true;
+		    }else{
+		        
+		        st.style.color="green"
+		        document.getElementById('<%=item[1]%>-start').disabled = true;
+		        document.getElementById('<%=item[1]%>-stop').disabled = false;
+		    }
+		    des.innerHTML = data.description;
+		}
+	}
+)
+<% end %>
+
+function addtask(){
+    const name = document.getElementById("addtext").value
+    const isletter = /^[a-zA-Z]+$/.test(name);
+    if (!isletter) {
+        alert("<%:Only letters can be used for names!%>")
+        return
+    }
+    if (name.length > 20) {
+        alert("<%:Cannot exceed 20 characters!%>")
+        return
+    }
+    XHR.get('<%=url([[admin]], [[services]], [[supervisord]], [[addtask]])%>', {name: name},
+    	function(x, data) {
+    	    if (data.code == 0) {
+    		    alert("<%:Creation failed. Please try again!%>")
+                return
+    	    }else if (data.code == 1){
+                const currentRows = document.getElementById("task-list").rows.length; 
+                const insertTr = document.getElementById("task-list").insertRow(currentRows);
+                insertTr.className = 'cbi-section-table-row';
+                insertTr.id = name + '-main';
+                insertTr.innerHTML = "<td class='cbi-value-field'>"+name+"</td><td class='cbi-value-field' id='"+name+"-status'></td><td class='cbi-value-field' id='"+name+"-description'></td><td class='cbi-value-field'><textarea class='cbi-input-textarea' id='"+name+"-text' rows='15' wrap='off'>"+data.data+"</textarea></td><td class='cbi-value-field'><input class='cbi-button cbi-input-apply' style='font-size: 100%;background-color: green!important;' type='button' id='"+name+"-start' disabled onclick='actions(&quot;starttask&quot;,&quot;"+name+"&quot;)' value='<%:Start%>' size='0'><input class='cbi-button cbi-input-remove' style='font-size: 100%;background-color: #333333!important;' type='button' id='"+name+"-stop' disabled onclick='actions(&quot;stoptask&quot;,&quot;"+name+"&quot;)' value='<%:Stop%>' size='0'><input class='cbi-button cbi-input-apply' style='font-size: 100%;' type='button' onclick='actions(&quot;restarttask&quot;,&quot;"+name+"&quot;)' value='<%:Reboot%>' size='0'><input class='cbi-button cbi-input-remove' style='font-size: 100%;' type='button' onclick='actions(&quot;savetask&quot;,&quot;"+name+"&quot;)' value='<%:Save%>' size='0'><input class='cbi-button cbi-button-remove' style='font-size: 100%;' type='button' onclick='actions(&quot;removetask&quot;,&quot;"+name+"&quot;)' value='<%:Delete%>' size='0'></td>";
+                document.getElementById("addtext").value="";
+                XHR.poll(5, '<%=url([[admin]], [[services]], [[supervisord]], [[gettask]])%>', {name: name},
+                	function(x, data) {
+                		const st = document.getElementById(name + '-status');
+                		const des = document.getElementById(name + '-description');
+                		if (data) {
+                		    st.innerHTML = data.status;
+                		    if (data.status == "Exited" || data.status == "Backoff"){
+                		        st.style.color="red"
+                		        document.getElementById(name + '-start').disabled = false;
+                		        document.getElementById(name + '-stop').disabled = true;
+                		    }else{
+                		        st.style.color="green"
+                		        document.getElementById(name + '-start').disabled = true;
+                		        document.getElementById(name + '-stop').disabled = false;
+                		    }
+                		    des.innerHTML = data.description;
+                		}
+                	}
+                )
+    	    }else if (data.code == 2){
+    		    alert("<%:A task with this name already exists!%>")
+                return
+    	    }
+    	}
+    )
+}
+
+
+function actions(mode,name){
+    if (mode=="savetask"){
+        const x = new XHR()
+        x.post('<%=url([[admin]], [[services]], [[supervisord]], [[savetask]])%>', {name: name, data: $('#' + name + '-text').val()},
+        	function(x) {
+        		if (JSON.parse(x.response).code) {
+                    alert("<%:Save success!%>")
+        		}else{
+        		    alert("<%:Save failed!%>")
+        		}
+        	}
+        )
+    }else{
+        if (mode=="removetask") {
+            const ret=confirm("<%:Are you sure you want to delete this task?%>")
+            if (!ret) return
+        }
+        XHR.get('<%=url([[admin]], [[services]], [[supervisord]], [[mode]])%>'.replace("mode",mode), {name: name},
+        	function(x, data) {
+        		if (data.code) {
+        		    if (mode == "starttask"){
+        		    	document.getElementById(name + '-start').disabled = true;
+        		        document.getElementById(name + '-stop').disabled = false;
+        		    }
+        		    if (mode == "stoptask"){
+                        document.getElementById(name + '-start').disabled = false;
+                        document.getElementById(name + '-stop').disabled = true;
+        		    }
+        		    if (mode == "removetask"){
+                        document.getElementById(name + '-main').remove();
+    
+        		    }
+        		}
+        	}
+        )
+    }
+}
+</script>
+<%+cbi/valuefooter%>

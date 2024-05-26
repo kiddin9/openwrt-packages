@@ -1,0 +1,294 @@
+#!/bin/sh /etc/rc.common
+
+START=97
+STOP=05
+USE_PROCD=1
+
+# $section $proto callback $args
+validate_share() {
+    local path
+    local name
+    local rw
+    local ro
+    local proto
+    config_get proto $1 proto
+    echo "$proto" | grep -qFw "$2" || return 0
+    config_get path $1 path
+    [ -z "$path" ] && return 1
+    config_get name $1 name
+    [ -z "$name" ] && name=${path##*/}
+    config_get rw $1 rw
+    config_get ro $1 ro
+
+    shift
+    shift
+    $@ "$path" "$name" "$rw" "$ro"
+}
+
+clean_unishare() {
+    local unishare
+    config_get unishare $1 unishare "0"
+    if [[ $unishare == 1 ]]; then
+        uci delete "$2.$1"
+    fi
+}
+
+clean_unishare_users() {
+    local users=`grep -s '^unishare:' /etc/group | cut -d: -f4 | sed 's/,/ /g'`
+    local username
+    [ -z "$users" ] && return 0
+    for username in $users; do
+        smbpasswd -L -x "$username" >/dev/null 2>&1
+    done
+    lock /var/lock/group
+    sed -i -E 's/^unishare:x:(\d+):.+/unishare:x:\1:/' /etc/group
+    lock -u /var/lock/group
+    users=`grep -s ':unishare:' /etc/passwd | cut -d: -f1`
+    [ -z "$users" ] && return 0
+    lock /var/lock/passwd
+    for username in $users; do
+        sed -i "/^$username:/d" /etc/shadow
+    done
+    sed -i -E '/^[^:]+:x:\d+:\d+:unishare:.*/d' /etc/passwd
+    lock -u /var/lock/passwd
+}
+
+clean_samba() {
+    clean_unishare_users
+    config_load samba4
+	config_foreach clean_unishare sambashare samba4
+}
+
+add_samba_user() {
+    local username
+    local password
+    local gid=$2
+    config_get username $1 username
+    [ -z "$username" ] && return 1
+    user_exists "$username" || user_add "$username" "" $gid "unishare"
+    group_add_user "unishare" "$username"
+    config_get password $1 password
+    if [ -z "$password" ]; then
+        smbpasswd -L -c /var/etc/smb.conf -a -n "$username" >/dev/null 2>&1
+    else
+        { echo "$password" ; echo "$password" ; } | smbpasswd -L -c /var/etc/smb.conf -a -s "$username" >/dev/null 2>&1
+    fi
+}
+
+# $smbcfg $path $name $rw $ro
+add_samba_share() {
+    local rw=$4
+    local ro=$5
+    rw=`echo "$rw" | sed -e 's/everyone/guest nobody @unishare/g' -e 's/users/@unishare/g'`
+    ro=`echo "$ro" | sed -e 's/everyone/guest nobody @unishare/g' -e 's/users/@unishare/g'`
+    {
+        cat <<-EOF
+    add $1 sambashare
+    set $1.@sambashare[-1].unishare=1
+    set $1.@sambashare[-1].path=$2
+    set $1.@sambashare[-1].name=$3
+    set $1.@sambashare[-1].read_only=yes
+    set $1.@sambashare[-1].force_root=1
+    set $1.@sambashare[-1].inherit_owner=yes
+    set $1.@sambashare[-1].create_mask=0666
+    set $1.@sambashare[-1].dir_mask=0777
+    set $1.@sambashare[-1].users='$rw $ro'
+EOF
+        [[ $UNISHARE_G_ANONYMOUS == 1 ]] && echo "    set $1.@sambashare[-1].guest_ok=yes"
+        [ -n "$rw" ] && echo "    set $1.@sambashare[-1].write_list='$rw'"
+        [ -n "$ro" ] && echo "    set $1.@sambashare[-1].read_list='$ro'"
+    } | uci batch >/dev/null
+}
+
+config_samba() {
+    local gid=`group_add_next unishare`
+    [ -z "$gid" ] && return 1
+    [ -f "/var/etc/smb.conf" ] || cat <<-EOF >/var/etc/smb.conf
+[global]
+	security = user
+	null passwords = yes
+	passdb backend = smbpasswd
+EOF
+    config_foreach add_samba_user user $gid
+    config_foreach validate_share share samba add_samba_share samba4
+}
+
+reconfig_samba() {
+    config_samba || { uci revert samba4; return 1; }
+    uci commit samba4
+}
+
+# $path $name $rw $ro
+add_webdav_share() {
+    local rw="$3"
+    local ro="$4"
+    local u
+    local var
+    local v
+    for u in $rw; do
+        var="UNISHARE_DAV_${u}_rw"
+        eval "v=\$$var"
+        export -n "$var=${v:+$v }$name"
+    done
+    for u in $ro; do
+        var="UNISHARE_DAV_${u}_ro"
+        eval "v=\$$var"
+        export -n "$var=${v:+$v }$name"
+    done
+    ln -s "$path" "/var/run/unishare/root/$name"
+}
+
+clean_webdav_user() {
+    local username
+    config_get username $1 username
+    [ -z "$username" ] && return 0
+    export -n "UNISHARE_DAV_${username}_rw="
+    export -n "UNISHARE_DAV_${username}_ro="
+}
+
+add_webdav_user() {
+    local username
+    local password
+    config_get username $1 username
+    [ -z "$username" ] && return 1
+    config_get password $1 password
+    echo "  - username: $username"
+    echo "    password: $password"
+    echo "    rules:"
+    local v
+    local r
+    eval "v=\$UNISHARE_DAV_${username}_rw"
+    for r in $v; do
+        echo "      - path: /$r"
+        echo "        modify: true"
+    done
+    for r in $UNISHARE_DAV_users_rw; do
+        echo "      - path: /$r"
+        echo "        modify: true"
+    done
+    eval "v=\$UNISHARE_DAV_${username}_ro"
+    for r in $v; do
+        echo "      - path: /$r"
+        echo "        allow: true"
+    done
+    for r in $UNISHARE_DAV_users_ro; do
+        echo "      - path: /$r"
+        echo "        allow: true"
+    done
+}
+
+config_webdav_header() {
+    local r
+    local anonymous=false
+    [[ $UNISHARE_G_ANONYMOUS == 1 ]] && anonymous=true
+    cat <<-EOF
+# Server related settings
+address: 0.0.0.0
+port: $UNISHARE_G_DAVPORT
+auth: true
+anonymous: $anonymous
+tls: false
+cert: cert.pem
+key: key.pem
+prefix: /
+no_sniff: true
+debug: false
+
+# Default user settings (will be merged)
+scope: /var/run/unishare/root
+modify: false
+rules:
+EOF
+    for r in $UNISHARE_DAV_everyone_rw; do
+        echo "  - path: /$r"
+        echo "    modify: true"
+    done
+    for r in $UNISHARE_DAV_everyone_ro; do
+        echo "  - path: /$r"
+        echo "    allow: true"
+    done
+    cat <<-EOF
+  - regex: true
+    allow: false
+    path: ^/.+
+  - regex: false
+    allow: true
+    path: /
+
+# CORS configuration
+cors:
+  enabled: true
+  credentials: true
+  allowed_headers:
+    - Depth
+  allowed_hosts:
+    - http://localhost:$UNISHARE_G_DAVPORT
+  allowed_methods:
+    - GET
+  exposed_headers:
+    - Content-Length
+    - Content-Range
+
+users:
+EOF
+}
+
+config_webdav() {
+    rm -rf /var/run/unishare 2>/dev/null
+    mkdir -p /var/run/unishare/root || return 1
+    config_foreach clean_webdav_user user
+    config_foreach validate_share share webdav add_webdav_share
+    { config_webdav_header ; config_foreach add_webdav_user user ; } > /var/run/unishare/webdav.yml
+}
+
+global_config() {
+    local enabled
+    local anonymous
+    local webdav_port
+    config_get enabled $1 enabled
+    config_get anonymous $1 anonymous
+    config_get webdav_port $1 webdav_port
+    export -n "UNISHARE_G_ENABLED=$enabled"
+    export -n "UNISHARE_G_ANONYMOUS=$anonymous"
+    export -n "UNISHARE_G_DAVPORT=$webdav_port"
+}
+
+boot() {
+    export -n ONBOOT=1
+    start "$@"
+}
+
+start_service() {
+    clean_samba
+    config_load unishare
+    config_foreach global_config global
+    [ "$UNISHARE_G_ENABLED" = "1" ] || {
+        uci commit samba4
+        [ "$ONBOOT" = "1" ] || /etc/init.d/samba4 reload
+        return 0
+    }
+    [ -z "$UNISHARE_G_DAVPORT" ] && UNISHARE_G_DAVPORT=8080
+    reconfig_samba || return 1
+    [ "$ONBOOT" = "1" ] || /etc/init.d/samba4 reload
+    config_webdav || return 1
+
+    # start webdav2 daemon
+    procd_open_instance
+    procd_set_param command /usr/sbin/webdav2 -c /var/run/unishare/webdav.yml
+    procd_set_param respawn
+    procd_set_param file /var/run/unishare/webdav.yml
+    procd_set_param limits nofile=16384
+    procd_close_instance
+}
+
+service_stopped() {
+    clean_samba
+    [ `uci changes samba4 | wc -l` -gt 0 ] && {
+        uci commit samba4
+        /etc/init.d/samba4 reload
+    }
+}
+
+service_triggers() {
+	procd_add_reload_trigger "unishare"
+}

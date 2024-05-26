@@ -1,0 +1,13 @@
+Index: accel-ppp-1.11.2/accel-pppd/ctrl/l2tp/l2tp.c
+===================================================================
+--- accel-ppp-1.11.2.orig/accel-pppd/ctrl/l2tp/l2tp.c
++++ accel-ppp-1.11.2/accel-pppd/ctrl/l2tp/l2tp.c
+@@ -843,7 +843,7 @@ static void l2tp_tunnel_free_sessions(st
+ 	void *sessions = conn->sessions;
+ 
+ 	conn->sessions = NULL;
+-	tdestroy(sessions, (__free_fn_t)l2tp_session_free);
++	tdestroy(sessions, l2tp_session_free);
+ 	/* Let l2tp_session_free() handle the session counter and
+ 	 * the reference held by the tunnel.
+ 	 */

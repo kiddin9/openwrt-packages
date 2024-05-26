@@ -1,0 +1,20 @@
+#!/bin/sh
+
+if [[ "`docker container inspect -f '{{ (index .Mounts 0).Destination }}' memos`" = "/config" ]]; then
+    echo "fix script bug"
+    config_path="`docker container inspect -f '{{ (index .Mounts 0).Source }}' memos`"
+    echo "backup old data"
+    if [[ -z "$config_path" ]]; then
+        docker start memos 2>/dev/null
+        docker exec memos cp -a /var/opt/memos/. /config/
+        docker stop memos 2>/dev/null
+    else
+        mkdir -p "$config_path"
+        docker stop memos 2>/dev/null
+        docker cp -a memos:/var/opt/memos/. "${config_path%/}/"
+    fi
+    echo "remove old container"
+    docker rm -f memos
+    echo "you should deploy later"
+fi
+exit 0

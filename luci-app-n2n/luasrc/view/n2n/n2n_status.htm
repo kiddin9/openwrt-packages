@@ -1,0 +1,20 @@
+<script type="text/javascript">//<![CDATA[
+XHR.poll(3, '<%=url([[admin]], [[vpn]], [[n2n]], [[status]])%>', null,
+    function(x, data) {
+        var status = document.getElementById('n2n_status');
+        if (data && status) {
+            if (data.running) {
+                status.innerHTML = "<em><b style='color:green;'>N2N VPN <%:RUNNING%></b></em>";
+            } else {
+                status.innerHTML = "<em><b style='color:red;'>N2N VPN <%:NOT RUNNING%></b></em>";
+            }
+        }
+    }
+);
+//]]>
+</script>
+<fieldset class="cbi-section">
+    <p id="n2n_status">
+        <em><%:Collecting data...%></em>
+    </p>
+</fieldset>

@@ -1,0 +1,83 @@
+msgid "Webd Netdisk"
+msgstr "Webd 网盘"
+
+msgid "Official Website"
+msgstr "官网"
+
+msgid "Basic Settings"
+msgstr "基础设置"
+
+msgid "Set the basic settings of Webd"
+msgstr "配置 Webd 的基础设置"
+
+msgid "Listening Port"
+msgstr "监听端口"
+
+msgid "Webd - A lightweight self hosted netdisk"
+msgstr "Webd 是一款轻量级的 (self-hosted) 自建网盘软件, 界面简洁易用, 速度快资源占用低"
+
+msgid "Listen IPv6"
+msgstr "监听 IPv6"
+
+msgid "Listen both IPv4 and IPv6 Address"
+msgstr "同时监听 IPv4 和 IPv6 地址"
+
+msgid "Enable Anonymous Access"
+msgstr "允许匿名访问"
+
+msgid "Anonymous Permission"
+msgstr "匿名访问权限"
+
+msgid "Anonymous access is allowed when enabled (Not Safe)"
+msgstr "启用后将允许匿名用户访问 (不安全)"
+
+msgid "At least one permission must be choosed to allow anonymous access"
+msgstr "若要允许匿名访问则勾选至少一个权限"
+
+msgid "Binary Path"
+msgstr "程序路径"
+
+msgid "Webd binary Path"
+msgstr "Webd 程序路径"
+
+msgid "Config Path"
+msgstr "配置文件路径"
+
+msgid "Webd config Path"
+msgstr "Webd 配置文件路径"
+
+msgid "Local Directory"
+msgstr "本地路径"
+
+msgid "Directory of Webd"
+msgstr "Webd 监听路径"
+
+msgid "Recycle Bin"
+msgstr "回收站"
+
+msgid "Automatically create recycle bin directory"
+msgstr "允许自动创建回收站目录"
+
+msgid "Set the username, password and permissions. Maximum for 2 accounts"
+msgstr "设置用户名和密码, 以及单个用户的权限, 最多支持设置两个账号"
+
+msgid "Read files"
+msgstr "读取文件"
+
+msgid "Obtain file list"
+msgstr "获取文件列表"
+
+msgid "Upload files"
+msgstr "上传文件"
+
+msgid "Remove files"
+msgstr "删除或移动文件"
+
+msgid "Show hidden files"
+msgstr "显示隐藏文件"
+
+msgid "Play media"
+msgstr "播放媒体"
+
+msgid "Append download attribute"
+msgstr "附加下载属性"

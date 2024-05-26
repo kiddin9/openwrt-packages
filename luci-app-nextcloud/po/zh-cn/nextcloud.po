@@ -1,0 +1,38 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "A safe home for all your data. Access & share your files, calendars, contacts, mail & more from any device, on your terms."
+msgstr "所有数据的安全之家。 根据您的条件，从任何设备访问和共享您的文件、日历、联系人、邮件等。"
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Nextcloud status:"
+msgstr "Nextcloud 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Nextcloud is running"
+msgstr "Nextcloud 运行中"
+
+msgid "Nextcloud is not running"
+msgstr "Nextcloud 未运行"
+
+msgid "Open Nextcloud"
+msgstr "打开 Nextcloud"

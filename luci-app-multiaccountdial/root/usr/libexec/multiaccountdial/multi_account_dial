@@ -1,0 +1,210 @@
+#!/bin/sh
+. /lib/functions.sh
+
+
+config_file='/etc/multiaccountdial/config'
+syncdial_num=2
+macvlan_index=0
+command=$1
+track_ip='119.29.29.29 www.baidu.com 114.114.114.114'
+add_mwan=$(uci -q get  multiaccountdial.@base_setting[0].add_mwan)
+dial_num=$(uci -q get  multiaccountdial.@base_setting[0].dial_num)
+if [ "$dial_num" != "" ]; then
+    syncdial_num=$dial_num
+fi
+
+mwan_cfg_add() {
+	#gen mwan3_interface
+	uci set mwan3.${1}=interface
+	uci set mwan3.${1}.enabled=1
+	uci set mwan3.${1}.count=2
+	uci set mwan3.${1}.timeout=2
+	uci set mwan3.${1}.interval=5
+	uci set mwan3.${1}.down=4
+	uci set mwan3.${1}.up=1
+	for i in $chk_ip_list
+	do
+		uci add_list mwan3.${1}.track_ip="$track_ip"
+	done
+	uci set mwan3.${1}.reliability=1
+	uci set mwan3.${1}.initial_state=online
+	uci set mwan3.${1}.family=ipv4
+	uci set mwan3.${1}.track_method=ping
+	uci set mwan3.${1}.size=56
+	uci set mwan3.${1}.failure_interval=5
+	uci set mwan3.${1}.recovery_interval=5
+	uci set mwan3.${1}.flush_conntrack=never
+	#gen mwan3_member
+	uci set mwan3.${1}_m1_w1=member
+	uci set mwan3.${1}_m1_w1.interface=${1}
+	uci set mwan3.${1}_m1_w1.metric=1
+	uci set mwan3.${1}_m1_w1.weight=1
+	#gen mwan3_policy
+	uci add_list mwan3.balanced.use_member=${1}_m1_w1
+}
+
+#删除MWAN负载均衡相关配置
+#$1:接口名称
+mwan_cfg_del() {
+	uci del mwan3.${1}
+	uci del mwan3.${1}_m1_w1
+	uci del_list mwan3.balanced.use_member=${1}_m1_w1
+}
+
+
+
+#$1 parent interface , $2 macvlan_index , $3 vlan_tag
+#会创建一个macvlan接口，ifname为mac_${parent_ifname}
+create_macvlan_if(){
+    local ifname=$1
+    local macvlan_index=$2
+    local vlan_tag=$3
+    local macvlan_name=${ifname}.${vlan_tag}mac${macvlan_index}
+    local config_name=mac_${macvlan_name}
+    echo "create macvlan $macvlan_name with ifname $ifname"
+    uci batch <<EOF
+add network device
+set network.@device[-1].name=$macvlan_name
+set network.@device[-1].device=${ifname}.${vlan_tag}
+set network.@device[-1].type=macvlan
+set network.@device[-1].mode=bridge
+set network.@device[-1].scriptmark=1
+EOF
+uci commit
+}
+
+#$ifname,$index,$account,$password
+add_pppoe_if(){
+    local ifname=$1
+    local index=$2
+    local account=$3
+    local password=$4
+    local metric=$((40+$index))
+echo add pppoe $ifname with account $account and password $password
+    uci batch <<EOF
+set network.vwan$index=interface
+set network.vwan$index.proto=pppoe
+set network.vwan$index.device=$ifname
+set network.vwan$index.username=$account
+set network.vwan$index.password=$password
+set network.vwan$index.metric=$metric
+set network.vwan$index.defaultroute=0
+set network.vwan$index.ipv6=0
+set network.vwan$index.scriptmark=1
+add_list firewall.@zone[1].network=vwan$index
+set dhcp.vwan$index=dhcp
+set dhcp.vwan$index.interface=vwan$index
+set dhcp.vwan$index.ignore=1
+commit network
+commit firewall
+commit dhcp
+EOF
+
+}
+
+remove_device(){
+    local device_cfg=$1
+    uci -q get network.${device_cfg}.scriptmark && {
+        echo remove device ${device_cfg}
+        uci del network.${device_cfg}
+    }
+}
+
+remove_if(){
+    local ifcfg=$1
+    [ ${ifcfg::4} == "vwan" ] && {
+        uci del network.${ifcfg}
+        uci del_list firewall.@zone[1].network=${ifcfg}
+    }
+    mwan_cfg_del ${ifcfg}
+}
+
+remove_vwan(){
+            config_load network
+            config_foreach remove_device device
+            config_foreach remove_if interface
+}
+
+
+add_vwan(){
+for line in `cat $config_file`
+do 
+    #remove comment
+    line=`echo $line | sed 's/#.*$//'`
+    if [ -z "$line" ]; then
+        continue
+    fi
+    #get params split by comma
+    account=`echo $line | awk -F ',' '{print $1}'`
+    password=`echo $line | awk -F ',' '{print $2}'`
+    ifname=`echo $line | awk -F ',' '{print $3}'`
+    vlan_tag=`echo $line | awk -F ',' '{print $4}'`
+    for i in $(seq 1 $syncdial_num)
+    do 
+        
+        create_macvlan_if ${ifname} $macvlan_index $vlan_tag
+        #add devicename to list
+        add_pppoe_if  ${ifname}.${vlan_tag}mac${macvlan_index} $macvlan_index $account $password
+        if [ "$add_mwan" == "1" ]; then
+            mwan_cfg_add vwan${macvlan_index}
+        fi
+        uci commit
+        macvlan_index=$((macvlan_index+1))
+    done
+done
+}
+
+redial_if(){
+    local if_cfg=$1
+    uci -q get network.${if_cfg}.scriptmark && {
+        echo redial interface ${if_cfg}
+        ifdown $if_cfg
+        ifup $if_cfg
+    }   
+}
+
+redial_all(){
+    config_load network
+    config_foreach redial_if interface
+}
+
+count_if(){
+    local if_cfg=$1  
+    uci -q get network.${if_cfg}.scriptmark>/dev/null && {
+        local up=$(ifstatus ${if_cfg} |grep '"up": true,' |wc -l )
+        local down=$(ifstatus ${if_cfg} |grep '"up": false,' |wc -l )
+        if [ $up -eq 1 ];then online=${online}1;fi
+        if [ $down -eq 1 ];then offline=${offline}1;fi
+   }   
+}
+
+count_all(){
+    config_load network
+    config_foreach count_if interface
+}
+
+case $command in
+    "add")
+        add_vwan
+        uci commit network
+        uci commit firewall
+        uci commit mwan3
+        ;;
+    "del")
+        remove_vwan
+        uci commit network
+        uci commit firewall
+        uci commit mwan3
+        ;;
+    "redial")
+        redial_all
+        ;;
+    "count_online")
+        count_all
+        echo 在线:$(echo -e $online | wc -L)
+        echo 离线:$(echo -e $offline | wc -L)
+        ;;
+    *)
+        echo "unknown command $command"
+        ;;
+esac

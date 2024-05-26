@@ -1,0 +1,36 @@
+msgid "System Convenient Tools"
+msgstr "系统便利工具"
+
+msgid "Execute"
+msgstr "执行"
+
+msgid "Some convenient tools which can fix some errors."
+msgstr "一些便利的工具集，方便修复一些问题。"
+
+msgid "Reset rom pkgs"
+msgstr "修复系统软件"
+
+msgid "Turn off IPv6"
+msgstr "关闭 IPv6"
+
+msgid "Full IPv6"
+msgstr "开启 IPv6"
+
+msgid "Half IPv6 (Only Router)"
+msgstr "半 IPv6（仅路由器）"
+
+msgid "Reset qBittorrent Password"
+msgstr "重置 qBittorrent 密码"
+
+msgid "HDD hibernation Status"
+msgstr "查看硬盘休眠"
+
+msgid "Run SpeedTest"
+msgstr "外网测速"
+
+msgid "Select the action to run:"
+msgstr "选择执行的操作："
+
+msgid "Actions"
+msgstr "操作"
+

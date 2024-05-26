@@ -1,0 +1,4 @@
+
+config base
+	option tmp_path '/tmp/natter2'
+	option enable '0'

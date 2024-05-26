@@ -1,0 +1,14 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+    delete firewall.wxedge
+    set firewall.wxedge=rule
+    set firewall.wxedge.name="wxedge"
+    set firewall.wxedge.target="ACCEPT"
+    set firewall.wxedge.src="wan"
+    set firewall.wxedge.dest_port="1024-65535"
+    set firewall.wxedge.enabled="0"
+    commit firewall
+EOF
+
+exit 0

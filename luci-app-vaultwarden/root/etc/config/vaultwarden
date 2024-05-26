@@ -1,0 +1,8 @@
+config main
+	option 'http_port' '8002'
+	option 'notify_port' ''
+  option 'admin_token' ''
+  option 'signup_allowed' '0'
+	option 'image_name' 'vaultwarden/server:latest'
+	option 'config_path' ''
+

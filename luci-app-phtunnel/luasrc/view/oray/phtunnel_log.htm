@@ -1,0 +1,17 @@
+<%+header%>
+
+<%
+require("luci.sys")
+require("luci.model.uci")
+
+local uci = luci.model.uci.cursor()
+local log_file = uci:get("phtunnel", "log", "path")
+
+if not log_file or log_file == "" then
+	log_file = "/var/log/oraybox/phtunnel.log"
+end
+%>
+
+<%=string.gsub(luci.sys.exec("tail -n 5000 " .. log_file), "\n", "<br/>")%>
+
+<%+footer%>

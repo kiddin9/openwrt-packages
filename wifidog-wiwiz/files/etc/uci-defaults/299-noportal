@@ -1,0 +1,47 @@
+#!/bin/sh
+cat >>/etc/config/network <<EOF
+
+config interface 'noportal'
+        option proto 'static'
+        option ipaddr '192.168.66.1'
+        option netmask '255.255.255.0'
+        option type 'bridge'
+EOF
+
+cat >>/etc/config/dhcp <<EOF
+
+config dhcp 'noportal'
+        option start '100'
+        option leasetime '12h'
+        option limit '150'
+        option interface 'noportal'
+EOF
+
+cat >>/etc/config/firewall <<EOF
+
+config zone
+        option output 'ACCEPT'
+        option name 'noportal'
+        option network 'noportal'
+        option input 'ACCEPT'
+        option forward 'ACCEPT'
+
+config forwarding
+        option dest 'wan'
+        option src 'noportal'
+
+config rule
+        option target 'ACCEPT'
+        option dest_port '67-68'
+        option name 'NoPortal DHCP'
+        option proto 'udp'
+        option src 'noportal'
+
+config rule
+        option enabled '1'
+        option target 'ACCEPT'
+        option proto 'tcp udp'
+        option dest_port '53'
+        option name 'NoPortal DNS'
+        option src 'noportal'
+EOF

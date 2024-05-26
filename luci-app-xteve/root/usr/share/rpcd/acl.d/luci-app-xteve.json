@@ -1,0 +1,11 @@
+{
+	"luci-app-xteve": {
+		"description": "Grant UCI access for luci-app-xteve",
+		"read": {
+			"uci": [ "xteve" ]
+		},
+		"write": {
+			"uci": [ "xteve" ]
+		}
+	}
+}

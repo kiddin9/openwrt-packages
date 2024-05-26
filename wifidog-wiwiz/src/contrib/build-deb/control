@@ -1,0 +1,15 @@
+Source: wifidog
+Section: net
+Priority: optional
+Maintainer: Philippe April <philippe@ilesansfil.org>
+
+Package: wifidog
+Architecture: any
+Depends: iptables, modutils, grep, mawk | awk
+Provides: libhttpd
+Description: The WiFi Guard Dog client
+ The WiFi Gaurd Dog project is a complete and embeddable captive portal
+ solution for wireless community groups or individuals who wish to open
+ a free HotSpot while still preventing abuse of their Internet connection.
+ .
+ This package contains only the client part.

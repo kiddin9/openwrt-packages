@@ -1,0 +1,8 @@
+{
+  "phtunnel-luci-app": {
+    "description": "phtunnel luci interface",
+    "read": {
+      "cgi-io": [ "download" ]
+    }
+  }
+}

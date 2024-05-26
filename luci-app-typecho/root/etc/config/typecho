@@ -1,0 +1,4 @@
+config main
+	option 'port' '9080'
+	option 'config_path' ''
+

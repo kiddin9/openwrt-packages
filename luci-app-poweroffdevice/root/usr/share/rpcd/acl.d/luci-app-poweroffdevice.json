@@ -1,0 +1,11 @@
+{
+	"luci-app-poweroffdevice": {
+		"description": "Grant UCI access for luci-app-poweroffdevice",
+		"read": {
+			"uci": [ "poweroffdevice" ]
+		},
+		"write": {
+			"uci": [ "poweroffdevice" ]
+		}
+	}
+}

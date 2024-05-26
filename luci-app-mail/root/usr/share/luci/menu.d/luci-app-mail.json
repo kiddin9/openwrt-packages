@@ -1,0 +1,13 @@
+{
+	"admin/services/mail": {
+		"title": "E-Mail",
+		"order": 90,
+		"action": {
+			"type": "cbi",
+			"path": "mail"
+		},
+		"depends": {
+			"acl": [ "luci-app-mail" ]
+		}
+	}
+}

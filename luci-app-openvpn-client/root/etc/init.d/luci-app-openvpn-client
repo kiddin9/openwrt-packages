@@ -1,0 +1,264 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2021-2022 Lienol <lawlienol@gmail.com>
+
+START=99
+STOP=10
+
+USE_PROCD=1
+PROG=/usr/sbin/openvpn
+
+CONFIG="luci-app-openvpn-client"
+TMP_OVPN_PATH=/var/etc/openvpn-client
+
+start_instance() {
+	local cfgid=${1}
+	stop_instance ${cfgid}
+	local c_enabled=$(uci -q get ${CONFIG}.${cfgid}.enabled)
+	[ "${c_enabled}" -eq 1 ] || return 1
+	
+	local c_server=$(uci -q get ${CONFIG}.${cfgid}.server)
+	[ -n "${c_server}" ] || return 1
+	
+	local c_port=$(uci -q get ${CONFIG}.${cfgid}.port)
+	[ -n "${c_port}" ] || return 1
+	
+	local c_ca="$(uci -q get ${CONFIG}.${cfgid}.ca)"
+	[ -n "${c_ca}" ] || return 1
+	
+	local cfgid=$(uci show ${CONFIG}.${cfgid} | head -n 1 | cut -d '.' -sf 2 | cut -d '=' -sf 1)
+	
+	local c_dev="ovpn_${cfgid}"
+	
+	mkdir -p ${TMP_OVPN_PATH}
+	mkdir -p ${TMP_OVPN_PATH}/${cfgid}
+	
+	echo "${c_ca}" >> ${TMP_OVPN_PATH}/${cfgid}/ca
+	local _ca="ca ca"
+	
+	local c_cert="$(uci -q get ${CONFIG}.${cfgid}.cert)"
+	[ -n "${c_cert}" ] && {
+		echo "${c_cert}" >> ${TMP_OVPN_PATH}/${cfgid}/cert
+		local _cert="cert cert"
+	}
+	
+	local c_key="$(uci -q get ${CONFIG}.${cfgid}.key)"
+	[ -n "${c_key}" ] && {
+		echo "${c_key}" >> ${TMP_OVPN_PATH}/${cfgid}/key
+		local _key="key key"
+	}
+	
+	local c_lzo=$(uci -q get ${CONFIG}.${cfgid}.lzo)
+	[ "${c_lzo}" = "1" ] && local _lzo="comp-lzo"
+	
+	local c_route_nopull=$(uci -q get ${CONFIG}.${cfgid}.route_nopull)
+	[ "${c_route_nopull}" = "1" ] && local _route_nopull="route-nopull"
+	
+	local c_auth=$(uci -q get ${CONFIG}.${cfgid}.auth)
+	[ -n "${c_auth}" ] && {
+		if [ "${c_auth}" = "user_pass" ]; then
+			local c_username=$(uci -q get ${CONFIG}.${cfgid}.username)
+			local c_password=$(uci -q get ${CONFIG}.${cfgid}.password)
+			echo "${c_username}" >> ${TMP_OVPN_PATH}/${cfgid}/auth-user-pass
+			echo "${c_password}" >> ${TMP_OVPN_PATH}/${cfgid}/auth-user-pass
+			local _auth_user_pass="auth-user-pass auth-user-pass"
+		elif [ "${c_auth}" = "tls_auth" ]; then
+			local c_tls_auth="$(uci -q get ${CONFIG}.${cfgid}.tls_auth)"
+			[ -n "${c_tls_auth}" ] && {
+				echo "${c_tls_auth}" >> ${TMP_OVPN_PATH}/${cfgid}/tls-auth
+				local _tls_auth="tls-auth tls-auth"
+			}
+		elif [ "${c_auth}" = "tls_crypt" ]; then
+			local c_tls_crypt="$(uci -q get ${CONFIG}.${cfgid}.tls_crypt)"
+			[ -n "${c_tls_crypt}" ] && {
+				echo "${c_tls_crypt}" >> ${TMP_OVPN_PATH}/${cfgid}/tls-crypt
+				local _tls_crypt="tls-crypt tls-crypt"
+			}
+		fi
+	}
+	
+	local c_proxy=$(uci -q get ${CONFIG}.${cfgid}.proxy)
+	[ -n "${c_proxy}" ] && {
+		local _proxy=""
+		
+		local c_p_username=$(uci -q get ${CONFIG}.${cfgid}.proxy_username)
+		local c_p_password=$(uci -q get ${CONFIG}.${cfgid}.proxy_password)
+		if [ -n "${c_p_username}" ] && [ -n "${c_p_password}" ]; then
+			echo "${c_p_username}" >> ${TMP_OVPN_PATH}/${cfgid}/proxy-auth
+			echo "${c_p_password}" >> ${TMP_OVPN_PATH}/${cfgid}/proxy-auth
+			local _proxy_auth="proxy-auth"
+		fi
+		
+		local c_p_server=$(uci -q get ${CONFIG}.${cfgid}.proxy_server)
+		local c_p_port=$(uci -q get ${CONFIG}.${cfgid}.proxy_port)
+		
+		if [ "${c_proxy}" = "http" ]; then
+			_proxy="http-proxy ${c_p_server} ${c_p_port} ${_proxy_auth}"
+		elif [ "${c_proxy}" = "socks" ]; then
+			_proxy="socks-proxy ${c_p_server} ${c_p_port} ${_proxy_auth}"
+		fi
+	}
+	
+	echo "#!/bin/sh" > ${TMP_OVPN_PATH}/${cfgid}/up.sh
+	echo "#!/bin/sh" > ${TMP_OVPN_PATH}/${cfgid}/down.sh
+	[ ! -s "/var/etc/${CONFIG}.include" ] && echo '#!/bin/sh' > /var/etc/${CONFIG}.include
+	
+	cat <<-EOF >> ${TMP_OVPN_PATH}/${cfgid}/up.sh
+		eval "\$(ipcalc.sh \${ifconfig_local} \${ifconfig_netmask})"
+		
+		echo "\${IP}" > ${TMP_OVPN_PATH}/${cfgid}/ip
+		echo "\${NETWORK}" > ${TMP_OVPN_PATH}/${cfgid}/network
+		echo "\${PREFIX}" > ${TMP_OVPN_PATH}/${cfgid}/mask
+		
+		${TMP_OVPN_PATH}/${cfgid}/iptables_add.sh
+	EOF
+	
+	cat <<-EOF >> ${TMP_OVPN_PATH}/${cfgid}/down.sh
+		ifup ovpn_${cfgid} >/dev/null 2>&1
+		ifdown ovpn_${cfgid} >/dev/null 2>&1
+		
+		${TMP_OVPN_PATH}/${cfgid}/iptables_del.sh
+	EOF
+	
+	cat <<-EOF >> ${TMP_OVPN_PATH}/${cfgid}/iptables_add.sh
+		${TMP_OVPN_PATH}/${cfgid}/iptables_del.sh
+		#允许服务端配置静态路由表访问内网
+		iptables -t nat -I POSTROUTING -s \$(cat ${TMP_OVPN_PATH}/${cfgid}/network)/\$(cat ${TMP_OVPN_PATH}/${cfgid}/mask) -m comment --comment "${c_dev}" -j MASQUERADE
+		iptables -t nat -I POSTROUTING -o ${c_dev} -m comment --comment "${c_dev}" -j MASQUERADE
+		iptables -I FORWARD -i ${c_dev} -m comment --comment "${c_dev}" -j ACCEPT
+		iptables -I FORWARD -o ${c_dev} -m comment --comment "${c_dev}" -j ACCEPT
+	EOF
+	
+	cat <<-EOF >> ${TMP_OVPN_PATH}/${cfgid}/iptables_del.sh
+		ipt_del() {
+			for i in \$(seq 1 \$(\$1 -nL \$2 | grep -c "${c_dev}")); do
+				local index=\$(\$1 --line-number -nL \$2 | grep "${c_dev}" | head -1 | awk '{print \$1}')
+				\$1 -w -D \$2 \$index 2>/dev/null
+			done
+		}
+		ipt_del "iptables" "FORWARD"
+		ipt_del "iptables -t nat" "POSTROUTING"
+	EOF
+	
+	cat <<-EOF >> /var/etc/${CONFIG}.include
+		${TMP_OVPN_PATH}/${cfgid}/iptables_add.sh
+	EOF
+	
+	local c_routes=$(uci -q get ${CONFIG}.${cfgid}.routes)
+	[ -n "${c_routes}" ] && {
+		for c_route in ${c_routes}; do
+			local c_network=$(echo -n "${c_route}" | awk -F ',' '{print $1}')
+			local c_gateway=$(echo -n "${c_route}" | awk -F ',' '{print $2}')
+			if [ -n "${c_gateway}" ]; then
+				echo "route add -net ${c_network} gw ${c_gateway} dev ${c_dev} >/dev/null 2>&1" >> ${TMP_OVPN_PATH}/${cfgid}/up.sh
+				echo "route del -net ${c_network} gw ${c_gateway} dev ${c_dev} >/dev/null 2>&1" >> ${TMP_OVPN_PATH}/${cfgid}/down.sh
+			else
+				echo "route add -net ${c_network} dev ${c_dev} >/dev/null 2>&1" >> ${TMP_OVPN_PATH}/${cfgid}/up.sh
+				echo "route del -net ${c_network} dev ${c_dev} >/dev/null 2>&1" >> ${TMP_OVPN_PATH}/${cfgid}/down.sh
+			fi
+		done
+	}
+	
+	chmod 0755 ${TMP_OVPN_PATH}/${cfgid}/*.sh
+	
+	cat <<-EOF >> ${TMP_OVPN_PATH}/${cfgid}/client.conf
+		client
+		float
+		dev ${c_dev}
+		dev-type $(uci -q get ${CONFIG}.${cfgid}.dev)
+		remote ${c_server} ${c_port}
+		proto $(uci -q get ${CONFIG}.${cfgid}.proto)
+		${_ca}
+		${_cert}
+		${_key}
+		${_proxy}
+		resolv-retry infinite
+		nobind
+		persist-key
+		persist-tun
+		auth-nocache
+		${_auth_user_pass}
+		${_tls_auth}
+		${_tls_crypt}
+		${_lzo}
+		${_route_nopull}
+		verb 3
+		
+		up up.sh
+		down down.sh
+		script-security 3
+		log         openvpn.log
+		log-append  openvpn.log
+		$(uci -q get ${CONFIG}.${cfgid}.extra_config)
+	EOF
+	
+	sed -i '/^\s*$/d' ${TMP_OVPN_PATH}/${cfgid}/client.conf >/dev/null 2>&1
+	
+	procd_open_instance "${CONFIG}_${cfgid}"
+	procd_set_param command "${PROG}"	\
+		--cd "${TMP_OVPN_PATH}/${cfgid}" \
+		--config "client.conf"
+	procd_set_param file "${TMP_OVPN_PATH}/${cfgid}/client.conf"
+	procd_set_param term_timeout 15
+	procd_set_param respawn
+	procd_append_param respawn 3600
+	procd_append_param respawn 5
+	procd_append_param respawn -1
+	procd_close_instance
+}
+
+stop_instance() {
+	local cfgid=${1}
+	[ -d "${TMP_OVPN_PATH}/${cfgid}" ] && {
+		"${TMP_OVPN_PATH}/${cfgid}/down.sh" >/dev/null 2>&1
+	}
+	top -bn1 | grep "${TMP_OVPN_PATH}/${cfgid}" | grep -v "grep" | awk '{print $1}' | xargs kill -2 >/dev/null 2>&1
+	sed -i "/${cfgid}/d" /var/etc/${CONFIG}.include >/dev/null 2>&1
+	rm -rf ${TMP_OVPN_PATH}/${cfgid}
+}
+
+start_instance_all() {
+	local _clients=$(uci -q show ${CONFIG} | grep "=clients" | cut -d '.' -sf2 | cut -d '=' -sf 1)
+	[ -n "${_clients}" ] && {
+		mkdir -p ${TMP_OVPN_PATH}
+		for _client in ${_clients}; do
+			start_instance ${_client}
+		done
+	}
+}
+
+stop_instance_all() {
+	[ -d "${TMP_OVPN_PATH}" ] && {
+		for cfgid in $(ls ${TMP_OVPN_PATH}); do
+			"${TMP_OVPN_PATH}/${cfgid}/down.sh" >/dev/null 2>&1
+		done
+	}
+	top -bn1 | grep "${TMP_OVPN_PATH}" | grep -v "grep" | awk '{print $1}' | xargs kill -2 >/dev/null 2>&1
+	rm -rf /var/etc/${CONFIG}.include
+	rm -rf ${TMP_OVPN_PATH}
+}
+
+start_service() {
+	local cfgid=${1}
+	if [ -n "${cfgid}" ]; then 
+		start_instance ${cfgid}
+	else
+		start_instance_all 
+	fi
+}
+
+stop_service() {
+	local cfgid=${1}
+	if [ -n "${cfgid}" ]; then 
+		stop_instance ${cfgid}
+	else
+		stop_instance_all 
+	fi
+}
+
+reload_service() {
+	restart
+}
+
+service_triggers() {
+	procd_add_reload_trigger "${CONFIG}"
+}

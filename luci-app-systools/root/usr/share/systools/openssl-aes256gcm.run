@@ -1,0 +1,4 @@
+#!/bin/bash
+
+openssl speed -evp aes-256-gcm
+

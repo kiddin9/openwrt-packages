@@ -1,0 +1,192 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+USE_PROCD=1
+
+NAME=natmap
+PROG=/usr/bin/$NAME
+
+STATUS_PATH=/var/run/natmap
+
+load_interfaces() {
+	config_get interface "$1" interface
+	config_get natmap_enable "$1" natmap_enable 1
+
+	[ "${natmap_enable}" = "1" ] && interfaces=" ${interface} ${interfaces}"
+}
+
+validate_section_natmap() {
+	uci_load_validate "${NAME}" natmap "$1" "$2" \
+		'natmap_enable:bool:0' \
+		'general_ip_address_family:string' \
+		'general_nat_protocol:string' \
+		'general_wan_interface:string' \
+		'general_nat_name:string' \
+		'general_interval:uinteger' \
+		'general_stun_server:host' \
+		'general_http_server:host' \
+		'general_bind_port:port' \
+		'forward_enable:bool:0' \
+		'forward_target_ip:ip4addr' \
+		'forward_target_port:port' \
+		'forward_mode:string' \
+		'forward_firewall_target_interface:string' \
+		'forward_ikuai_web_url:string' \
+		'forward_ikuai_username:string' \
+		'forward_ikuai_password:string' \
+		'forward_ikuai_mapping_protocol:string' \
+		'forward_ikuai_mapping_wan_interface:string' \
+		'forward_advanced_enable:bool:0' \
+		'forward_advanced_max_retries:uinteger:0' \
+		'forward_advanced_sleep_time:uinteger:0' \
+		'notify_enable:bool:0' \
+		'notify_mode:string' \
+		'notify_telegram_bot_chat_id:string' \
+		'notify_telegram_bot_token:string' \
+		'notify_telegram_bot_proxy:string' \
+		'notify_pushplus_token:string' \
+		'notify_serverchan_sendkey:string' \
+		'notify_serverchan_advanced_enable:bool:0' \
+		'notify_serverchan_advanced_url:string' \
+		'notify_gotify_url:string' \
+		'notify_gotify_token:string' \
+		'notify_gotify_priority:uinteger' \
+		'notify_advanced_enable:bool:0' \
+		'notify_advanced_max_retries:uinteger:0' \
+		'notify_advanced_sleep_time:uinteger:0' \
+		'link_enable:bool:0' \
+		'link_mode:string' \
+		'link_emby_url:string' \
+		'link_emby_api_key:string' \
+		'link_emby_use_https:bool:0' \
+		'link_emby_update_host_with_ip:bool:0' \
+		'link_qb_web_url:string' \
+		'link_qb_username:string' \
+		'link_qb_password:string' \
+		'link_qb_ipv6_address:ip6addr' \
+		'link_qb_allow_ipv6:bool:0' \
+		'link_tr_rpc_url:string' \
+		'link_tr_username:string' \
+		'link_tr_password:string' \
+		'link_tr_allow_ipv6:bool:0' \
+		'link_tr_ipv6_address:ip6addr' \
+		'link_cloudflare_token:string' \
+		'link_cloudflare_zone_id:string' \
+		'link_cloudflare_origin_rule_name:string' \
+		'link_cloudflare_redirect_rule_name:string' \
+		'link_cloudflare_redirect_rule_target_url:string' \
+		'link_cloudflare_ddns_type:string' \
+		'link_cloudflare_ddns_domain:host' \
+		'link_advanced_enable:bool:0' \
+		'link_advanced_max_retries:uinteger:0' \
+		'link_advanced_sleep_time:uinteger:0' \
+		'custom_script_enable:bool:0' \
+		'custom_script_path:file'
+}
+
+natmap_instance() {
+	[ "$2" = 0 ] || {
+		echo "validation failed"
+		return 1
+	}
+
+	[ "${natmap_enable}" = 0 ] && return 1
+
+	procd_open_instance "$1"
+	procd_set_param command "$PROG" \
+		${general_interval:+-k "$general_interval"} \
+		${general_stun_server:+-s "$general_stun_server"} \
+		${general_http_server:+-h "$general_http_server"} \
+		${general_bind_port:+-b "$general_bind_port"}
+
+	[ "${general_ip_address_family}" = ipv4 ] && procd_append_param command -4
+	[ "${general_ip_address_family}" = ipv6 ] && procd_append_param command -6
+	[ "${general_nat_protocol}" = 'udp' ] && procd_append_param command -u
+
+	[ -n "${general_wan_interface}" ] && {
+		local ifname
+
+		network_get_device ifname "$general_wan_interface" || ifname="$general_wan_interface"
+		procd_append_param command -i "$ifname"
+		procd_append_param netdev "$ifname"
+	}
+
+	[ -n "${forward_firewall_target_interface}" ] && {
+		local ifname
+
+		network_get_device ifname "$forward_firewall_target_interface" || ifname="$forward_firewall_target_interface"
+		procd_append_param command -i "$ifname"
+		procd_append_param netdev "$ifname"
+	}
+
+	[ "${forward_enable}" == 1 ] && [ "${forward_mode}" = natmap ] && [ -n "${forward_target_ip}" ] && procd_append_param command -t "$forward_target_ip" -p "$forward_target_port"
+	for e in $EXTRA_ENV; do
+		eval value=\$${e}
+		option_name=$(echo "$e" | tr 'a-z' 'A-Z')
+		if [ -n "$value" ]; then
+			procd_append_param env $option_name="$value"
+		fi
+	done
+
+	# console.log "natmap"
+	procd_append_param command -e /usr/share/natmap/update.sh
+
+	procd_set_param respawn
+	procd_set_param stdout 1
+	procd_set_param stderr 1
+
+	procd_close_instance
+}
+
+clear_status_files() {
+	find "${STATUS_PATH}" -type f -print0 | xargs -0 rm -f --
+}
+
+service_triggers() {
+	local interfaces
+
+	procd_add_reload_trigger "${NAME}"
+
+	config_load "${NAME}"
+	config_foreach load_interfaces natmap
+
+	[ -n "${interfaces}" ] && {
+		for n in $interfaces; do
+			procd_add_reload_interface_trigger $n
+		done
+	}
+
+	procd_add_validation validate_section_natmap
+}
+
+start_service() {
+	. /lib/functions/network.sh
+	config_cb() {
+		[ $# -eq 0 ] && return
+
+		option_cb() {
+			local option="$1"
+
+			EXTRA_ENV="$EXTRA_ENV $option"
+		}
+
+		list_cb() {
+			local name="$1"
+			EXTRA_ENV="$EXTRA_ENV $name"
+		}
+	}
+	mkdir -p "${STATUS_PATH}"
+	clear_status_files
+
+	config_load "${NAME}"
+	config_foreach validate_section_natmap natmap natmap_instance
+}
+
+reload_service() {
+	stop
+	start
+}
+
+service_stopped() {
+	clear_status_files
+}

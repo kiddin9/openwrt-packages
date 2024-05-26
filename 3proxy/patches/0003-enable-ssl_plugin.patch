@@ -1,0 +1,13 @@
+Index: 3proxy/Makefile.Linux
+===================================================================
+--- 3proxy.orig/Makefile.Linux
++++ 3proxy/Makefile.Linux
+@@ -35,7 +35,7 @@ MAKEFILE = Makefile.Linux
+ #LIBS = -lcrypto -lssl -ldl 
+ LIBS = -lcrypto -lssl -ldl -pthread 
+ #PLUGINS = SSLPlugin StringsPlugin TrafficPlugin PCREPlugin TransparentPlugin PamAuth
+-PLUGINS = StringsPlugin TrafficPlugin PCREPlugin TransparentPlugin
++PLUGINS = SSLPlugin StringsPlugin TrafficPlugin PCREPlugin TransparentPlugin
+ 
+ include Makefile.inc
+ 

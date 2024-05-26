@@ -1,0 +1,42 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Memos"
+msgstr "Memos 知识管理"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "Memos is an open-source, self-hosted memo hub with knowledge management and collaboration."
+msgstr "Memos 是一个开源的极简的碎片化知识管理工具。"
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "HTTP Port"
+msgstr "HTTP 端口"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Memos status:"
+msgstr "Memos 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Memos is running"
+msgstr "Memos 运行中"
+
+msgid "Memos is not running"
+msgstr "Memos 未运行"
+
+msgid "Open Memos"
+msgstr "打开 Memos"
+

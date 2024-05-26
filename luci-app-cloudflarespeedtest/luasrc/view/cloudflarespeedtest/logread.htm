@@ -1,0 +1,23 @@
+<%+cbi/valueheader%>
+<input type="checkbox" id="checkbox1" checked><%:Auto refresh%></input>
+<textarea id="logview" class="cbi-input-textarea" style="width: 100%" rows="30" readonly="readonly"></textarea>
+
+<script type="text/javascript">
+    const LOG_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","getlog")%>';
+    
+    function getlog(){
+        XHR.get(LOG_URL, null, function(x, data) {            
+             logview.value = data.log;   
+             if(document.getElementById("checkbox1").checked == true){
+                logview.scrollTop = logview.scrollHeight;
+             }     
+        });
+    }
+    getlog()
+    setInterval(() => { 
+        if(document.getElementById("checkbox1").checked == true){
+            getlog()
+        }
+    }, 2000);
+</script>
+<%+cbi/valuefooter%>

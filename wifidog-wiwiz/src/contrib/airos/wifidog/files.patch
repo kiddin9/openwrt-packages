@@ -1,0 +1,87 @@
+--- SDK.UBNT.v5.2.clean/openwrt/package/ubnt-base-files/files/init	2010-05-14 06:11:06.000000000 -0400
++++ SDK.UBNT.v5.2/openwrt/package/ubnt-base-files/files/init	2010-07-27 12:52:36.087267563 -0400
+@@ -64,7 +64,7 @@ echo "...filesystem init done"
+ # making sure that critical files are in place
+ mkdir -p /etc/rc.d /etc/init.d
+ # forced update
+-for f in inittab rc.d/rc.sysinit rc.d/rc rc.d/rc.stop ppp; do
++for f in inittab rc.d/rc.sysinit rc.d/rc rc.d/rc.stop ppp wifidog.conf wifidog-msg.html ; do
+         cp -f -r /usr/etc/$f /etc/$f
+ done
+ echo "...base ok"
+@@ -139,6 +139,14 @@ if [ -e /sbin/ubntconf ]; then
+ 	/sbin/ubntconf
+ fi
+ 
++#adding wifidog to startup programs
++if [ -f /usr/etc/init.d/wifidog ]; then
++	cp -f /usr/etc/init.d/wifidog /etc/sysinit/wifidog.conf
++	echo "null::respawn:/usr/bin/wifidog -f" >> /etc/inittab
++	echo "wifidog" >> /etc/startup.list
++fi
++
++
+ echo "...running /sbin/init"
+ exec /sbin/init
+ 
+--- SDK.UBNT.v5.2.clean/openwrt/package/ubnt-base-files/files/usr/etc/rc.d/rc.softrestart	2010-05-14 06:11:06.000000000 -0400
++++ SDK.UBNT.v5.2/openwrt/package/ubnt-base-files/files/usr/etc/rc.d/rc.softrestart	2010-07-27 12:03:15.604767622 -0400
+@@ -80,3 +80,10 @@ if [ $# -gt 0 ]; then
+ 			-p /etc/ 2>/dev/null &
+ 	fi
+ fi
++
++#adding wifidog to startup programs
++if [ -f /usr/etc/init.d/wifidog ]; then
++	cp -f /usr/etc/init.d/wifidog /etc/sysinit/wifidog.conf
++	echo "null::respawn:/usr/bin/wifidog -f" >> /etc/inittab
++	echo "wifidog" >> /etc/startup.list
++fi
+
+--- SDK.UBNT.v5.2.clean/openwrt/.config	2010-05-18 05:03:40.000000000 -0400
++++ SDK.UBNT.v5.2/openwrt/.config	2010-07-26 14:59:08.131750309 -0400
+@@ -888,7 +888,7 @@ CONFIG_PACKAGE_hotplug2=y
+ CONFIG_PACKAGE_iptables=y
+ CONFIG_PACKAGE_iptables-mod-conntrack=y
+ CONFIG_PACKAGE_iptables-mod-conntrack-extra=y
+-# CONFIG_PACKAGE_iptables-mod-extra is not set
++CONFIG_PACKAGE_iptables-mod-extra=y
+ CONFIG_PACKAGE_iptables-mod-filter=y
+ # CONFIG_PACKAGE_iptables-mod-imq is not set
+ CONFIG_PACKAGE_iptables-mod-ipopt=y
+@@ -896,7 +896,7 @@ CONFIG_PACKAGE_iptables-mod-ipopt=y
+ # CONFIG_PACKAGE_iptables-mod-ipsec is not set
+ # CONFIG_PACKAGE_iptables-mod-ipset is not set
+ CONFIG_PACKAGE_iptables-mod-nat=y
+-# CONFIG_PACKAGE_iptables-mod-nat-extra is not set
++CONFIG_PACKAGE_iptables-mod-nat-extra=y
+ # CONFIG_PACKAGE_iptables-mod-ulog is not set
+ # CONFIG_PACKAGE_iptables-utils is not set
+ # CONFIG_PACKAGE_ldconfig is not set
+@@ -963,6 +963,7 @@ CONFIG_PACKAGE_php2=y
+ #
+ # Network
+ #
++CONFIG_PACKAGE_wifidog=y
+ 
+ #
+ # Monitoring
+@@ -1149,7 +1150,7 @@ CONFIG_PACKAGE_kmod-ebtables=y
+ CONFIG_PACKAGE_kmod-ipt-core=y
+ CONFIG_PACKAGE_kmod-ipt-conntrack=y
+ CONFIG_PACKAGE_kmod-ipt-conntrack-extra=y
+-# CONFIG_PACKAGE_kmod-ipt-extra is not set
++CONFIG_PACKAGE_kmod-ipt-extra=y
+ CONFIG_PACKAGE_kmod-ipt-filter=y
+ # CONFIG_PACKAGE_kmod-ipt-imq is not set
+ CONFIG_PACKAGE_kmod-ipt-ipopt=y
+@@ -1157,7 +1158,7 @@ CONFIG_PACKAGE_kmod-ipt-ipopt=y
+ # CONFIG_PACKAGE_kmod-ipt-ipsec is not set
+ # CONFIG_PACKAGE_kmod-ipt-ipset is not set
+ CONFIG_PACKAGE_kmod-ipt-nat=y
+-# CONFIG_PACKAGE_kmod-ipt-nat-extra is not set
++CONFIG_PACKAGE_kmod-ipt-nat-extra=y
+ CONFIG_PACKAGE_kmod-ipt-nathelper=y
+ # CONFIG_PACKAGE_kmod-ipt-nathelper-extra is not set
+ # CONFIG_PACKAGE_kmod-ipt-queue is not set
+

@@ -1,0 +1,30 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+USE_PROCD=1
+NAME=sunpanel
+ 
+get_config() {
+  config_get_bool enabled $1 enabled 0
+  config_get config_path $1 config_path
+}
+
+start_service() { 
+  config_load "$NAME"
+  config_foreach get_config "$NAME"
+  [ $enabled != 1 ] && return 1
+  mkdir -p "$config_path"
+  lua /usr/libexec/istorec/sunpanel_conf.lua $NAME /usr/share/$NAME/conf.temp $config_path/conf.ini
+
+  procd_open_instance
+  procd_set_param file $config_path/conf.ini
+  procd_set_param command /usr/sbin/sunpanelbin -cfgPath $config_path
+  procd_set_param stderr 1
+  procd_set_param respawn
+  procd_close_instance
+}
+
+service_triggers() {
+  procd_add_reload_trigger "$NAME"
+}
+

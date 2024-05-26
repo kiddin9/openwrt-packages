@@ -1,0 +1,87 @@
+getinfo() {
+  O=$(sms_tool -d $_DEVICE at "AT+CGMM?")
+  _NAME="Fibocom $(echo "$O" | awk -F[:,] '/^\+CGMM:/{gsub("\"","");print $2}' | xargs)"
+  echo "$_NAME"
+}
+
+getsupportedbands() {
+    _DEFAULT_LTE_BANDS="1 2 3 4 5 7 8 12 13 14 17 18 19 20 25 26 28 29 30 32 34 38 39 40 41 42 43 46 48 66 71"
+    echo "$_DEFAULT_LTE_BANDS"
+}
+
+getbands() {
+    # +GTACT: 20,6,3,101,102,103,104,105,107,108,112,113,114,117,118,119,120,125,126,128,129,130,132,134,138,139,140,141,142,143,146,148,166,171
+
+    O=$(sms_tool -d $_DEVICE at "AT+GTACT?")
+    BANDS=$(echo "$O" | awk -F: '/^\+GTACT:/{gsub(","," ");print $2}')
+    for BAND in $BANDS; do
+        if [ $BAND -gt 100 ] && [ $BAND -lt 200 ]; then
+            echo -n "$((BAND - 100)) "
+        fi
+    done
+    echo ""
+}
+
+setbands() {
+    BANDS="$1"
+
+    T=""
+    if [ "$BANDS" = "default" ]; then
+        T="0"
+    else
+        for BAND in $BANDS; do
+            case $BAND in
+                ''|*[!0-9]*) continue ;;
+            esac
+            [ -n "$T" ] && T="${T},"
+            T="${T}$((BAND + 100))"
+        done
+    fi
+
+    if [ -n "$T" ]; then
+        O=$(sms_tool -d $_DEVICE at "AT+GTACT?")
+        MODE=$(echo "$O" | awk -F[:,] '/\+GTACT:/{print $2","$3","$4}'| xargs)
+        sms_tool -d $_DEVICE at "AT+GTACT=$MODE,$T"
+    fi
+}
+
+getsupportedbands5gsa() {
+    _DEFAULT_5GSA_BANDS="1 2 3 5 7 8 20 25 28 30 38 40 41 48 66 71 77 78 79"
+    echo "$_DEFAULT_5GSA_BANDS"
+}
+
+getbands5gsa() {
+    # +GTACT: 20,6,3,501,502,503,505,507,508,5020,5025,5028,5030,5038,5040,5041,5048,5066,5071,5077,5078,5079
+
+    O=$(sms_tool -d $_DEVICE at "AT+GTACT?")
+    BANDS=$(echo "$O" | awk -F: '/^\+GTACT:/{gsub(","," ");print $2}')
+    for BAND in $BANDS; do
+        if [ $BAND -gt 500 ] && [ $BAND -lt 5100 ]; then
+            echo -n "$(echo "$BAND" | sed 's/^50//g') "
+        fi
+    done
+    echo ""
+}
+
+setbands5gsa() {
+    BANDS="$1"
+
+    T=""
+    if [ "$BANDS" = "default" ]; then
+        T="0"
+    else
+        for BAND in $BANDS; do
+            case $BAND in
+                ''|*[!0-9]*) continue ;;
+            esac
+            [ -n "$T" ] && T="${T},"
+            T="${T}50${BAND}"
+        done
+    fi
+
+    if [ -n "$T" ]; then
+        O=$(sms_tool -d $_DEVICE at "AT+GTACT?")
+        MODE=$(echo "$O" | awk -F[:,] '/\+GTACT:/{print $2","$3","$4}'| xargs)
+        sms_tool -d $_DEVICE at "AT+GTACT=$MODE,$T"
+    fi
+}

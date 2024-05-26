@@ -1,0 +1,14 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "MyMind is mind editor."
+msgstr "MyMind 是一个在线思维导图编辑器。"
+
+msgid "Open MyMind"
+msgstr "打开 MyMind"
+
+msgid "MyMind Web"
+msgstr "MyMind 网页"

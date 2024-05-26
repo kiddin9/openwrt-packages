@@ -1,0 +1,11 @@
+{
+	"luci-app-pptp-server": {
+		"description": "Grant UCI access for luci-app-pptp-server",
+		"read": {
+			"uci": [ "pptpd" ]
+		},
+		"write": {
+			"uci": [ "pptpd" ]
+		}
+	}
+}

@@ -1,0 +1,38 @@
+#!/bin/sh
+
+. /usr/lib/autorepeater/autorepeater_functions.sh
+SECTION_ID="global"
+VERBOSE_MODE=${2:-1}
+
+network_get_ipaddr _ipv4 ${INTERFACE}
+network_get_gateway _ipgw ${INTERFACE}
+[ "${_ipv4}" = "0.0.0.0" -o "${_ipgw}" = "0.0.0.0" -o -z "${_ipv4}" -o -z "${_ipgw}" ] && exit 0
+
+config_load "autorepeater"
+load_all_config_options "autorepeater" "${SECTION_ID}"
+ERR_LAST=$?
+DATFILE="${RUNDIR}/${SECTION_ID}.dat"
+ERRFILE="${RUNDIR}/${SECTION_ID}.err"
+LOGFILE="${LOGDIR}/${SECTION_ID}.log"
+[ ${VERBOSE_MODE} -gt 1 -a -f ${LOGFILE} ] && rm -f ${LOGFILE}
+
+[ ${ERR_LAST} -ne 0 ] && {
+	[ ${VERBOSE_MODE} -le 1 ] && VERBOSE_MODE=2
+	write_log  7 "************ ************** ************** **************"
+	write_log  5 "UPnP PID '$$' started at $(eval ${DATE_PROG})"
+	write_log  7 "uci configuration:\n$(uci -q show autorepeater | grep '=autorepeater' | sort)"
+	write_log 14 "Service section '${SECTION_ID}' not defined"
+}
+
+set_interface() {
+	[ "x${1}" == "x${INTERFACE}" ] && __IFACE="${INTERFACE}"
+}
+
+if [ "$ACTION" = "ifup" ] ; then
+	__IFACE=""
+	config_list_foreach "${SECTION_ID}" "interface" set_interface
+	[ -z "${__IFACE}" ] && return 0
+	write_log 5 "* UPnP mapping trigger by iface event [ ${INTERFACE} - ${ACTION} ]"
+	portmapping_trying "pnp-mapping" "${SECTION_ID}" "root_url"
+fi
+

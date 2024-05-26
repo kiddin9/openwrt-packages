@@ -1,0 +1,43 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8"
+
+msgid "Access AP / Modem"
+msgstr "访问AP/光猫"
+
+msgid "Allows clients in the local network to access AP or modem on different subnet."
+msgstr "让局域网客户端访问不同子网的AP或光猫"
+
+msgid "Global Settings"
+msgstr "全局设置"
+
+msgid "Interface Settings"
+msgstr "网络接口配置"
+
+msgid "AP on LAN side"
+msgstr "位于LAN口的AP"
+
+msgid "AP / Modem on WAN side"
+msgstr "位于WAN口的AP或光猫"
+
+msgid "Virtual IP"
+msgstr "虚拟IP地址"
+
+msgid ""
+"Here add the IP address of the same subnet as the target device, but not the same as the target device. "
+"<br>Do not add IPs already used by other devices."
+msgstr ""
+"这里添加与目标设备同子网的IP地址，但不能与目标设备IP完全相同。<br>不要添加其他设备正在使用的IP。"
+
+msgid ""
+"<br>For example, you want to access the AP, its IP address is 192.168.31.1, but the client and the router are not in its subnet, so it cannot be connected. "
+"Then you can add 192.168.31.254 here, the client will be able to access 192.168.31.1 after saving and applying."
+msgstr "<br>例如，你想要访问AP后台，它的IP地址是192.168.31.1，但是由于现在客户端和路由器都不在它的子网，无法连接。那么可以在这里添加192.168.31.254，保存并应用之后客户端就能访问192.168.31.1了。"
+
+msgid ""
+"<br>For example, you want to access the modem, its IP address is 192.168.1.1, but because it uses PPPoE bridge mode, so it cannot be connected. "
+"Then you can add 192.168.1.254 here, the client will be able to access 192.168.1.1 after saving and applying."
+msgstr "<br>例如，你想要访问光猫后台，它的IP地址是192.168.1.1，但是由于它使用PPPoE桥接模式，无法连接。那么可以在这里添加192.168.1.254，保存并应用之后客户端就能访问192.168.1.1了。"
+
+msgid "Supports \"IP/MASK\", \"IP/PREFIX\", and pure \"IP\" format, pure \"IP\" assumes a prefix of 24 bits"
+msgstr "支持“IP/掩码”、“IP/前缀长度”、以及纯“IP”格式，纯“IP”则假设前缀24位"

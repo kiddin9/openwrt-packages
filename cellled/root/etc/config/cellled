@@ -1,0 +1,25 @@
+
+config device
+	option data_type 'qmi'
+	option device_qmi '/dev/cdc-wdm0'
+	option timeout '5'
+
+config rssi_led
+	option led 'blue:sys'
+	option rssi_min '20'
+	option rssi_max '39'
+
+config rssi_led
+        option led 'blue:wlan0'
+        option rssi_min '40'
+        option rssi_max '59'
+
+config rssi_led
+        option led 'blue:wlan1'
+        option rssi_min '60'
+        option rssi_max '79'
+
+config rssi_led
+        option led 'blue:net'
+        option rssi_min '80'
+        option rssi_max '100'

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+openssl speed -evp chacha20-poly1305
+

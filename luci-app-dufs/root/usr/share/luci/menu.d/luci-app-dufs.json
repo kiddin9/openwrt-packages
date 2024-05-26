@@ -1,0 +1,13 @@
+{
+	"admin/services/dufs": {
+		"title": "Dufs",
+		"action": {
+			"type": "view",
+			"path": "dufs"
+		},
+		"depends": {
+			"acl": [ "luci-app-dufs" ],
+			"uci": { "dufs": true }
+		}
+	}
+}

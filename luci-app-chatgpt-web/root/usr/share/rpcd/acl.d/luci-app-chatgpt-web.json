@@ -1,0 +1,11 @@
+{
+	"luci-app-chatgpt-web": {
+		"description": "Grant UCI access for luci-app-chatgpt-web",
+		"read": {
+			"uci": [ "chatgpt-web" ]
+		},
+		"write": {
+			"uci": [ "chatgpt-web" ]
+		}
+	}
+}

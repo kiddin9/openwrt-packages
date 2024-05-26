@@ -1,0 +1,56 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "Plex is an streaming media service and a client–server media player platform, made by Plex, Inc."
+msgstr "Plex 是一个多媒体串流平台。"
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Plex status:"
+msgstr "Plex 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Plex is running"
+msgstr "Plex 运行中"
+
+msgid "Plex is not running"
+msgstr "Plex 未运行"
+
+msgid "Open Plex"
+msgstr "打开 Plex"
+
+msgid "Not required, all disk will be mounted under %s"
+msgstr "可不填，所有硬盘都会挂载到 %s 下"
+
+msgid "Plex running in host network, for DLNA application. Port is always 32400 if enabled"
+msgstr "在宿主网络运行 Plex，以支持 DLNA 等应用，例如投屏，如果启用则端口固定为32400"
+
+msgid "The free space of Docker is less than 2GB, which may cause the installation to fail."
+msgstr "Docker 可用空间已不足2GB，可能导致安装失败。"
+
+msgid "Plex Claim Token"
+msgstr "Plex Claim 令牌"
+
+msgid "Obtain token from %s"
+msgstr "从 %s 获取令牌"
+
+msgid "Please make sure there has enough space"
+msgstr "请确保有足够空间"

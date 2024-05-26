@@ -1,0 +1,11 @@
+{
+	"luci-app-airconnect": {
+		"description": "Grant UCI access for luci-app-airconnect",
+		"read": {
+			"uci": [ "airconnect" ]
+		},
+		"write": {
+			"uci": [ "airconnect" ]
+		}
+	}
+}

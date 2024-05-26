@@ -1,0 +1,6 @@
+config main
+	option 'http_port' '2342'
+	option 'image_name' 'photoprism/photoprism'
+	option 'config_path' ''
+	option 'password' ''
+

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete firewall.homeredirect
+	set firewall.homeredirect=include
+	set firewall.homeredirect.type=script
+	set firewall.homeredirect.path=/etc/homeredirect/firewall.include
+	set firewall.homeredirect.reload=1
+EOF
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@homeredirect[-1]
+	add ucitrack homeredirect
+	set ucitrack.@homeredirect[-1].init=homeredirect
+	commit ucitrack
+EOF
+
+rm -rf /tmp/luci-*cache
+exit 0

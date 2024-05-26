@@ -1,0 +1,15 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+START=50
+
+start() {
+	/usr/bin/wifidog-init start
+}
+
+stop() {
+	/usr/bin/wifidog-init stop
+}
+
+status() {
+	/usr/bin/wifidog-init status
+}

@@ -1,0 +1,45 @@
+<html>
+<head>
+<title> </title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Language" content="zh">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="viewport" content="width=device-width; initial-scale=1.0">
+<script>
+function doOnload() {
+var lang = "en";
+var _lang = navigator.language || navigator.browserLanguage;
+  
+if      (_lang.indexOf('en') > -1) lang='en';
+else if (_lang.indexOf('zh') > -1) lang='zh';
+else                               lang='en';
+
+if(lang == "en") {
+	document.getElementById("dvEn").style.display = "";
+	document.getElementById("dvZh").style.display = "none";	
+} else if(lang == "zh") {
+	document.getElementById("dvEn").style.display = "none";
+	document.getElementById("dvZh").style.display = "";	
+}
+
+}
+</script>
+</head>
+
+<body onload="doOnload();">
+<div id="dvEn" style="display:">
+<p>You are seeing the page because it is probable that the internet connection provided by this hotspot is temporarily unavailable.</p>
+<p>If at all possible, please notify the owners of this hotspot that the internet connection is out of service.</p>
+<p>The maintainers of this network are aware of this disruption.  We hope that this situation will be resolved soon.</p>
+<p>In a while please try again.
+</div>
+
+<div id="dvZh" style="display:none">
+<p>现在Internet连接可能暂时中断。</p>
+<p>请联系网络管理员，或稍后重试。</p>
+</div>
+
+</body>
+</html>
+

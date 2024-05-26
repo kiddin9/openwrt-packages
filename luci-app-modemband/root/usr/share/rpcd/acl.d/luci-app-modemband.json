@@ -1,0 +1,25 @@
+{
+	"luci-app-modemband": {
+		"description": "Grant access to LuCI app modemband",
+		"read": {
+   			"cgi-io": [ "exec" ],
+    			"file": {
+				"/usr/bin/modemband.sh": [ "exec" ],
+				"/usr/bin/loaded.sh": [ "exec" ],
+				"/usr/bin/sms_tool": [ "exec" ],
+				"/etc/modemband": [ "read" ],
+				"/usr/share/modemband": [ "read" ],
+				"/usr/share/modemband/*": [ "read" ]
+			},
+			"uci": [ "modemband", "luci-app-modemband" ]
+		},
+		"write": {
+			"file": {
+				"/etc/modemband": [ "write" ],
+				"/usr/share/modemband/*": [ "write" ]
+			},
+			"uci": [ "modemband", "luci-app-modemband" ]
+		}
+	}
+}
+

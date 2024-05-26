@@ -1,0 +1,34 @@
+#!/bin/sh
+
+export PATH=/usr/bin:/sbin:/bin/usr/bin:/sbin:/bin
+export HOME=/root
+export GATEWAY_INTERFACE=
+export REMOTE_HOST=
+export REMOTE_ADDR=
+export SHLVL=
+export QUERY_STRING=
+export HTTP_USER_AGENT=
+export DOCUMENT_ROOT=
+export REMOTE_PORT=
+export HTTP_ACCEPT=
+export SCRIPT_FILENAME=
+export HTTP_HOST=
+export REQUEST_URI=
+export SERVER_SOFTWARE=
+export HTTP_CONNECTION=
+export HTTP_COOKIE=
+export HTTP_ACCEPT_LANGUAGE=
+export SERVER_PROTOCOL=
+export HTTP_ACCEPT_ENCODING=
+export PATH_INFO=
+export REDIRECT_STATUS=
+export REQUEST_METHOD=
+export SERVER_ADDR=
+export PWD=
+export SERVER_PORT=
+export SCRIPT_NAME=
+export SERVER_NAME=
+export TERM=screen-256color
+
+/usr/bin/speedtest --format=json --accept-license --accept-gdpr --servers 2>/dev/null
+

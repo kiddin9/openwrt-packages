@@ -1,0 +1,1 @@
+obj-${CONFIG_RKP_IPID}	+= rkp-ipid.o

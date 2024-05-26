@@ -1,0 +1,12 @@
+callsign=N0CALL
+sendA=0
+sendB=1
+sendC=0
+sendD=0
+sendE=0
+address=127.0.0.1
+language=0
+format=1
+interval=2
+windowX=0
+windowY=0

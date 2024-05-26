@@ -1,0 +1,81 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Pikpak"
+msgstr "PikPak"
+
+msgid "Pikpak WebDAV"
+msgstr "PikPak WebDAV"
+
+msgid "Enable"
+msgstr "启用"
+
+msgid "Pikpak Username"
+msgstr "Pikpak登陆用户名"
+
+msgid "Pikpak Password"
+msgstr "Pikpak登陆密码"
+
+msgid "Host"
+msgstr "监听主机"
+
+msgid "Root Directory"
+msgstr "云盘根目录"
+
+msgid "Host"
+msgstr "监听主机"
+
+msgid "Port"
+msgstr "监听端口"
+
+msgid "Username"
+msgstr "用户名"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "Read Buffer Size"
+msgstr "下载缓冲大小(bytes)"
+
+
+msgid "Write Buffer Size"
+msgstr "上传缓冲大小(bytes)"
+
+
+msgid "Cache Size"
+msgstr "目录缓存大小"
+
+msgid "Cache Expiration Time (seconds)"
+msgstr "目录缓存过期时间（单位为秒）"
+
+msgid "Proxy Url"
+msgstr "代理网址"
+
+msgid "Collecting data..."
+msgstr "获取数据中..."
+
+msgid "RUNNING"
+msgstr "运行中"
+
+msgid "NOT RUNNING"
+msgstr "未运行"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Log"
+msgstr "日志"
+
+msgid "Debug Mode"
+msgstr "调试模式"
+
+msgid "<a href=\"https://github.com/ykxVK8yL5L/pikpak-webdav\" target=\"_blank\">Project GitHub URL</a>"
+msgstr "<a href=\"https://github.com/ykxVK8yL5L/pikpak-webdav\" target=\"_blank\">GitHub 项目地址</a>"
+
+
+msgid "Restrict access to a folder of Pikpak, defaults to / which means no restrictions"
+msgstr "限制只能访问该云盘目录，默认为 / 表示不限制，注意这个参数不是本地磁盘路径"
+
+msgid "Delete file permanently instead of trashing"
+msgstr "删除文件不放入回收站【未实现】"
+

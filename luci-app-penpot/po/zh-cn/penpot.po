@@ -1,0 +1,44 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "Penpot is the first Open Source design and prototyping platform meant for cross-domain teams."
+msgstr "Penpot 是第一个开源的便于团队协作的在线设计平台。"
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "HTTP Port"
+msgstr "HTTP 端口"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Penpot status:"
+msgstr "Penpot 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Penpot is running"
+msgstr "Penpot 运行中"
+
+msgid "Penpot is not running"
+msgstr "Penpot 未运行"
+
+msgid "Open Penpot"
+msgstr "打开 Penpot"
+
+msgid "Console"
+msgstr "控制台"
+
+msgid "Manually edit template at"
+msgstr "可以手动手改配置文件的模板，路径在："

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+/etc/init.d/broadband enabled || exit 0
+[ "$INTERFACE" != "$(uci get broadband.general.network)" ] && exit 0
+
+case "$ACTION" in
+	ifup)
+		/etc/init.d/broadband restart
+		;;
+	ifdown)
+		/etc/init.d/broadband stop
+		;;
+esac

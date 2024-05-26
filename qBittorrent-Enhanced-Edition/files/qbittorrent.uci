@@ -1,0 +1,8 @@
+#!/bin/sh
+
+sed -e "s,config qbittorrent\$,config qbittorrent 'config',g" \
+    -e "s,option enable ,option enabled ,g" \
+    -e "s,option port ,option http_port ,g" \
+	-i "/etc/config/qbittorrent"
+
+exit 0

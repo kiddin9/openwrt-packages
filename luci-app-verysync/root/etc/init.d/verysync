@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+
+START=50
+STOP=10
+
+VERYSYNC="/usr/bin/verysync"
+
+start() {
+	local enabled="$(uci get verysync.config.enabled)"
+	local port="$(uci get verysync.config.port)"
+	local profile="$(uci get verysync.config.profile)"
+	stop
+	[ "${enabled}" == "1" ] || exit 0
+	export HOME="/root/"
+	"${VERYSYNC}" -gui-address="0.0.0.0:${port}" -logfile="/var/log/verysync.log" -home="${profile}" -no-browser >/dev/null 2>&1 &
+}
+
+stop() {
+	kill -9 `pgrep "${VERYSYNC}"` >/dev/null 2>&1
+}

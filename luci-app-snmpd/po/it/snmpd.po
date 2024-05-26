@@ -1,0 +1,184 @@
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2022-02-21 21:14+0000\n"
+"Last-Translator: Deleted User <noreply+28@weblate.org>\n"
+"Language-Team: Italian <http://weblate.openmptcprouter.com/projects/omr/"
+"luciapplicationssnmpd/it/>\n"
+"Language: it\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.10.1\n"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:82
+msgid "Access"
+msgstr "Accesso"
+
+#: luci-app-snmpd/luasrc/view/snmpd.htm:81
+#: luci-app-snmpd/luasrc/view/snmpd.htm:122
+msgid "Add"
+msgstr "Aggiungi"
+
+#: luci-app-snmpd/luasrc/view/snmpd.htm:66
+#: luci-app-snmpd/luasrc/view/snmpd.htm:116
+msgid "All"
+msgstr "Tutti"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:139
+msgid "Arguments"
+msgstr "Parametri"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:42
+msgid "Community"
+msgstr "Community"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:23
+msgid "Contact"
+msgstr "Contatto"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:97
+msgid "Context"
+msgstr "Contesto"
+
+#: luci-app-snmpd/luasrc/view/snmpd.htm:54
+msgid "Domain, IP or network"
+msgstr "Dominio, IP o rete"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:9
+#: luci-app-snmpd/luasrc/view/snmpd.htm:24
+msgid "Enabled"
+msgstr "Abilitato"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:132
+msgid "Exec"
+msgstr "Esegui"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:6
+#: luci-app-snmpd/luasrc/view/snmpd.htm:21
+#: luci-app-snmpd/luasrc/view/snmpd.htm:48
+msgid "General"
+msgstr "Generale"
+
+#: luci-app-snmpd/root/usr/share/rpcd/acl.d/luci-app-snmpd.json:3
+msgid "Grant UCI access for luci-app-snmpd"
+msgstr "Concedi l'accesso UCI per luci-app-snmpd"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:63
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:72
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:86
+msgid "Group"
+msgstr "Gruppo"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:63
+msgid "Groups help define access methods"
+msgstr "I gruppi aiutano a definire i metodi di accesso"
+
+#: luci-app-snmpd/luasrc/view/snmpd.htm:64
+#: luci-app-snmpd/luasrc/view/snmpd.htm:114
+msgid "Interface"
+msgstr "Interfaccia"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:101
+msgid "Level"
+msgstr "Livello"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:22
+msgid "Location"
+msgstr "Sede"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:24
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:137
+msgid "Name"
+msgstr "Nome"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:12
+msgid "Networks"
+msgstr "Reti"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:116
+msgid "Notify"
+msgstr "Notificare"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:136
+msgid "ObjectID"
+msgstr ""
+
+#: luci-app-snmpd/luasrc/view/snmpd.htm:55
+#: luci-app-snmpd/luasrc/view/snmpd.htm:90
+msgid "Output interface"
+msgstr "Interfaccia di output"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:138
+msgid "Program"
+msgstr "Programma"
+
+#: luci-app-snmpd/luasrc/view/snmpd.htm:85
+#: luci-app-snmpd/luasrc/view/snmpd.htm:89
+msgid "Protocols"
+msgstr "Protocollo"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:106
+msgid "Read"
+msgstr "Leggi"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:34
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:69
+msgid "Read-only"
+msgstr "Sola lettura"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:35
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:70
+msgid "Read-write"
+msgstr "Leggi-Scrivi"
+
+#: luci-app-snmpd/luasrc/controller/snmpd.lua:6
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:4
+#: luci-app-snmpd/luasrc/view/snmpd.htm:19
+#: luci-app-snmpd/root/usr/share/luci/menu.d/luci-app-snmpd.json:3
+msgid "SNMPd"
+msgstr ""
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:4
+msgid "SNMPd settings interface (Beta)"
+msgstr "Interfaccia delle impostazioni SNMPd (Beta)"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:32
+msgid "Server"
+msgstr ""
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:37
+msgid "Source"
+msgstr ""
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:19
+msgid "System"
+msgstr "Sistema"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:111
+msgid "Write"
+msgstr "Scrittura"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:92
+msgid "any"
+msgstr "qualsiasi"
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:104
+msgid "auth"
+msgstr ""
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:29
+msgid "com2sec security"
+msgstr ""
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:103
+msgid "noauth"
+msgstr ""
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:67
+msgid "secname"
+msgstr ""
+
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:76
+#: luci-app-snmpd/luasrc/model/cbi/snmpd.lua:90
+msgid "version"
+msgstr "versione"

@@ -1,0 +1,19 @@
+#!/bin/sh /etc/rc.common
+
+START=90
+STOP=10
+
+enabled="$(uci get speedtest-web.config.enabled)"
+port="$(uci get speedtest-web.config.port)"
+
+start() {
+	stop
+	[ "$enabled" == "1" ] || exit 0
+	speedtest-web                          \
+	--listen_port         "${port}"        \
+	>/dev/null 2>&1 &
+}
+
+stop() {
+	killall -q -9 `which speedtest-web`
+}

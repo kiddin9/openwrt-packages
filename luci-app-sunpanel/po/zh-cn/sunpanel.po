@@ -1,0 +1,21 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Server, NAS navigation panel, Homepage, Browser homepage. Login:"
+msgstr "一个好看的NAS导航页，登录："
+
+msgid "Global settings"
+msgstr "全局配置"
+
+msgid "Status"
+msgstr "状态"
+

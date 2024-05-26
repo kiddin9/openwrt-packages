@@ -1,0 +1,11 @@
+#!/bin/sh
+
+image_name=`uci get plex.@main[0].image_name 2>/dev/null`
+
+if [ "$image_name" == "plexinc/pms-docker:latest" -a "`uname -m`" != "x86_64" ]; then
+    uci -q batch <<-EOF >/dev/null
+        set plex.@main[0].image_name=""
+        commit plex
+EOF
+fi
+exit 0

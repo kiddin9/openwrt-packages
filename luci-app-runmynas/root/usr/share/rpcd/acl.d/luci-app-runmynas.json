@@ -1,0 +1,11 @@
+{
+	"luci-app-runmynas": {
+		"description": "Grant UCI access for luci-app-runmynas",
+		"read": {
+			"uci": [ "runmynas" ]
+		},
+		"write": {
+			"uci": [ "runmynas" ]
+		}
+	}
+}

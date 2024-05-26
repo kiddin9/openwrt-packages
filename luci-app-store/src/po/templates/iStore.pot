@@ -1,0 +1,11 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "istore_vue_lang"
+msgstr "en"
+
+msgid "iStore"
+msgstr ""
+
+msgid "This package is broken! Please reinstall or uninstall it."
+msgstr ""

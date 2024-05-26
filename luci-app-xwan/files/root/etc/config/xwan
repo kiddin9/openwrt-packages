@@ -1,0 +1,10 @@
+config xwan
+	option enabled '0'
+	option number '1'
+	option balanced '1'
+	list track_ip 'gateway'
+        list track_ip '223.5.5.5'
+        list track_ip '119.28.28.28'
+        list track_ip '2402:4e00::'
+        list track_ip '2400:3200::1'
+	option family 'ipv4'

@@ -1,0 +1,186 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2014 OpenWrt.org
+
+START=94
+STOP=13
+USE_PROCD=1
+
+#设置防火墙
+# $1:网络接口名称
+set_firewall()
+{
+	local interface_name="$1"
+
+	local num=$(uci show firewall | grep "name='wan'" | wc -l)
+	local wwan_num=$(uci -q get firewall.@zone[$num].network | grep -w "${interface_name}" | wc -l)
+	if [ "$wwan_num" = "0" ]; then
+		uci add_list firewall.@zone[$num].network="${interface_name}"
+	fi
+	uci commit firewall
+}
+
+#设置IPv4网络接口
+# $1:网络接口名称
+# $2:网络接口
+set_ipv4_interface()
+{
+	local interface_name="$1"
+	local network_interface="$2"
+
+	#添加或修改网络配置
+	uci set network.${interface_name}='interface'
+	uci set network.${interface_name}.proto='dhcp'
+	uci set network.${interface_name}.device="${network_interface}"
+	uci set network.${interface_name}.device="${network_interface}"
+	uci commit network
+
+	#加入WAN防火墙
+	set_firewall "${interface_name}"
+
+	#启动网络接口
+	ifup "${interface_name}"
+}
+
+#设置IPv6网络接口
+# $1:网络接口名称
+# $2:网络接口
+set_ipv6_interface()
+{
+	local interface_name="$1"
+	local network_interface="$2"
+
+	#添加或修改网络配置
+	uci set network.${interface_name}='interface'
+	uci set network.${interface_name}.proto='dhcpv6'
+	uci set network.${interface_name}.extendprefix='1'
+	uci set network.${interface_name}.device="${network_interface}"
+	uci set network.${interface_name}.device="${network_interface}"
+	uci commit network
+
+	#加入WAN防火墙
+	set_firewall "${interface_name}"
+	
+	#启动网络接口
+	ifup "${interface_name}"
+}
+
+#设置IPV4和IPv6网络接口
+# $1:IPV4网络接口名称
+# $2:IPv6网络接口名称
+# $3:网络接口
+set_ipv4v6_interface()
+{
+	local ipv4_interface_name="$1"
+	local ipv6_interface_name="$2"
+	local network_interface="$3"
+
+	#设置IPV4网络接口
+	set_ipv4_interface "${ipv4_interface_name}" "${network_interface}"
+	#设置IPV6网络接口（别名）
+	set_ipv6_interface "${ipv6_interface_name}" "@${ipv4_interface_name}"
+}
+
+#设置网络接口
+# $2:网络接口
+set_interface()
+{
+	local network_interface="$1"
+
+	local pdp_type
+	[ "$ipv6" = "1" ] && {
+		pdp_type="ipv4v6"
+	}
+
+	case $pdp_type in
+		"ipv4") set_ipv4_interface "wwan_5g" "${network_interface}" ;;
+		"ipv6") set_ipv6_interface "wwan6_5g" "${network_interface}" ;;
+		"ipv4v6") set_ipv4v6_interface "wwan_5g" "wwan6_5g" "${network_interface}" ;;
+		*) set_ipv4v6_interface "wwan_5g" "wwan6_5g" "${network_interface}" ;;
+	esac
+}
+
+run_dial()
+{
+	local enabled
+	config_get_bool enabled $1 enabled
+
+	if [ "$enabled" = "1" ]; then
+		local apn
+		local user
+		local password
+		local auth
+		local ipv6
+		local network_bridge
+		local device
+
+		config_get apn $1 apn
+		config_get user $1 user
+		config_get password $1 password
+		config_get auth $1 auth
+		config_get ipv6 $1 ipv6
+		config_get network_bridge $1 network_bridge
+		config_get device $1 device
+
+		devname="$(basename "${device}")"
+		devicepath="$(find /sys/class/ -name ${devname})"
+		devpath="$(readlink -f ${devicepath}/device/)"
+		network="$( ls "${devpath}"/net )"
+
+		#拨号配置
+		procd_open_instance
+		procd_set_param command quectel-CM
+		if [ "$ipv6" = 1 ]; then
+			procd_append_param command "-4" "-6"
+		fi
+		if [ "$network_bridge" = 1 ]; then
+			procd_append_param command "-b"
+		fi
+		if [ "$apn" != "" ];then
+			procd_append_param command "-s" "$apn"
+		fi
+		if [ "$username" != "" ]; then
+			procd_append_param command "$username"
+		fi
+		if [ "$password" != "" ]; then
+			procd_append_param command "$password"
+		fi
+		if [ "$auth" != "" ]; then
+			procd_append_param command "$auth"
+		fi
+		if [ "$device" != "" ]; then
+			procd_append_param command -i "$network"
+		fi
+		procd_set_param respawn
+		procd_close_instance
+
+		#设置网络接口
+		local network_interface
+		if [ -d /sys/class/net/rmnet_mhi0 ]; then
+			network_interface="rmnet_mhi0.1"
+		elif [ -d /sys/class/net/wwan0_1 ]; then
+			network_interface="wwan0_1"
+		elif [ -d /sys/class/net/wwan0.1 ]; then
+			network_interface="wwan0.1"
+		elif [ -d /sys/class/net/wwan0 ]; then
+			network_interface="wwan0"
+		fi
+		set_interface "${network_interface}"
+	fi
+
+	sleep 15
+}
+
+service_triggers()
+{
+	procd_add_reload_trigger "hypermodem"
+}
+
+start_service() {
+	config_load hypermodem
+	config_foreach run_dial service
+}
+
+stop_service()
+{
+	killall quectel-CM >/dev/null 2>&1
+}

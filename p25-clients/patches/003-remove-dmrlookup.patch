@@ -1,0 +1,63 @@
+diff --git a/P25Gateway/Makefile b/P25Gateway/Makefile
+index f774001..c046b61 100644
+--- a/P25Gateway/Makefile
++++ b/P25Gateway/Makefile
+@@ -4,7 +4,7 @@ CFLAGS  = -g -O3 -Wall -DHAVE_LOG_H -DUDP_SOCKET_MAX=2 -std=c++0x -pthread
+ LIBS    = -lpthread
+ LDFLAGS = -g
+ 
+-OBJECTS = Conf.o DMRLookup.o Log.o Mutex.o P25Gateway.o P25Network.o Reflectors.o RptNetwork.o StopWatch.o Thread.o Timer.o UDPSocket.o Utils.o Voice.o
++OBJECTS = Conf.o Log.o Mutex.o P25Gateway.o P25Network.o Reflectors.o RptNetwork.o StopWatch.o Thread.o Timer.o UDPSocket.o Utils.o Voice.o
+ 
+ all:		P25Gateway
+ 
+diff --git a/P25Gateway/P25Gateway.cpp b/P25Gateway/P25Gateway.cpp
+index 6a00e8a..a237996 100644
+--- a/P25Gateway/P25Gateway.cpp
++++ b/P25Gateway/P25Gateway.cpp
+@@ -21,7 +21,6 @@
+ #include "P25Network.h"
+ #include "Reflectors.h"
+ #include "StopWatch.h"
+-#include "DMRLookup.h"
+ #include "Version.h"
+ #include "Thread.h"
+ #include "Voice.h"
+@@ -222,9 +221,6 @@ void CP25Gateway::run()
+ 		reflectors.setP252DMR(m_conf.getNetworkP252DMRAddress(), m_conf.getNetworkP252DMRPort());
+ 	reflectors.load();
+ 
+-	CDMRLookup* lookup = new CDMRLookup(m_conf.getLookupName(), m_conf.getLookupTime());
+-	lookup->read();
+-
+ 	unsigned int rfHangTime  = m_conf.getNetworkRFHangTime();
+ 	unsigned int netHangTime = m_conf.getNetworkNetHangTime();
+ 
+@@ -362,8 +358,7 @@ void CP25Gateway::run()
+ 
+ 				if (dstTG != currentTG) {
+ 					if (currentAddrLen > 0U) {
+-						std::string callsign = lookup->find(srcId);
+-						LogMessage("Unlinking from reflector %u by %s", currentTG, callsign.c_str());
++						LogMessage("Unlinked from reflector %u by %d", srcId);
+ 
+ 						if (!currentIsStatic) {
+ 							remoteNetwork.unlink(currentAddr, currentAddrLen);
+@@ -403,8 +398,7 @@ void CP25Gateway::run()
+ 
+ 					// Link to the new reflector
+ 					if (currentAddrLen > 0U) {
+-						std::string callsign = lookup->find(srcId);
+-						LogMessage("Switched to reflector %u due to RF activity from %s", currentTG, callsign.c_str());
++						LogMessage("Linked to reflector %u by %d", currentTG, srcId);
+ 
+ 						if (!currentIsStatic) {
+ 							remoteNetwork.poll(currentAddr, currentAddrLen);
+@@ -607,7 +601,5 @@ void CP25Gateway::run()
+ 
+ 	remoteNetwork.close();
+ 
+-	lookup->stop();
+-
+ 	::LogFinalise();
+ }

@@ -1,0 +1,80 @@
+<%#
+Copyright 2019-2020 Michael BD7MQB <bd7mqb@qq.com>
+This is free software, licensed under the GNU GENERAL PUBLIC LICENSE, Version 2.0
+-%>
+<table>
+<tr>
+	<th class="auto-display"><%:Time%></th>
+	<th class="auto-display2"><%:Mode%></th>
+	<th class="auto-display3">M</th>
+	<th><%:Callsign%></th>
+	<th><%:Target%></th>
+	<th class="auto-display2"><%:Src%></th>
+	<th><%:Dur%></th>
+	<th><%:Loss%></th>
+	<th><%:BER%></th>
+</tr>
+<% for i, lh in ipairs(lastheard) do
+if not localtx and i > 20 then
+	break
+end
+
+repeat
+if localtx and lh.source ~= "RF" then 
+	break
+end
+
+local loss_color, ber_color
+
+if lh.loss < 1 then
+	loss_color = nil
+elseif lh.loss == 1 then
+	loss_color = "#1d1"
+elseif lh.loss > 1 and lh.loss <=3 then
+	loss_color = "#fa0" 
+else
+	loss_color = "#f33"
+end
+
+if lh.ber == 0 then
+	ber_color = nil
+elseif lh.ber >= 0 and lh.ber <= 1.9 then 
+	ber_color = "#1d1" 
+elseif lh.ber >= 2.0 and lh.ber <= 4.9 then 
+	ber_color = "#fa0"
+else
+	ber_color = "#f33"
+end
+%>
+<tr>
+	<td class="auto-display"><%=lh.timestamp%></td>
+	<td class="auto-display2"><%=lh.mode%></td>
+	<td class="auto-display3"><%=string.sub(lh.mode, 1, 1)%></td>
+	<td><a href="http://www.qrz.com/db/<%=lh.callsign%>" target="_blank"><%=lh.callsign%></a></td>
+	<td><%=lh.target%></td>
+	<% if lh.source == "RF" then %>
+	<td style="background:#1d1;" class="auto-display2">RF</td>
+	<% else %>
+	<td class="auto-display2"><%=lh.source%></td>
+	<% end %>
+	<% if not lh.duration then %>
+	<td style="background:#f33;">TX</td><td></td><td></td>
+	<% elseif lh.duration == "SMS" then %>
+	<td style="background:#1d1;">SMS</td><td></td><td></td>
+	<% else %>
+		<td><%=lh.duration%></td>
+		<% if not loss_color then %>
+		<td><%=lh.loss%>%</td>
+		<% else %>
+		<td style="background:<%=loss_color%>;"><%=lh.loss%>%</td>
+		<% end %>
+		<% if not ber_color then %>
+		<td><%=lh.ber%>%</td>
+		<% else %>
+		<td style="background:<%=ber_color%>;"><%=lh.ber%>%</td>
+		<% end %>
+	<% end %>
+</tr>
+<% until true %>
+<% end %>
+</table>

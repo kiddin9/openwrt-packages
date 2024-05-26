@@ -1,0 +1,6 @@
+#!/bin/sh
+
+[ "$INTERFACE" == "wan" -a "$ACTION" == "ifup" ] && {
+	logger -t oray 'wan interface up and phtunnel restart'
+	/etc/init.d/phtunnel restart
+}

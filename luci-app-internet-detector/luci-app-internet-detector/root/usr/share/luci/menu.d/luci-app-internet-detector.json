@@ -1,0 +1,17 @@
+{
+	"admin/services/internet-detector": {
+		"title": "Internet Detector",
+		"order": 80,
+		"action": {
+			"type": "view",
+			"path": "internet-detector"
+		},
+		"depends": {
+			"acl": [ "luci-app-internet-detector" ],
+			"fs": {
+				"/usr/bin/internet-detector": "executable"
+			},
+			"uci": { "internet-detector": true }
+		}
+	}
+}

@@ -1,0 +1,6 @@
+
+config supervisord 'main'
+	option filepath '/usr/bin/supervisord'
+	option enabled '1'
+	option amend '0'
+

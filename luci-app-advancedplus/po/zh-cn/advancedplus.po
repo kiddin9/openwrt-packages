@@ -1,0 +1,416 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+
+msgid "Advanced plus"
+msgstr "进阶设置"
+
+msgid "KuCat Theme Config"
+msgstr "KuCat主题设置"
+
+msgid "Argon Config"
+msgstr "Argon主题设置"
+
+msgid "Design Config"
+msgstr "Design主题设置"
+
+
+msgid "Advanced Setting"
+msgstr "高级设置"
+
+msgid "Here you can set the blur and transparency of the login page of argon theme, and manage the background pictures and videos.[Chrome is recommended]"
+msgstr "在这里你可以设置argon 主题的登录页面的模糊和透明度。[建议使用 Chrome]"
+
+msgid "Here you can set the mode of the theme and change the proxy tool icon in the navigation bar. [Recommend Chrome]"
+msgstr "这里可以设置主题的模式和更换导航栏的代理工具图标。[建议使用 Chrome]"
+
+msgid "Advanced Edit"
+msgstr "进阶参数编辑"
+
+msgid "Built-in"
+msgstr "内建"
+
+msgid "The enhanced version of the original advanced settings allows for unified setting and management of background images for kucat/Agron/Opentopd themes, without the need to upload them separately. Color schemes for kucat/Agron/design themes can be set.<br>"
+msgstr "原高级设置的加强版，可以统一设置管理 kucat/Agron/Opentopd三个主题登录壁纸图片，无须分开上传，可以设置kucat/Agron/design主题的颜色方案<br>"
+
+msgid "At the same time, important plugin parameters can be compiled. At the same time, some system parameters can also be set, such as display and hide settings."
+msgstr "同时可以编译重要的插件参数。同时还可以设置部分系统参数，如：显示隐藏设置设置等功能。"
+
+msgid "Show or hide the setup wizard menu"
+msgstr "显示或者隐藏设置向导菜单"
+
+msgid "Hide Wizard"
+msgstr "隐藏设置向导"
+
+msgid "Wallpaper Source"
+msgstr "壁纸来源"
+
+msgid "Enable wallpaper"
+msgstr "启用壁纸"
+
+msgid "Wallpaper used as theme background"
+msgstr "壁纸用作主题桌面壁纸"
+
+msgid "Theme Background upload"
+msgstr "主题壁纸文件管理"
+
+msgid "Local wallpaper"
+msgstr "本地壁纸库"
+
+msgid "Online Bing wallpaper"
+msgstr "Bing在线壁纸"
+
+msgid "Bing Wallpapers"
+msgstr "Bing 壁纸"
+
+msgid "Auto download Bing wallpaper"
+msgstr "自动下载Bing每日壁纸"
+
+msgid "Auto download unsplash wallpaper"
+msgstr "自动下载unsplash壁纸"
+
+msgid "Auto download Iciba wallpaper"
+msgstr "自动下载词霸每日壁纸"
+
+msgid "Auto download Bird 4K wallpaper"
+msgstr "自动下载360小鸟4K高清壁纸(每日4千张随机选)"
+
+msgid "Local wallpapers need to be uploaded on their own, and only the first update downloaded on the same day will be automatically downloaded."
+msgstr "本地壁纸库需自行上传，自动下载仅当天登录第一次才下载。彻底解决在线壁纸导致的卡顿和白屏等问题，如果还卡请清除浏览器缓存。"
+
+msgid "Theme mode"
+msgstr "主题模式"
+
+msgid "Wallpaper blur radius"
+msgstr "壁纸模糊半径"
+
+msgid "Wallpaper transparency"
+msgstr "壁纸透明度"
+
+msgid "Follow System"
+msgstr "跟随系统"
+
+msgid "Refreshing mode"
+msgstr "清爽模式"
+
+msgid "Enable Daily Word"
+msgstr "启用每日一言"
+
+msgid "Cancel background glass fence special effects"
+msgstr "取消背景玻璃栅栏特效"
+
+msgid "Care mode (large font)"
+msgstr "关怀模式(大字体)"
+
+msgid "Expand Toolbar"
+msgstr "展开导航栏"
+
+msgid "Expand or shrink the toolbar"
+msgstr "展开或者收缩导航栏"
+
+msgid "Color palette"
+msgstr "调色板工具"
+
+msgid "Call up your favorite color value tool (note: HEX and RGB colors)"
+msgstr "调出自己喜欢的颜色值工具(注意:HEX和RGB值区别)"
+
+msgid "Light"
+msgstr "亮色"
+
+msgid "Auto"
+msgstr "自动"
+
+msgid "Dark"
+msgstr "暗色"
+
+msgid "Force Light"
+msgstr "强制亮色"
+
+msgid "Force Dark"
+msgstr "强制暗色"
+
+msgid "Force desktop background"
+msgstr "强制指定主题桌面壁纸"
+
+msgid "Main Background color(RGB)"
+msgstr "主背景色(RGB)"
+
+msgid "Fence background transparency"
+msgstr "隔栏背景透明度"
+
+msgid "Fence background(RGB)"
+msgstr "隔栏背景色(RGB)"
+
+msgid "[Light mode] Primary Color"
+msgstr "[亮色模式] 主色调"
+
+msgid "[Dark mode] Primary Color"
+msgstr "[暗色模式] 主色调"
+
+msgid "A HEX Color ; ( Default: #5e72e4 )"
+msgstr "十六进制颜色值 ( 预设为：#5e72e4 )"
+
+msgid "A HEX Color ; ( Default: #483d8b )"
+msgstr "十六进制颜色值 ( 预设为：#483d8b )"
+
+msgid "[Light mode] Transparency"
+msgstr "[亮色模式] 透明度"
+
+msgid "[Dark mode] Transparency"
+msgstr "[暗色模式] 透明度"
+
+msgid "0 transparent - 1 opaque ; ( Suggest: transparent: 0 or translucent preset: 0.5 )"
+msgstr "0最透明 - 1不透明 ; ( 建议: 透明 0 或 半透明预设 0.5 )"
+
+msgid "0 transparent - 1 opaque ; ( Suggest: Black translucent preset: 0.5 )"
+msgstr "0最透明 - 1不透明 ; ( 建议: 黑色半透明 0.5 )"
+
+msgid "[Light mode] Frosted Glass Radius"
+msgstr "[亮色模式] 毛玻璃模糊半径"
+
+msgid "[Dark mode] Frosted Glass Radius"
+msgstr "[暗色模式] 毛玻璃模糊半径"
+
+msgid "Larger value will more blurred ; ( Suggest: clear: 1 or blur preset: 10 )"
+msgstr "值越大越模糊; ( 建议: 清透 1 或 模糊预设 10 )"
+
+msgid "You can upload jpg, png, and gif files to create your favorite kucat desktop interface"
+msgstr "你可以上传jpg、png、gif文件，以创建自己喜欢的kucat桌面界面"
+
+msgid "You can upload files such as jpg,png,gif files, To change the login page background.Uploading Kucat, Agron, and Opentopd all three themes can be used once"
+msgstr "你可以上传jpg、png、gif文件，以创建自己喜欢的登录界面,上传一次Kucat,Agron,Opentopd三种主题都可使用"
+
+msgid "Save Changes"
+msgstr "保存更改"
+
+msgid "Choose local file:"
+msgstr "选择本地文件："
+
+msgid "Couldn't open file:"
+msgstr "无法打开文件："
+
+msgid "Create upload file error."
+msgstr "创建上传文件失败。"
+
+msgid "File name"
+msgstr "文件名"
+
+msgid "File saved to"
+msgstr "文件保存到"
+
+msgid "FileTransfer"
+msgstr "文件传输"
+
+msgid "Install"
+msgstr "安装"
+
+msgid "Attributes"
+msgstr "属性"
+
+msgid "Modify time"
+msgstr "修改时间"
+
+msgid "No specify upload file."
+msgstr "未指定上传文件"
+
+msgid "Path on Route:"
+msgstr "路由根目录："
+
+msgid "Remove"
+msgstr "移除"
+
+msgid "Size"
+msgstr "大小"
+
+msgid "Upload (Free:"
+msgstr "上传 (剩余空间："
+
+msgid "Background file list"
+msgstr "壁纸文件列表"
+
+msgid "Upload file to '/www/luci-static/resources/background/'"
+msgstr "文件将上传到'/www/luci-static/resources/background/'"
+
+msgid "Color scheme list"
+msgstr "颜色配置方案列表"
+
+msgid "List menu background color transparency"
+msgstr "列表菜单背景色透明度"
+
+msgid "HTML color picker"
+msgstr "HTML 取色器"
+
+msgid "There are 6 preset color schemes, and only the desktop background image can be set to display or not. The custom color values are RGB values such as 255,0,0 (representing red), and a blur radius of 0 indicates no lag in the image."
+msgstr "预置6种颜色方案，只可设置桌面壁纸图显示与否。自定义的颜色值是RGB值如：255,0,0(表示红色)，模糊半径为0则画面无卡顿。"
+
+msgid "Set and manage features such as KuCat themed background wallpaper, main background color, partition background, transparency, blur, toolbar retraction and shortcut pointing.</br>"
+msgstr "设置和管理酷猫主题登陆壁纸、桌面壁纸、主背景色、隔栏背景、透明度、模糊度、工具栏收放和快捷指向等功能。</br>"
+
+msgid "</br>For specific usage, see:"
+msgstr "</br>使用说明："
+
+msgid "Services Ssrkey settings"
+msgstr "服务相关快捷键设置"
+
+msgid "System Userkey settings"
+msgstr "系统相关快捷键设置"
+
+msgid "Status Homekey settings"
+msgstr "状态相关快捷键设置"
+
+msgid "Enable color matching"
+msgstr "启用配色方案"
+
+msgid "Using the Color palette"
+msgstr "使用颜色调色板"
+
+msgid "RoyalBlue"
+msgstr "皇家高端蓝"
+
+msgid "MediumSeaGreen"
+msgstr "中海清爽绿"
+
+msgid "SandyBrown"
+msgstr "桑迪布朗黄"
+
+msgid "Black tea eye protection gray"
+msgstr "黑茶护眼灰"
+
+msgid "TomatoRed"
+msgstr "番茄别样红"
+
+msgid "Cool night time(gray and dark)"
+msgstr "炫酷黑夜时空(灰度暗)"
+
+msgid "White"
+msgstr "纯静白色"
+
+msgid "Cool Ocean Heart (transparent and bright)"
+msgstr "炫酷海洋之心(透明亮)"
+
+msgid "Login Background Upload"
+msgstr "登录壁纸上传"
+
+msgid "Desktop background upload"
+msgstr "桌面壁纸上传"
+
+msgid "Accessing using HTTPS"
+msgstr "使用https访问"
+
+msgid "Open the address in the background and use HTTPS for secure access"
+msgstr "打开后台地址用https安全访问"
+
+msgid "OPENWRT backend and SSH login do not display shortcut menus"
+msgstr "OPENWRT后台和SSH登录不显示快捷菜单"
+
+msgid "No backend menu required"
+msgstr "不用后台菜单"
+
+msgid "Wallpaper synchronization"
+msgstr "壁纸同步"
+
+msgid "Is the login wallpaper consistent with the desktop wallpaper? If not selected, it indicates that the desktop wallpaper and login wallpaper are set independently."
+msgstr "登录壁纸与桌面壁纸是否一致，不选择表示桌面壁纸和登录壁纸独立设置。"
+
+msgid "CPU scheduling mode"
+msgstr "CPU调度模式"
+
+msgid "Dynamic scheduling (default)"
+msgstr "动态调度（默认）"
+
+msgid "Highest performance"
+msgstr "最高性能"
+
+msgid "Energy saving mode"
+msgstr "节能模式"
+
+msgid "The higher the CPU tuning performance, the faster the speed, and the higher the energy consumption. The energy-saving mode has the lowest CPU frequency and saves the most power. Dynamic debugging adjusts CPU frequency and voltage based on CPU load to achieve optimal performance and energy efficiency balance"
+msgstr "CPU调节性能越高速度越快能耗高。节能模式CPU频率最低也最省电。动态调试根据CPU负载情况来调整CPU频率和电压，以达到最佳的性能和能效平衡."
+
+msgid "TTL value lock"
+msgstr "TTL值锁定及安全性"
+
+msgid "Extending the transmission distance of data packets in the network and improving network security"
+msgstr "延长数据包在网络中的传输距离及提高网络安全性"
+
+msgid "Qos automatic optimization"
+msgstr "Qos自动优化"
+
+msgid "Enable QOS automatic optimization strategy (testing function)"
+msgstr "开启QOS自动优化策略（测试功能）"
+
+
+msgid "You can choose Theme color mode here"
+msgstr "你可以选择喜欢的主题模式"
+
+msgid "Navigation bar setting"
+msgstr "导航栏设置"
+
+msgid "Display navigation bar"
+msgstr "显示导航栏"
+
+msgid "Close navigation bar"
+msgstr "关闭导航栏"
+
+msgid "The navigation bar is display by default"
+msgstr "默认显示导航栏"
+
+msgid "Navigation bar proxy"
+msgstr "导航栏代理"
+
+msgid "OpenClash by default"
+msgstr "默认 OpenClash"
+
+msgid "The starting number symbol (#) or each line of the semicolon (;) is considered a comment; Remove (;) and enable the specified option."
+msgstr "开头的数字符号（＃）或分号的每一行（;）被视为注释；删除（;）启用指定选项。"
+
+msgid "<font color=\"Red\"><strong>Configuration documents are directly edited unless you know what you are doing, please do not easily modify these configuration documents. Incorrect configuration may result in errors such as inability to power on</strong></font><br/>"
+msgstr "<font color=\"Red\"><strong>配置文档是直接编辑的除非你知道自己在干什么，否则请不要轻易修改这些配置文档。配置不正确可能会导致不能开机等错误。</strong></font><br/>"
+
+msgid "This page is about configuration"
+msgstr "本页是配置"
+
+msgid "Document content. Automatic restart takes effect after saving the application"
+msgstr "文档内容。应用保存后自动重启生效"
+
+msgid "TSO optimization for network card interruption"
+msgstr "网卡断流TSO优化"
+
+msgid "Turn off the TSO parameters of the INTEL225 network card to improve network interruption"
+msgstr "关闭INTEL225网卡TSO参数，改善网络断流"
+
+msgid "Loading plugins"
+msgstr "加载插件"
+
+msgid "Choose to load and install the app store, DOCKER, all drivers, etc"
+msgstr "选择加载安装应用商店、DOCKER、所有驱动等"
+
+msgid "Select the type of loading"
+msgstr "选择加载的类型"
+
+msgid "Install iStore"
+msgstr "安装iStore"
+
+msgid "Install Docker"
+msgstr "安装Docker仓库"
+
+msgid "Install All drives"
+msgstr "安装全部驱动"
+
+msgid "Perform operation"
+msgstr "执行操作"
+
+msgid "Click to execute"
+msgstr "点击执行"
+
+msgid "Allow TTYD external network access"
+msgstr "允许TTYD外网访问"
+
+msgid "Set firewall wan to open"
+msgstr "设置防火墙wan打开"
+
+msgid "Add Android host name mapping"
+msgstr "添加安卓主机名映射"
+
+msgid "Resolve the issue of Android native TV not being able to connect to WiFi for the first time"
+msgstr "解决安卓原生TV首次连不上wifi的问题"

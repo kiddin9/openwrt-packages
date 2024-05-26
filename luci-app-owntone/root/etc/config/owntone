@@ -1,0 +1,5 @@
+config main
+	option 'image_name' 'lscr.io/linuxserver/daapd:latest'
+	option 'config_path' ''
+	option 'music_path' ''
+

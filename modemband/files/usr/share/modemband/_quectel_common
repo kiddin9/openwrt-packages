@@ -1,0 +1,17 @@
+getsupportedbands() {
+	echo "${_DEFAULT_LTE_BANDS:-Unsupported}"
+}
+
+getbands() {
+	O=$(sms_tool -d $_DEVICE at "at+qcfg=\"band\"")
+	HEX=$(echo "$O" | awk -F[:,] '{print $4}' | xargs)
+	hextobands "$HEX"
+}
+
+setbands() {
+	BANDS="$1"
+	[ "$BANDS" = "default" ] && BANDS="$_DEFAULT_LTE_BANDS"
+
+	HEX=$(bandstohex "$BANDS")
+	[ "$HEX" != "0" ] && sms_tool -d $_DEVICE at "at+qcfg=\"band\",0,$HEX,0,1"
+}

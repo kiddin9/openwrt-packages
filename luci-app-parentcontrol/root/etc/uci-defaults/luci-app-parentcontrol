@@ -1,0 +1,17 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@parentcontrol[-1]
+	add ucitrack parentcontrol
+	set ucitrack.@parentcontrol[-1].init=parentcontrol
+	commit ucitrack
+EOF
+
+uci -q delete firewall.parentcontrol
+uci -q set firewall.parentcontrol=include
+uci -q set firewall.parentcontrol.type=script
+uci -q set firewall.parentcontrol.path=/etc/parentcontrol.include
+uci -q set firewall.parentcontrol.reload=1
+uci commit firewall
+rm -f /tmp/luci-indexcache
+exit 0

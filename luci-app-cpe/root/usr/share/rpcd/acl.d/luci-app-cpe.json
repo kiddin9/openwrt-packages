@@ -1,0 +1,11 @@
+{
+	"luci-app-cpe": {
+		"description": "Grant UCI access for luci-app-cpe",
+		"read": {
+			"uci": [ "modem" ]
+		},
+		"write": {
+			"uci": [ "modem" ]
+		}
+	}
+}

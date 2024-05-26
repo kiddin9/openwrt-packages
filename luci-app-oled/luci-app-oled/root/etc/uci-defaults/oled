@@ -1,0 +1,33 @@
+#!/bin/sh
+
+uci_write_config() {
+	[[ `uci -q get oled.@oled[0].showmenu` -eq 1 ]] && return
+	uci -q batch <<-EOF >/dev/null
+		set oled.@oled[0].showmenu="1"
+		set oled.@oled[0].enable="1"
+		set oled.@oled[0].path="$1"
+		set oled.@oled[0].rotate="$2"
+		set oled.@oled[0].netspeed="$3"
+		set oled.@oled[0].netsource="$4"
+		commit oled
+EOF
+}
+
+. /lib/functions/system.sh
+
+case "$(board_name)" in
+hinlink,opc-h69k)
+	uci_write_config '/dev/i2c-5' 1 1 eth0
+	;;
+esac
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@oled[-1]
+	add ucitrack oled
+	set ucitrack.@oled[-1].init=oled
+	commit ucitrack
+EOF
+
+sed -e "/\/etc\/init\.d\/oled/d" -i /etc/crontabs/root && /etc/init.d/cron reload
+rm -rf /tmp/luci-*
+exit 0

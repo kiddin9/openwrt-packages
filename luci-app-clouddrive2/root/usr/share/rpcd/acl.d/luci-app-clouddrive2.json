@@ -1,0 +1,11 @@
+{
+	"luci-app-clouddrive2": {
+		"description": "Grant UCI access for luci-app-clouddrive2",
+		"read": {
+			"uci": [ "clouddrive2" ]
+		},
+		"write": {
+			"uci": [ "clouddrive2" ]
+		}
+	}
+}

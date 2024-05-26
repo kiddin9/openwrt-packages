@@ -1,0 +1,27 @@
+config wifidog 'wifidog'	
+	option wifidog_enable '1'
+	
+	
+	option gateway_interface 'br-lan'
+	option externalinterface 'eth0.2'
+
+	
+	option server_hostname 'www.test.com'
+	option server_httpport '80'	
+	option server_path '/wifidog/'
+	
+	option server_sslAvailable '0'
+	option server_sslport '443'
+	option server_LoginScriptPathFragment 'login/?'
+	option server_PortalScriptPathFragment 'portal/?'
+	option server_PingScriptPathFragment 'ping/?'
+	option server_AuthScriptPathFragment 'auth/?'
+	option server_MsgScriptPathFragment 'gw_message.php?'
+	
+	option gateway_port '2060'
+	option check_interval '60'
+	option client_timeout '5'
+
+config trustedmaclist
+
+config allowrule

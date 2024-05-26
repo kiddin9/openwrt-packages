@@ -1,0 +1,17 @@
+<%+cbi/valueheader%>
+<script type="text/javascript" src="<%=resource%>/cbi.js?v=git-17.110.13538-6360059"></script>
+<script type="text/javascript">//<![CDATA[
+
+	function do_add_vwan()
+	{
+		XHR.get('<%=luci.dispatcher.build_url("admin", "network", "add_vwan")%>', null,
+			function(x, st)
+			{
+				window.location.href='<%=luci.dispatcher.build_url("admin", "network", "network")%>';
+			}
+		);
+	}
+//]]></script>
+
+<input class="btn cbi-button cbi-button-save" id="cbi-add_vwan-<%=section%>-action" type="button" value="添加vwan" onclick="do_add_vwan()" />
+<%+cbi/valuefooter%>

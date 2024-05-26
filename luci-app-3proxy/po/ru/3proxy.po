@@ -1,0 +1,14 @@
+"Language: ru\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: Konstantine Shevlakov <shevlakov@132lan.ru>\n"
+
+msgid "Configuration"
+msgstr "Конфигурация"
+
+msgid "Configuration file for 3proxy."
+msgstr "Файл настройки 3proxy."
+
+msgid "Edit config 3proxy"
+msgstr "Редактируйте файл настройки"
+

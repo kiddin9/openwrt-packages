@@ -1,0 +1,19 @@
+{
+	"luci-app-torbp": {
+		"description": "Grant UCI luci-app-torbp",
+		"read": {
+			"cgi-io": [
+				"exec"
+			],
+
+			"uci": [
+			"torbp"
+			]
+		},
+		"write": {
+			"uci": [
+				"torbp"
+			]
+		}
+	}
+}

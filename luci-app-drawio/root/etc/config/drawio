@@ -1,0 +1,4 @@
+config main
+	option 'port' '8091'
+	option 'config_path' ''
+

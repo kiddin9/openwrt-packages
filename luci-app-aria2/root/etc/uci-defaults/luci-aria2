@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd /usr/share/aria2 && sh ./tracker.sh >/dev/null 2>&1 &
+
+exit 0

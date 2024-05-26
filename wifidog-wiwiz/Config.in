@@ -1,0 +1,4 @@
+config NO_PORTAL
+	bool "Add NoPortal network and firewall configuration"
+	default n
+

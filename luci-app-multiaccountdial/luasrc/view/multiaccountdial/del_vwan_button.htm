@@ -1,0 +1,17 @@
+<%+cbi/valueheader%>
+<script type="text/javascript" src="<%=resource%>/cbi.js?v=git-17.110.13538-6360059"></script>
+<script type="text/javascript">//<![CDATA[
+
+	function do_del_vwan()
+	{
+		XHR.get('<%=luci.dispatcher.build_url("admin", "network", "del_vwan")%>', null,
+			function(x, st)
+			{
+				window.location.href='<%=luci.dispatcher.build_url("admin", "network", "network")%>';
+			}
+		);
+	}
+//]]></script>
+
+<input class="btn cbi-button cbi-button-save" id="cbi-del_vwan-<%=section%>-action" type="button" value="删除vwan" onclick="do_del_vwan()" />
+<%+cbi/valuefooter%>

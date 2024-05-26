@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# if [ "$PKG_UPGRADE" != 1 ]; then
+# 	uci batch <<-EOF
+# 		set luci.themes.vzant=/luci-static/vzant
+# 		set luci.main.mediaurlbase=/luci-static/vzant
+# 		uci commit
+# 	EOF
+# fi
+
+exit 0
+
+

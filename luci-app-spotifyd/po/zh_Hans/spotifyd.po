@@ -1,0 +1,160 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:125
+msgid "A custom pregain applied before sending the audio to the output device."
+msgstr "在将音频发送到输出设备之前应用的自定义预增益。"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:149
+msgid "A script that gets evaluated in the user's shell when the song changes."
+msgstr "当音乐更改时执行用户指定的 shell 脚本。"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:42
+msgid "An open source Spotify client running as a UNIX daemon."
+msgstr "作为 UNIX 守护进程运行的开源 Spotify 客户端。"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:105
+msgid "Audio bitrate"
+msgstr "音频比特率"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:88
+msgid "Audio device"
+msgstr "音频设备"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:95
+msgid "Audio format"
+msgstr "音频格式"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:92
+msgid "Autoplay similar music"
+msgstr "自动播放类似音乐"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:81
+msgid "Backend"
+msgstr "后端"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:140
+msgid "Cache path"
+msgstr "缓存路径"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:55
+msgid "Collecting data…"
+msgstr "收集数据中…"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:86
+msgid "Control device"
+msgstr "控制设备"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:69
+msgid "Device name"
+msgstr "设备名称"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:71
+msgid "Device type"
+msgstr "设备类型"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:61
+msgid "Enable"
+msgstr "启用"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:135
+msgid "Enable cache"
+msgstr "启用缓存"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:122
+msgid "Enable to normalize the volume during playback."
+msgstr "在播放时启用音量平衡。"
+
+#: applications/luci-app-spotifyd/root/usr/share/rpcd/acl.d/luci-app-spotifyd.json:3
+msgid "Grant UCI access for luci-app-spotifyd"
+msgstr "授予 luci-app-spotifyd 访问 UCI 配置的权限"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:113
+msgid "Initial volume"
+msgstr "初始音量"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:143
+msgid "Max cache size"
+msgstr "最大缓存大小"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:90
+msgid "Mixer device"
+msgstr "混音设备"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:31
+msgid "NOT RUNNING"
+msgstr "未在运行"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:124
+msgid "Normalisation pregain"
+msgstr "平衡预增益"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:66
+msgid "Password"
+msgstr "密码"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:151
+msgid "Proxy server"
+msgstr "代理服务器"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:29
+msgid "RUNNING"
+msgstr "运行中"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:148
+msgid "Song change hook"
+msgstr "音乐更改钩子"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:29
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:31
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:41
+#: applications/luci-app-spotifyd/root/usr/share/luci/menu.d/luci-app-spotifyd.json:3
+msgid "Spotifyd"
+msgstr "Spotifyd"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:93
+msgid "Start playing similar songs after your music has ended."
+msgstr "当音乐播放结束后开始播放类似的音乐。"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:96
+msgid "The audio format of the streamed audio data."
+msgstr "串流音频数据的格式。"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:106
+msgid "The bitrate of the streamed audio data."
+msgstr "串流音频数据的比特率。"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:144
+msgid "The maximal cache size in bytes."
+msgstr "最大缓存大小（以字节为单位）。"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:155
+msgid "The port used for the Spotify Connect discovery."
+msgstr "用于 Spotify Connect 发现的端口。"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:152
+msgid "The proxy used to connect to Spotify's servers."
+msgstr "用于连接到 Spotify 服务器的代理。"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:64
+msgid "Username"
+msgstr "用户名"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:127
+msgid "Volume controller"
+msgstr "音量控制器"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:121
+msgid "Volume normalisation"
+msgstr "音量平衡"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:154
+msgid "Zeroconf port"
+msgstr "Zeroconf 端口"

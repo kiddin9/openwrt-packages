@@ -1,0 +1,7 @@
+
+config homebridge
+	option interface '192.168.1.1'
+	option enabled '1'
+	option model 'independent'
+	
+

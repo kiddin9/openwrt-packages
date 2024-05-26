@@ -1,0 +1,153 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:125
+msgid "A custom pregain applied before sending the audio to the output device."
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:149
+msgid "A script that gets evaluated in the user's shell when the song changes."
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:42
+msgid "An open source Spotify client running as a UNIX daemon."
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:105
+msgid "Audio bitrate"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:88
+msgid "Audio device"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:95
+msgid "Audio format"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:92
+msgid "Autoplay similar music"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:81
+msgid "Backend"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:140
+msgid "Cache path"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:55
+msgid "Collecting data…"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:86
+msgid "Control device"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:69
+msgid "Device name"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:71
+msgid "Device type"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:61
+msgid "Enable"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:135
+msgid "Enable cache"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:122
+msgid "Enable to normalize the volume during playback."
+msgstr ""
+
+#: applications/luci-app-spotifyd/root/usr/share/rpcd/acl.d/luci-app-spotifyd.json:3
+msgid "Grant UCI access for luci-app-spotifyd"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:113
+msgid "Initial volume"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:143
+msgid "Max cache size"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:90
+msgid "Mixer device"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:31
+msgid "NOT RUNNING"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:124
+msgid "Normalisation pregain"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:66
+msgid "Password"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:151
+msgid "Proxy server"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:29
+msgid "RUNNING"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:148
+msgid "Song change hook"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:29
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:31
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:41
+#: applications/luci-app-spotifyd/root/usr/share/luci/menu.d/luci-app-spotifyd.json:3
+msgid "Spotifyd"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:93
+msgid "Start playing similar songs after your music has ended."
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:96
+msgid "The audio format of the streamed audio data."
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:106
+msgid "The bitrate of the streamed audio data."
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:144
+msgid "The maximal cache size in bytes."
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:155
+msgid "The port used for the Spotify Connect discovery."
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:152
+msgid "The proxy used to connect to Spotify's servers."
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:64
+msgid "Username"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:127
+msgid "Volume controller"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:121
+msgid "Volume normalisation"
+msgstr ""
+
+#: applications/luci-app-spotifyd/htdocs/luci-static/resources/view/spotifyd.js:154
+msgid "Zeroconf port"
+msgstr ""

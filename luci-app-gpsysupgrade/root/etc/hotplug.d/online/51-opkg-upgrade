@@ -1,0 +1,5 @@
+if [ "$(uci -q get wizard.default.autoupgrade_pkg)" == '1' ] && lock -n /var/lock/opkg-upgrade && opkg update; then
+. /etc/profile.d/opkg.sh
+opkg upgr 2>&1 | logger -t opkg
+fi
+lock -u /var/lock/opkg-upgrade

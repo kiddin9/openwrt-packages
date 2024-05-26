@@ -1,0 +1,11 @@
+{
+	"luci-app-cloudflarespeedtest": {
+		"description": "Grant UCI access for luci-app-cloudflarespeedtest",
+		"read": {
+			"uci": [ "cloudflarespeedtest" ]
+		},
+		"write": {
+			"uci": [ "cloudflarespeedtest" ]
+		}
+	}
+}

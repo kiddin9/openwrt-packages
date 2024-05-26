@@ -1,0 +1,2 @@
+config runmynas
+	option 'target' ''

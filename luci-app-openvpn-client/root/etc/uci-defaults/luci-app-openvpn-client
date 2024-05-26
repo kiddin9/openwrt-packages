@@ -1,0 +1,12 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete firewall.openvpn_client
+	set firewall.openvpn_client=include
+	set firewall.openvpn_client.type=script
+	set firewall.openvpn_client.path=/var/etc/luci-app-openvpn-client.include
+	set firewall.openvpn_client.reload=1
+EOF
+
+rm -rf /tmp/luci-*cache
+exit 0

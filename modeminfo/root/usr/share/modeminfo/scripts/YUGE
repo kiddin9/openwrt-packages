@@ -1,0 +1,54 @@
+function modem_data(){
+	DATA=$(echo "$O" | grep -Ev '^OK')
+	MANUF=$(echo "$DATA" | awk 'c&&! --c;/ICCID/{c=1}')
+	MODEL=$(echo "$DATA" | awk 'c&&! --c;/ICCID/{c=2}')
+	FW=$(echo "$DATA" | awk 'c&&! --c;/ICCID/{c=3}')
+	DEVICE="$MANUF $MODEL"
+	TECH=$(echo "$DATA" | awk -F [,] '/\+COPS/{print $NF}')
+	ICCID=$(echo "$DATA" | awk '/ICCID/{print $2}')
+	IMSI=$(echo "$DATA" | awk 'c&&! --c;/ICCID/{c=5}')
+	IMEI=$(echo "$DATA" | awk 'c&&! --c;/ICCID/{c=4}')
+	# ToDO
+	#CHIPTEMP=$(echo "$DATA" | awk '/\+ZCHIPTEMP/{print $2}')
+
+	case $TECH in
+		0|1) MODE=GSM ;;
+		2) MODE=WCDMA ;;
+		3) MODE=EDGE ;;
+		4) MODE=HSDPA ;;
+		5) MODE=HSUPA ;;
+		6) MODE=HSDPA,HSUPA ;;
+		7) MODE=LTE ;;
+		8) MODE=DC-HSPA+ ;;
+	esac
+
+	case $TECH in
+		7)
+			PCI=$(echo "$DATA" | awk -F [:,] '/\+ZCDS/{print $10}')
+			EEMGINFO=$(echo "$O" | awk -F[':'] '/^\+EEMLTESVC:/ {print $2}')
+			EARFCN=$(echo $EEMGINFO | awk -F [,] '{print $6}')
+			LAC=$(echo $EEMGINFO | awk -F [,] '{printf "%x\n", toupper($4)}')
+			CID=$(echo $EEMGINFO | awk -F [,] '{printf "%x\n", toupper($21)}')
+			ENBx=$(echo $CID | sed -e 's/..$//')
+			ENBID=$(printf %d 0x$ENBx)
+			CELL=$(printf %d 0x${CID: -2})
+			PCI=$(echo $EEMGINFO | awk -F [,] '{print $5}')
+			RSRQ=$(echo $EEMGINFO | awk -F[,] '{printf "%.0f\n", -19.5+$11/2}')
+			RSRP=$(echo $EEMGINFO | awk -F[,] '{print -140+$10'})
+			SINR=$(echo $EEMGINFO | awk -F[','] '{printf "%.0f\n", $12/4+5}')
+			BWDL=$(echo $EEMGINFO | awk -F[','] '{print $9}')
+		;;
+		2|4|5|6|8)
+			EEMGINFO=$(echo "$O" | awk -F[':'] '/^\+EEMUMTSSVC/ {print $2}')
+			EARFCN=$(echo $EEMGINFO | awk -F [,] '{print $20}')
+			SINR=$(echo $EEMGINFO | awk -F [,] '{printf "%.0f\n", -24+$6/2}')
+			LAC=$(echo $EEMGINFO | awk -F [,] '{printf "%x\n", toupper($16)}')
+			CID=$(echo $EEMGINFO | awk -F [,] '{printf "%x\n", toupper($17)}')
+			
+		;;
+	esac
+	if [ $(uci -q get modeminfo.@general[0].decimail) = "1" ]; then
+                LAC=$(printf %d 0x$LAC)
+                CID=$(printf %d 0x$CID)
+        fi	
+}

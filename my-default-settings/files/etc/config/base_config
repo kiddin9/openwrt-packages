@@ -1,0 +1,3 @@
+config status
+	option version '0'
+	option base '1'

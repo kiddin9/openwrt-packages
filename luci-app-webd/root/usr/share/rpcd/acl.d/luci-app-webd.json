@@ -1,0 +1,11 @@
+{
+	"luci-app-webd": {
+		"description": "Grant UCI access for luci-app-webd",
+		"read": {
+			"uci": [ "webd" ]
+		},
+		"write": {
+			"uci": [ "webd" ]
+		}
+	}
+}

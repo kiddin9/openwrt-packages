@@ -1,0 +1,15 @@
+--- a/quickjs/quickjs.c
++++ b/quickjs/quickjs.c
+@@ -78,6 +78,12 @@
+ #define CONFIG_STACK_CHECK
+ #endif
+ 
++#ifndef FE_UPWARD
++#define	FE_UPWARD	0x800
++#endif
++#ifndef FE_DOWNWARD
++#define	FE_DOWNWARD	0x400
++#endif
+ 
+ /* dump object free */
+ //#define DUMP_FREE

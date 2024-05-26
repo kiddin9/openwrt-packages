@@ -1,0 +1,17 @@
+{
+	"luci-app-log-viewer": {
+		"description": "Grant access to log-viewer procedures",
+		"read": {
+			"cgi-io": [ "exec" ],
+			"file": {
+				"/sbin/logread*": [ "exec" ],
+				"/usr/sbin/logread*": [ "exec" ],
+				"/bin/dmesg -r": [ "exec" ]
+			},
+			"ubus": {
+				"system": [ "info" ],
+				"luci.log-viewer": [ "getSyslogSize", "getSyslogHash", "getDmesgSize", "getDmesgHash", "getLogfileSize" ]
+			}
+		}
+	}
+}

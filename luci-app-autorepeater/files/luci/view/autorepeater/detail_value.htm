@@ -1,0 +1,7 @@
+
+<%+cbi/valueheader%>
+	<input type="text" class="cbi-input-text" style="width: 10em;" onchange="cbi_d_update(this.id)"<%=
+		attr("name", cbid) .. attr("id", cbid) .. attr("value", self:cfgvalue(section) or self.default) ..
+		ifattr(self.size, "size") .. ifattr(self.placeholder, "placeholder")
+	%> />
+<!-- no value footer to suppress next line -->

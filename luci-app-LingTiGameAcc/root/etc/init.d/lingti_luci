@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+
+[ -d /var/bin ] || mkdir -p /var/bin
+[ -f /var/bin/lingti ] || cp /usr/bin/lingti /var/bin/lingti
+
+
+START=90
+STOP=15
+
+start() {
+	config_load lingti
+	local enable
+	config_get_bool enable lingti enabled
+	if [ "$enable" -eq 0 ]; then 
+	  stop
+	else
+	  /etc/init.d/lingti enable
+	  /var/bin/lingti & 2>/dev/null
+	fi
+}
+
+stop() {
+	config_load lingti
+	local enabled
+	config_get_bool enabled lingti enabled
+	/etc/init.d/lingti disable
+	kill -9 `pgrep -f "/var/bin/lingti"` 2>/dev/null
+}

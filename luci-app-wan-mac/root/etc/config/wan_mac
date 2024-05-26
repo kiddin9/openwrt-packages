@@ -1,0 +1,4 @@
+config wan_mac 'config'
+    option enabled '0'
+#   option prefix ''
+#   option macaddr ''

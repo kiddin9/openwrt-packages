@@ -1,0 +1,30 @@
+<!-- 
+	Copyright (C) 2021 zPonds <admin@shinenet.cn>
+	Copyright (C) 2020 KFERMercer <KFER.Mercer@gmail.com>
+	THIS IS FREE SOFTWARE, LICENSED UNDER GPLv3.
+ -->
+
+<script type="text/javascript">//<![CDATA[
+XHR.poll(3, '<%=url([[admin]], [[services]], [[nezha-agent]], [[status]])%>', null,
+	function(x, data) {
+		var tb = document.getElementById('nezha-agent_status');
+
+		if (data && tb) {
+			if (data.running) {
+				var links = '<em><b><font color=green>nezha-agent <%:RUNNING%></font></b></em>';
+				tb.innerHTML = links;
+			} else {
+				tb.innerHTML = '<em><b><font color=red>nezha-agent <%:NOT RUNNING%></font></b></em>';
+			}
+		}
+	}
+);
+
+//]]>
+</script>
+<style>.mar-10 {margin-left: 50px; margin-right: 10px;}</style>
+<fieldset class="cbi-section">
+	<p id="nezha-agent_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>

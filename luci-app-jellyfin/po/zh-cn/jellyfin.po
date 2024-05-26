@@ -1,0 +1,74 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "Jellyfin is the volunteer-built media solution that puts you in control of your media. Stream to any device from your own server, with no strings attached. Your media, your server, your way."
+msgstr "Jellyfin 是志愿者构建的媒体解决方案，可让您控制自己的电影等媒体，并不受任何限制地让您从各种设备去观看您的媒体。"
+
+msgid "The following models support hardware transcoding without configuration in Jellyfin:"
+msgstr "以下机型无需在Jellyfin配置即支持硬件转码："
+
+msgid "RK35xx series (e.g. R6S, R5S, R68s, R66s, H28K, etc.) with iStoreOS firmware (version 20221123 and above). Other firmwares require MPP and RGA to be turned on, and are not guaranteed to be available."
+msgstr "RK35xx 系列（例如R6S，R5S，R68s，R66s，H28K等）并使用 iStoreOS 固件（版本20221123及以上）。其他固件需开启MPP和RGA，不保证可用。"
+
+msgid "The following models may support hardware transcoding by referring to the official Jellyfin documentation:"
+msgstr "以下机型参考 Jellyfin 官方文档配置可能支持硬件转码："
+
+msgid "x86 series"
+msgstr "x86 系列"
+
+msgid "Raspberry Pi series"
+msgstr "树莓派系列"
+
+msgid "Media path"
+msgstr "媒体路径"
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "Transcode cache path"
+msgstr "转码缓存路径"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "Host network"
+msgstr "宿主网络"
+
+msgid "Jellyfin running in host network, for DLNA application, port is always 8096 if enabled"
+msgstr "在宿主网络运行 Jellyfin，以支持 DLNA 等应用，例如投屏，如果启用则端口固定为8096，需注意端口与 Emby 冲突"
+
+msgid "Default use 'transcodes' in 'config path' if not set, please make sure there has enough space"
+msgstr "留空则使用配置文件路径下的 transcodes，请确保有足够空间"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Jellyfin status:"
+msgstr "Jellyfin 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The initial installation of Jellyfin requires at least 2GB of space, please make sure that the Docker data directory has enough space. It is recommended to migrate Docker to a hard drive before installing Jellyfin."
+msgstr "初次安装 Jellyfin 至少需要2GB空间，请确保 Docker 数据目录有足够空间。建议安装 Jellyfin 前将 Docker 迁移到硬盘上。"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Jellyfin is running"
+msgstr "Jellyfin 运行中"
+
+msgid "Jellyfin is not running"
+msgstr "Jellyfin 未运行"
+
+msgid "Open Jellyfin"
+msgstr "打开 Jellyfin"
+
+msgid "Not required, all disk is mounted in"
+msgstr "可不填，所有硬盘都在"

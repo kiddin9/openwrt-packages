@@ -1,0 +1,67 @@
+{
+	"admin/status/log-viewer": {
+		"title": "Log Viewer",
+		"order": 5,
+		"action": {
+			"type": "alias",
+			"path": "admin/status/log-viewer/messages"
+		},
+		"depends": {
+			"acl": [ "luci-app-log-viewer" ]
+		}
+	},
+
+	"admin/status/log-viewer/messages": {
+		"title": "messages",
+		"order": 1,
+		"action": {
+			"type": "view",
+			"path": "log-viewer/multilog/messages"
+		}
+	},
+
+	"admin/status/log-viewer/secure": {
+		"title": "secure",
+		"order": 2,
+		"action": {
+			"type": "view",
+			"path": "log-viewer/multilog/secure"
+		}
+	},
+
+	"admin/status/log-viewer/maillog": {
+		"title": "maillog",
+		"order": 3,
+		"action": {
+			"type": "view",
+			"path": "log-viewer/multilog/maillog"
+		}
+	},
+
+	"admin/status/log-viewer/cron": {
+		"title": "cron",
+		"order": 4,
+		"action": {
+			"type": "view",
+			"path": "log-viewer/multilog/cron"
+		}
+	},
+
+	"admin/status/log-viewer/boot": {
+		"title": "boot",
+		"order": 5,
+		"action": {
+			"type": "view",
+			"path": "log-viewer/multilog/boot"
+		}
+	},
+
+		"admin/status/log-viewer/dmesg": {
+		"title": "kernel",
+		"order": 6,
+		"action": {
+			"type": "view",
+			"path": "log-viewer/dmesg"
+		}
+	}
+}

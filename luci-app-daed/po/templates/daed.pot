@@ -1,0 +1,86 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:53
+msgid "A modern dashboard for dae."
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:66
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/log.js:32
+msgid "Collecting data..."
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:72
+msgid "Enable"
+msgstr ""
+
+#: applications/luci-app-daed/root/usr/share/rpcd/acl.d/luci-app-daed.json:3
+msgid "Grant access to daed configuration"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:76
+msgid "Listening address"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/log.js:30
+msgid "Loading..."
+msgstr ""
+
+#: applications/luci-app-daed/root/usr/share/luci/menu.d/luci-app-daed.json:22
+msgid "Log"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/log.js:48
+msgid "Log file does not exist."
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/log.js:39
+msgid "Log is empty."
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:81
+msgid "Max log backups"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:86
+msgid "Max log size"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:35
+msgid "NOT RUNNING"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:32
+msgid "Open Web Interface"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:33
+msgid "RUNNING"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/log.js:65
+msgid "Refresh every %s seconds."
+msgstr ""
+
+#: applications/luci-app-daed/root/usr/share/luci/menu.d/luci-app-daed.json:14
+msgid "Settings"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:82
+msgid "The maximum number of old log files to retain."
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:87
+msgid "The maximum size in megabytes of the log file before it gets rotated."
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/log.js:52
+msgid "Unknown error: %s"
+msgstr ""
+
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:33
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:35
+#: applications/luci-app-daed/htdocs/luci-static/resources/view/daed/config.js:52
+#: applications/luci-app-daed/root/usr/share/luci/menu.d/luci-app-daed.json:3
+msgid "daed"
+msgstr ""

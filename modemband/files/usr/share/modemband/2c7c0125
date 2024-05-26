@@ -1,0 +1,8 @@
+_DEVICE=/dev/ttyUSB2
+_DEFAULT_LTE_BANDS="1 3 5 7 8 20 38 40 41"
+
+getinfo() {
+	echo "Quectel EC25"
+}
+
+. $RES/_quectel_common

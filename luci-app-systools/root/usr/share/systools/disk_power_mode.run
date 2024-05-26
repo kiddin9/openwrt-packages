@@ -1,0 +1,72 @@
+#!/bin/bash
+#function-1:显示硬盘盘符+Lable+容量以及硬盘上电状态
+#function-2:通过echo -e转义与if...elif...else语句使其active呈现红色,standby呈现绿色,方便快速检视硬盘上电情况
+#function-3:原for循环语句中加入判断和循环计数方式,统计active和standby的数量
+#function-4:增加 if 嵌套语句判断除开 active 和 standby 之外状态的硬盘，并将其标记为 unknown
+#function-5:将unknown状态的硬盘列举出来(对for语句上瘾了……
+
+dsk=`ls /dev/sd* | grep -Eo 'sd(a{2}|[a-z]+)$'`
+echo `date +%c`
+standby=0
+active=0
+unknown=0
+c=0
+
+if readlink /proc/$$/fd/1 2>/dev/null | grep -qF /dev/ ; then
+	highlight(){
+		echo -e "$1 $2 \033[0m"
+	}
+else
+	highlight(){
+		echo -e "$2"
+	}
+fi
+
+for i in $dsk;
+do
+echo -e "\n";
+echo -e "-----------------------";
+echo -n "/dev/$i : " ;
+stats=`smartctl -i -n standby /dev/$i|grep "mode"|awk '{print $4}' `;
+#echo $stats
+if [[ $stats == STANDBY ]]||[[ $stats == ACTIVE ]]||[[ $stats == IDLE_A ]]
+then
+   for s in $stats;
+   do
+   if [ $s == STANDBY ]
+   then
+      highlight "\033[30;42m" " STANDBY "
+      let standby=$standby+1
+   else
+      highlight "\033[37;41m" " ACTIVE "
+      let active=$active+1
+   fi
+   done
+else
+   highlight "\033[30;47m" " UNKNOWN "
+   let unknown=$unknown+1
+   for un in $i
+   do
+     list[c]=$un
+     ((c++))
+   done
+fi
+echo `lsblk /dev/$i|grep "/srv/dev-disk-by-label-"|awk '{print $7}' `;
+echo `lsblk /dev/$i|grep "/srv/dev-disk-by-label-"|awk '{print $4}' `;
+done
+
+echo -e "\n";
+highlight "\033[37;41m" "Active  Disk in Total=$active  ";
+highlight "\033[30;42m" "Standby Disk in Total=$standby  ";
+highlight "\033[30;47m" "Unknown Disk in Total=$unknown  ";
+#echo $c
+echo -e "Unknown Disk list: ";
+for((b=0;b<=$c;b++));
+do
+  if [[ $b -lt $c ]]
+  then
+  echo ${list[b]}
+  fi
+done
+echo -e "\n";
+exit

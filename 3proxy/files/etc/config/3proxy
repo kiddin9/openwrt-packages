@@ -1,0 +1,2 @@
+config 3proxy
+	option config '/etc/3proxy.cfg'

@@ -1,0 +1,39 @@
+. /etc/profile.d/opkg.sh
+OPKG_PI="$(opkg export pi)"
+if [ ! -e /etc/opkg-restore-auto ] \
+&& lock -n /var/lock/opkg-restore && [ -s "${OPKG_PI}" ]; then
+c=0
+while ! curl https://dl.openwrt.ai >/dev/null || ! opkg update >/dev/null; do
+echo "Network error." | logger -t opkg
+[[ "$(uci -q get dhcp.@dnsmasq[0].noresolv)" == 1 && $c == 3 ]] && {
+	uci -q del dhcp.@dnsmasq[0].noresolv
+	uci commit dhcp
+	uci -q get network.lan.dns || {
+		uci -q set network.lan.dns='223.5.5.5'
+		uci commit network
+		/etc/init.d/network reload
+		}
+	/etc/init.d/dnsmasq reload
+}
+[ $c -eq 300 ] && {
+	lock -u /var/lock/opkg-restore
+	exit 0
+} || let c++
+sleep 3
+done
+
+c1=0
+logs="1"
+while [ "$logs" != "" ]; do
+logs="$(opkg restore)"
+echo "${logs}" | logger -t opkg
+[ $c1 -eq 5 ] && {
+	lock -u /var/lock/opkg-restore
+	exit 0
+	} || let c1++
+sleep 2
+done
+touch /etc/opkg-restore-auto
+
+fi
+lock -u /var/lock/opkg-restore

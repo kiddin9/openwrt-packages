@@ -1,0 +1,37 @@
+#!/bin/sh
+if [ "$PKG_UPGRADE" != 1 ]; then
+	uci get luci.themes.KuCat >/dev/null 2>&1 || \
+uci batch <<-EOF
+	set luci.themes.KuCat=/luci-static/kucat
+	set luci.main.mediaurlbase=/luci-static/kucat
+	commit luci
+EOF
+fi
+chmod +x /usr/libexec/kucat/kucat*
+if [ ! -s "/etc/config/advancedplus" ];then
+[ ! -s "/etc/config/kucat" ] && {
+cat <<-EOF >/etc/config/kucat
+config basic
+	option gossr ''
+	option gouser ''
+	option gohome ''
+	option bklock '1'
+	option fontmode '0'
+	option font_d '1.1rem'
+	option font_z '0.92rem'
+	option font_x '0.875rem'
+	option background '0'
+	option setbar '1'
+	option bkuse '0'
+	option mode 'auto'
+	option primary_rgbm_ts '0.8'
+	option primary_opacity '0'
+	option primary_rgbm '26,131,97'
+	option primary_rgbs '76,157,69'
+	option primary_rgbs_ts '0.2'
+	option primary_rgbbody '248,248,248'
+EOF
+}
+fi
+rm -rf /tmp/luci-*
+exit 0

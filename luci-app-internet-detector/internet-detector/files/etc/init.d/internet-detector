@@ -1,0 +1,25 @@
+#!/bin/sh /etc/rc.common
+
+START=97
+STOP=01
+
+PROG="/usr/bin/internet-detector"
+
+run_instance() {
+	config_get enabled "$1" enabled "0"
+	if [ $enabled = "1" ]; then
+		$PROG service "$1"
+	fi
+}
+
+start() {
+	config_load internet-detector
+	config_get mode "config" mode "0"
+	if [ $mode = "1" ]; then
+		config_foreach run_instance "instance"
+	fi
+}
+
+stop() {
+	$PROG stop
+}

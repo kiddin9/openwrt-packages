@@ -1,0 +1,14 @@
+#!/bin/sh
+
+nginxer=$(uci get nginx.global.nginxer)
+if [ "$nginxer" != 1 ]; then
+    uci delete nginx._redirect2ssl.return
+    uci add_list nginx._redirect2ssl.include='restrict_locally'
+    uci add_list nginx._redirect2ssl.include='conf.d/*.locations'
+    uci set nginx._redirect2ssl.access_log='off; # logd openwrt'
+    uci set nginx.global.nginxer='1'
+    uci commit nginx
+    # /etc/init.d/uhttpd running || /etc/init.d/uhttpd disable
+    /etc/init.d/nginx reload
+fi
+exit 0

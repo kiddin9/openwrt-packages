@@ -1,0 +1,54 @@
+config basic
+	option algos 'kmp'
+	option control_mode '0'
+	option enabled '0'
+
+config weburl
+	option word 'baidu'
+	option timestart '00:00'
+	option timeend '00:00'
+	option week '*'
+	option enable '0'
+
+config weburl
+	option timestart '00:00'
+	option timeend '00:00'
+	option word 'youtube'
+	option week '1,2,3,4,5'
+	option enable '0'
+
+config protocol
+	option proto 'tcp'
+	option timestart '00:00'
+	option week '*'
+	option timeend '23:00'
+	option portd '80'
+	option enable '0'
+
+config protocol
+	option proto 'tcp'
+	option timestart '00:00'
+	option week '*'
+	option portd '443'
+	option timeend '23:00'
+	option enable '0'
+
+config protocol
+	option proto 'tcp'
+	option timestart '00:00'
+	option timeend '00:00'
+	option week '1,2,3,4,5'
+	option enable '0'
+
+config time
+	option timestart '00:00'
+	option week '*'
+	option timeend '23:59'
+	option enable '0'
+
+config time
+	option timestart '00:00'
+	option enable '0'
+	option week '1,2,3,4,5'
+	option timeend '23:59'
+

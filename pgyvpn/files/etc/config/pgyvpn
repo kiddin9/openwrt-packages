@@ -1,0 +1,20 @@
+config base 'base'
+	option filename '/usr/sbin/pgyvpnsvr'
+	option check_route_conflict '1'
+	option script_p2pinit '/usr/share/pgyvpn/p2pinit.sh'
+	option script_vncinit '/usr/share/pgyvpn/vncinit.sh'
+	option script_progress '/usr/share/pgyvpn/vpnprogress.sh'
+
+config secure 'secure'
+	option encrypt '0'
+
+config log 'log'
+	option path '/tmp/oray/pgyvpnsvr/log'
+	option mask '7'
+
+config oraysl 'oraysl'
+	option filename '/usr/sbin/pgyvpn_oraysl'
+	option logpath '/tmp/oray/pgyvpn_oraysl/log'
+	option statusfilename '/tmp/oray/pgyvpn_oraysl/status'
+	option pidfilename '/tmp/oray/pgyvpn_oraysl/pid'
+

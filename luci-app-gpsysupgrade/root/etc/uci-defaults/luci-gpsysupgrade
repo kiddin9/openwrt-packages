@@ -1,0 +1,9 @@
+rm -rf /tmp/luci-modulecache /tmp/luci-indexcache*
+
+grep -q "opkg-upgrade" /etc/crontabs/root || {
+	hour="$(grep -m1 -ao '[4-6]' /dev/urandom | head -n1)"
+	min="$(grep -m1 -ao '[0-5][0-9]' /dev/urandom | head -n1)"
+	echo "$min $hour * * * . /etc/hotplug.d/online/51-opkg-upgrade" >> /etc/crontabs/root
+}
+
+exit 0

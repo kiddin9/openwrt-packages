@@ -1,0 +1,41 @@
+msgid "Realtime Bandwidth"
+msgstr "实时流量"
+
+msgid "Display the network speed of the client, and only count the external traffic"
+msgstr "显示客户端网速，只统计外连流量"
+
+msgid "Pause refresh"
+msgstr "暂停刷新"
+
+msgid "Only display clients of specific network interface"
+msgstr "只显示特定网络接口的客户端"
+
+msgid "Interface..."
+msgstr "接口..."
+
+msgid "Merge by MAC address"
+msgstr "按MAC地址合并"
+
+msgid "Filter..."
+msgstr "过滤..."
+
+msgid "Filter the data according to the hostname, IP, MAC"
+msgstr "按主机名、IP、MAC过滤数据"
+
+msgid "Client IP"
+msgstr "客户端 IP"
+
+msgid "Client MAC"
+msgstr "客户端 MAC"
+
+msgid "Download speed"
+msgstr "下载速度"
+
+msgid "Download packets"
+msgstr "下载包"
+
+msgid "Upload speed"
+msgstr "上传速度"
+
+msgid "Upload packets"
+msgstr "上传包"

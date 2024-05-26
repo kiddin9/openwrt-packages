@@ -1,0 +1,90 @@
+# SimCom SIM7600E-H
+modem_data(){
+	# get hardware info
+	MANUF=$(echo "$O" | grep -i ${FAMILY} | head -1)
+	MODEL=$(echo "$O" | grep -i ${FAMILY} | tail -1)
+	DEVICE="$MANUF $MODEL"
+	FW=$(echo "$O" | awk '/\+CGMR:/{print $2}')
+	ICCID=$(echo "$O" | awk -F [:] '/ICCID:/{gsub("\r","");print $2}')
+	IMSI=$(echo "$O" | grep -A1 -i $FW | tail -1)
+	IMEI=$(echo "$O" | grep -A4 -i $FAMILY | tail -1)
+	# get signal info
+	TECH=$(echo "$O" | awk -F[,\ ] '/^\+CNSMOD/ {print $3}')
+	case "$TECH" in
+		1*) MODE="GSM";;
+		2*) MODE="GPRS";;
+		3*) MODE="EDGE";;
+		4*) MODE="UMTS";;
+		5*) MODE="HSDPA";;
+		6*) MODE="HSUPA";;
+		7*) MODE="HSPA";;
+		8*) MODE="LTE";;
+		*) MODE="--";;
+	esac
+	case "$TECH" in 
+		8*)
+			EARFCN=$(echo "$O" | awk -F[,\ ] '/^\+CPSI/ {print $9}')
+			CSQ_RSSI=$(echo "$O" | awk -F[,\ ] '/^\+CPSI/ {printf "%.0f\n", $14/10}')
+			RSRP=$(echo "$O" | awk -F[,\ ] '/^\+CPSI/ {printf "%.0f\n", $13/10}')
+			RSRQ=$(echo "$O" | awk -F[,\ ] '/^\+CPSI/ {printf "%.0f\n", $12/10}')
+			SINR=$(echo "$O" | awk -F[,\ ] '/^\+CPSI/ {printf "%.0f\n", ($15*2)-20}')
+			PCI=$(echo "$O" | awk -F[,\ ] '/^\+CPSI/ {print $7}')
+			LAC=$(echo "$O" | awk -F [,] '/\+CEREG/{print $3}')
+			CID=$(echo "$O" | awk -F [,] '/\+CEREG/{print $4}')
+			BWDL=$(echo "$O" |awk -F[,\ ] '/^\+CPSI/ {print $10}')
+			BWUL=$(echo "$O" |awk -F[,\ ] '/^\+CPSI/ {print $11}')
+			ENBx=$(echo $CID | sed -e 's/..$//')
+			CELL=$(printf %d 0x${CID: -2})
+			ENBID=$(printf %d 0x$ENBx)
+			LTE_CA=$(echo "$O" | grep -i CA_Scell | wc -l)
+                        if [ $LTE_CA -gt 0 ]; then
+				. /usr/share/modeminfo/scripts/ch_to_band
+				LTE_CA=1
+				SCH=$(echo "$O" | awk -F[:,] '/CA_Scell/{print $3}')
+				SBW=$(echo "$O" | awk -F[:,] '/CA_Scell/{print $6}')
+				for ch in $SCH; do
+					ch_to_band $ch
+					SCC="$SCC+$SC"
+				done
+				for bwc in $SBW; do
+					case $bwc in
+						1) BWCx=3 ;;
+						2) BWCx=5 ;;
+						3) BWCx=10 ;;
+						4) BWCx=15 ;;
+						5) BWCx=20 ;;
+					esac
+					BWCA=$(($BWCA+$BWCx))
+				done
+				case $BWDL in
+					1) BWDx=3 ;;
+					2) BWDx=5 ;;
+					3) BWDx=10 ;;
+					4) BWDx=15 ;;
+					5) BWDx=20 ;;
+				esac
+				BWCA=$((BWDx+$BWCA))
+			fi
+		;;
+		4*|5*|6*|7*)
+			EARFCN=$(echo "$O" | awk -F[,] '/^\+CPSI/ {print $8}')
+			ECIO=$(echo "$O" | awk -F[,] '/^\+CPSI/ {printf"%.0f\n", $10}')
+			SINR="-"$ECIO
+                        LAC=$(echo "$O" | awk -F [,] '/\+CEREG/{print $3}')
+                        CID=$(echo "$O" | awk -F [,] '/\+CEREG/{print $4}')
+		;;
+		1*|2*|3*)
+			EARFCN=$(echo "$O" | awk -F[,\ ] '/^\+CPSI/ {print $7}')
+                        LAC=$(echo "$O" | awk -F [,] '/\+CREG/{print $3}')
+                        CID=$(echo "$O" | awk -F [,] '/\+CREG/{print $4}')
+		;;
+	esac
+        LAC_NUM=$(printf %d 0x$LAC)
+        CID_NUM=$(printf %d 0x$CID)
+	CHIPTEMP=$(echo "$O" | awk -F[,\ ] '/^\+CPMUTEMP/ {print $2}')
+	if [ $(uci -q get modeminfo.@general[0].decimail) = "1" ]; then
+		LAC=$LAC_NUM
+		CID=$CID_NUM
+	fi
+
+}

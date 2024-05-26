@@ -1,0 +1,99 @@
+# MikroTik R11e-LTE, R11e-LTE6 modem (plat.ver."OpenWrt-18.06.7" router: MikroTik RBM33")
+# NEED REWRITE FUNCTION for atinout compatible!!!
+function modem_data() {
+	O=$(echo "$O" | grep -Ev '^$|^OK|^AT' | sort)	
+	TECH=$(echo "$O" | awk -F[,] '/^\+COPS/ {print $4}')
+	FW=$(echo "$O" | awk '/^\+CGMR/{gsub("\"|\r","",$0); print $2}')
+	REGST=$(echo "$O" | awk -F[,] '/\+CREG/{print $2}')
+	EEMGSTATE=-1
+	case "$TECH" in
+		0*|1*) # GSM, GSM Compact
+			MODE="GSM"
+			EEMGSTATE=0
+		;;   
+		2*) # UTRAN
+			MODE="UMTS" 
+			EEMGSTATE=0
+		;;    
+		3*) # GSM w/EGPRS
+			MODE="EDGE"
+			EEMGSTATE=0
+		;;    
+		4*|5*) # UTRAN w/HSDPA, UTRAN w/HSUPA
+			MODE="HSDPA"
+			EEMGSTATE=1
+		;;
+		6*) # UTRAN w/HSDPA and HSUPA
+			MODE="HSUPA"
+			EEMGSTATE=1
+		;;    
+		7*) # E-UTRAN
+			MODE="LTE"
+			EEMGSTATE=2
+		;;      
+		8*) # UTRAN HSPA+
+			MODE="HSPA"
+			EEMGSTATE=2
+		;;    
+		 *) 
+			MODE="--"
+		;;
+	esac
+	DEVx="$(echo "$O" | awk -F [:,] '/CGMI:|GMM:/{gsub("\"|\r","",$0);print substr($2,2);}')"
+	DEVICE=$(echo $DEVx)
+	IMEI=$(echo "$O" | awk -F [:,] '/\+CGSN:/{gsub(" ","", $2); print $2}')
+	# Need Chenges
+	IMSI=$(echo "$O" | awk -F [:,] '/\+CIMI/{gsub(" ","", $2); print $2}')
+	ICCID=$(echo "$O" | awk -F [:,] '/\+ICCID/{gsub(" ","", $2); print $2}')
+	CSQ_RSSI=$(echo "$O" | awk -F[':,'] '/^\+CESQ:/ {print $2}')
+	ECIO=$(echo "$O" | awk -F[':,'] '/^\+CESQ:/ {print $5}')
+	# If less than 11 -> error
+	if [ "x$CSQ_RSSI" != "x" ]; then
+		CSQ_RSSI=$(echo $CSQ_RSSI | awk '{if((110 - $1) > 11) print 110 - $1; else print "";}')
+	fi
+	if [ "x$ECIO" != "x" ]; then
+		ECIO=$(echo $ECIO | awk '($1 < 255) {print 25 - $1 * 0.5}')
+	fi
+	# LTE Engineering Mode
+	if [ $EEMGSTATE -eq 2 ]; then
+		EEMGINFO=$(echo "$O" | awk -F[':'] '/^\+EEMLTESVC:/ {print $2}')
+		if [ "x$EEMGINFO" != "x" ]; then
+			BW=$(echo $EEMGINFO | awk -F[','] '{print $8}')
+			BWDL=$(echo $EEMGINFO | awk -F[','] '{print $9}')
+			PCI=$(echo $EEMGINFO | awk -F [,] '{print $5}')
+			RSRP=$(echo $EEMGINFO | awk -F[','] '{print -140+$11}')
+			RSRQ=$(echo $EEMGINFO | awk -F[','] '{printf "%.0f\n", -19.5+$11/2}')
+			SINR=$(echo $EEMGINFO | awk -F[','] '{printf "%.0f\n", ($13/4+5)}')
+			COPS_MCC=$(echo $EEMGINFO | awk -F[','] '{print $1}')
+			COPS_MNC=$(echo $EEMGINFO | awk -F[','] '{print $3}')
+			LAC=$(echo "$O" | awk -F [,] '/^\+CREG/{print toupper($3)}')
+			CID=$(echo "$O" | awk -F [,] '/^\+CREG/{print toupper($4)}')
+			ENBx=$(echo $CID | sed -e 's/..$//')
+			ENBID=$(printf %d 0x$ENBx)
+			CELL=$(printf %d 0x${CID: -2})
+			EARFCN=$(echo $EEMGINFO | awk -F[','] '{print $6}')
+		fi
+	# UMTS Engineering Mode
+	elif [ $EEMGSTATE -eq 1 ]; then
+		COPS_NUM=$(echo "$O" | awk -F[":"] '/^\+EEMUMTSSV:/ {print $2}')
+		if [ "x$EEMGINFO" != "x" ]; then
+			COPS_MCC=$(echo $EEMGINFO | awk -F[','] '{print $11}')
+			COPS_MNC=$(echo $EEMGINFO | awk -F[','] '{print $12}')
+		fi
+	# GSM Engineering Mode
+	elif [ $EEMGSTATE -eq 0 ]; then
+		COPS_NUM=$(echo "$O" | awk -F[":"] '/^\+EEMGINFOSVC:/ {print $2}')
+		if [ "x$EEMGINFO" != "x" ]; then
+			COPS_MCC=$(echo $EEMGINFO | awk -F[','] '{print $1}')
+			COPS_MNC=$(echo $EEMGINFO | awk -F[','] '{print $2}')
+		fi
+	fi
+	if [ $(uci -q get modeminfo.@general[0].decimail) = "1" ]; then
+                LAC=$(printf %d 0x$LAC)
+                CID=$(printf %d 0x$CID)
+        fi
+	COPS=$(awk -F[\;] '/'$COPS_NUM'/ {print $2}' $RES/mccmnc.dat)
+	if [ "x$COPS" = "x" ]; then
+		COPS="$COPS_MCC $COPS_MNC"
+	fi
+}

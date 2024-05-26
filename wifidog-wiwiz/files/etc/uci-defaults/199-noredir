@@ -1,0 +1,9 @@
+#!/bin/sh
+
+uci set uhttpd.main.redirect_https='0'
+uci set uhttpd.main.error_page='/error.html'
+#uci set uhttpd.main.max_requests='1'
+#uci set uhttpd.main.http_keepalive='0'
+uci commit uhttpd
+
+/etc/init.d/uhttpd restart

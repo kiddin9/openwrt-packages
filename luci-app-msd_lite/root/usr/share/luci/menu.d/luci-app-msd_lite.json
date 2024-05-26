@@ -1,0 +1,13 @@
+{
+	"admin/services/msd_lite": {
+		"title": "Multi Stream daemon Lite",
+		"action": {
+			"type": "view",
+			"path": "msd_lite"
+		},
+		"depends": {
+			"acl": [ "luci-app-msd_lite" ],
+			"fs": { "/etc/config/msd_lite": "file" }
+		}
+	}
+}

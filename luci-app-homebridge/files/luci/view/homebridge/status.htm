@@ -1,0 +1,22 @@
+<script type="text/javascript">//<![CDATA[
+XHR.poll(3, '<%=url([[admin]], [[services]], [[homebridge]], [[status]])%>', null,
+	function(x, data) {
+		var tb = document.getElementById('homebridge_status');
+		if (data && tb) {
+			if (data.running) {
+				var links = '<em><b><font color=green>Homebridge <%:RUNNING%></font></b></em>';
+				tb.innerHTML = links;
+			} else {
+				tb.innerHTML = '<em><b><font color=red>Homebridge <%:NOT RUNNING%></font></b></em>';
+			}
+		}
+	}
+);
+//]]>
+</script>
+<style>.mar-10 {margin-left: 50px; margin-right: 10px;}</style>
+<fieldset class="cbi-section">
+	<p id="homebridge_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>

@@ -1,0 +1,88 @@
+#!/bin/sh /etc/rc.common
+
+USE_PROCD=1
+START=99
+
+CONF="spotifyd"
+PROG="/usr/bin/spotifyd"
+
+is_enabled() {
+	local enabled
+	config_get enabled "$1" "$2" "${3:-0}"
+	if [ "$enabled" -eq "1" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+append_param_arg() {
+	local value
+	config_get value "$1" "$2" $3
+	[ -n "$value" ] && procd_append_param command "--${2//_/-}" "$value"
+}
+
+append_param_bool() {
+	is_enabled "$1" "$2" $3 && procd_append_param command "--${2//_/-}"
+}
+
+load_config_arg() {
+	# account info
+	append_param_arg "$1" "username"
+	append_param_arg "$1" "password"
+
+	# device info
+	append_param_arg "$1" "device_name"
+	append_param_arg "$1" "device_type"
+
+	# device control
+	append_param_arg "$1" "backend"
+	append_param_arg "$1" "control"
+	append_param_arg "$1" "device"
+	append_param_arg "$1" "mixer"
+
+	# song control
+	append_param_bool "$1" "autoplay"
+	append_param_arg "$1" "audio_format"
+	append_param_arg "$1" "bitrate"
+
+	# volume control
+	append_param_arg "$1" "initial_volume"
+	append_param_bool "$1" "volume_normalisation"
+	append_param_arg "$1" "normalisation_pregain"
+	append_param_arg "$1" "volume_controller"
+
+	# cache
+	append_param_bool "$1" "no_audio_cache" "1"
+	if ! is_enabled "$1" "no_audio_cache"; then
+		append_param_arg "$1" "cache_path"
+		append_param_arg "$1" "max_cache_size"
+	fi
+
+	# advanced
+	append_param_arg "$1" "on_song_change_hook"
+	append_param_arg "$1" "proxy"
+	append_param_arg "$1" "zeroconf_port"
+}
+
+start_service() {
+	config_load "$CONF"
+
+	is_enabled "config" "enabled" || return 1
+
+	procd_open_instance "$CONF"
+	procd_set_param command "$PROG"
+	procd_append_param command "--no-daemon"
+
+	load_config_arg "config"
+
+	procd_set_param respawn
+	procd_set_param stdout 1
+	procd_set_param stderr 1
+
+	procd_close_instance
+}
+
+service_triggers() {
+	procd_add_reload_trigger "$CONF"
+}

@@ -1,0 +1,14 @@
+{
+	"admin/network/wan_mac": {
+		"title": "WAN MAC",
+		"order": 99,
+		"action": {
+			"type": "view",
+			"path": "wan_mac"
+		},
+		"depends": {
+			"acl": [ "luci-app-wan-mac" ],
+			"uci": { "wan_mac": true }
+		}
+	}
+}

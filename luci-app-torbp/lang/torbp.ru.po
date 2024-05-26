@@ -1,0 +1,56 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Tor bridges proxy"
+msgstr "Tor прокси"
+
+msgid "Tor with SOCKS 5 proxy with a UI for the ability to add bridges"
+msgstr "Tor SOCKS 5 прокси с интерфейсом, позволяющим добавлять мосты"
+
+msgid "Tor configuration"
+msgstr "Настройки Tor"
+
+msgid "Stop & Disable start on boot"
+msgstr "Остановить и Отключить автозапуск"
+
+msgid "Start & Enable start on boot"
+msgstr "Запустить и Включить автозапуск"
+
+msgid "NOT ENABLED on boot"
+msgstr "НЕ ЗАПУСКАЕТСЯ при загрузке"
+
+msgid "ENABLED on boot"
+msgstr "ЗАПУСКАЕТСЯ при загрузке"
+
+msgid "Tor is Running"
+msgstr "Tor запущен"
+
+msgid "Tor is not Installed"
+msgstr "Tor не установлен"
+
+msgid "Tor is not Running"
+msgstr "Tor не запущен"
+
+msgid "Make me Tor config"
+msgstr "Сконфигурировать Tor"
+
+msgid "Create a sample Tor config"
+msgstr "Создать пример конфигурации Tor"
+
+msgid "Edit torrc file"
+msgstr "Редактирование torrc"
+
+msgid "Apply & Restart Tor"
+msgstr "Применить и Перезапустить Tor"
+
+msgid "Log"
+msgstr "Журнал"
+
+msgid "Tor log"
+msgstr "Журнал Tor"
+
+msgid "and"
+msgstr "и"
+
+msgid "with PID"
+msgstr "c PID"

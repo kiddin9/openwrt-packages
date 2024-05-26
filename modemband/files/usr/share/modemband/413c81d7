@@ -1,0 +1,8 @@
+_DEVICE=/dev/ttyUSB1
+_DEFAULT_LTE_BANDS="1 2 3 4 5 7 8 12 13 14 17 18 19 20 25 26 28 29 30 32 38 39 40 41 42 43 46 66"
+
+getinfo() {
+	echo "Dell DW5821e Snapdragon X20 LTE"
+}
+
+. $RES/_foxconn_common1

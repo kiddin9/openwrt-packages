@@ -1,0 +1,12 @@
+config main 
+  option 'http_port' '9001' 
+  option 'config_path' '' 
+  option 'public_uri' 'http://localhost:9001'
+  option 'redis_uri' 'redis://penpot-redis/0'
+  option 'db_uri' 'postgresql://penpot-postgres/penpot'
+  option 'db_name' 'penpot'
+  option 'db_username' 'penpot'
+  option 'db_password' 'penpot' 
+  option 'smtp_default_from' 'no-reply@example.com'
+  option 'smtp_default_reply_to' 'no-reply@example.com'
+

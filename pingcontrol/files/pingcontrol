@@ -1,0 +1,102 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+
+INSTANCE=$1
+IFACE=$(uci -q get pingcontrol.$1.iface)
+CHECK_PERIOD=$(uci -q get pingcontrol.$1.check_period)
+TESTIP=$(uci -q get pingcontrol.$1.testip)
+SW_BEFORE_MODRES=$(uci -q get pingcontrol.$1.sw_before_modres)
+SW_BEFORE_SYSRES=$(uci -q get pingcontrol.$1.sw_before_sysres)
+
+PING_OK=$(uci -q get pingcontrol.$1.ping_ok)
+PING_LOST=$(uci -q get pingcontrol.$1.ping_lost)
+PING_RESTORED=$(uci -q get pingcontrol.$1.ping_restored)
+BEFORE_IFACE_DOWN=$(uci -q get pingcontrol.$1.before_iface_down)
+AFTER_IFACE_UP=$(uci -q get pingcontrol.$1.after_iface_up)
+BEFORE_REBOOT=$(uci -q get pingcontrol.$1.before_reboot)
+
+host_up_count=0
+lost1=0
+lost2=0
+lost_flag=0
+IP_COUNT=$(echo $TESTIP | wc -w)
+let SW_BEFORE_MODRES=SW_BEFORE_MODRES*IP_COUNT
+let SW_BEFORE_SYSRES=SW_BEFORE_SYSRES*IP_COUNT
+
+ubus call network.interface.$IFACE up
+while [[ -z "$IFNAME" ]]; do
+	json_load "$(ubus call network.interface.$IFACE status)"
+	json_get_var IFNAME l3_device
+	sleep $CHECK_PERIOD
+done
+
+while true; do
+	for IP in $TESTIP
+	do
+		/bin/ping -w5 -c1 -s8 -I $IFNAME $IP &> /dev/null
+		if [[ "$?" -eq "0" ]]; then
+			let host_up_count++
+		else
+			logger -t pingcontrol "$INSTANCE: Ping to host $IP lost"
+			if [[ -n "$PING_LOST" ]]; then
+				logger -t pingcontrol "$INSTANCE: Execute $PING_LOST"
+				eval $PING_LOST
+			fi
+			let lost1++
+			let lost2++
+			lost_flag=1
+		fi
+	done
+
+	if [[ "$host_up_count" -gt "0" ]]; then
+		logger -t pingcontrol "$INSTANCE: Ping OK, reset counters"
+		if [[ "$lost_flag" -eq "1" ]]; then
+			if [[ -n "$PING_RESTORED" ]]; then
+				logger -t pingcontrol "$INSTANCE: Execute $PING_RESTORED"
+				eval $PING_RESTORED
+			fi
+		else
+			if [[ -n "$PING_OK" ]]; then
+				logger -t pingcontrol "$INSTANCE: Execute $PING_OK"
+				eval $PING_OK
+			fi
+		fi
+		host_up_count=0
+		lost1=0
+		lost2=0
+		lost_flag=0
+	fi
+
+	if [[ "$lost1" -gt "0" ]]; then
+		if [[ "$SW_BEFORE_MODRES" -ne "0" ]]; then
+			if [[ "$lost1" -ge "$SW_BEFORE_MODRES" ]]; then
+				if [[ -n "$BEFORE_IFACE_DOWN" ]]; then
+					logger -t pingcontrol "$INSTANCE: Execute $BEFORE_IFACE_DOWN"
+					eval $BEFORE_IFACE_DOWN
+				fi
+				logger -t pingcontrol "$INSTANCE: Ifup/ifdown $IFACE"
+				ubus call network.interface.$IFACE down
+				sleep 1
+				ubus call network.interface.$IFACE up
+				if [[ -n "$AFTER_IFACE_UP" ]]; then
+					logger -t pingcontrol "$INSTANCE: Execute $AFTER_IFACE_UP"
+					eval $AFTER_IFACE_UP
+				fi
+				lost1=0
+			fi
+		fi
+		if [[ "$SW_BEFORE_SYSRES" -ne "0" ]]; then
+			if [[ "$lost2" -ge "$SW_BEFORE_SYSRES" ]]; then
+				if [[ -n "$BEFORE_REBOOT" ]]; then
+					logger -t pingcontrol "$INSTANCE: Execute $BEFORE_REBOOT"
+					eval $BEFORE_REBOOT
+				fi
+				logger -t pingcontrol "$INSTANCE: Reboot now!"
+				reboot
+			fi
+		fi
+	fi
+
+	sleep $CHECK_PERIOD
+done

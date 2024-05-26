@@ -1,0 +1,56 @@
+<%+cbi/valueheader%>
+<script type="text/javascript">//<![CDATA[
+    const STATUS_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","status")%>';
+    const RUN_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","start")%>';
+    const STOP_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","stop")%>';
+    const LOG_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","logread")%>';
+  
+    XHR.poll(3, STATUS_URL, null,
+        function(x, data) {
+            var tb = document.getElementById('cloudflarespeedtest_status');        
+          
+            if (data && tb) {
+                if (data.running) {
+                    buttonStatus(true)          
+                    tb.innerHTML = '<em><b><font color=green><%:RUNNING %></font></b></em>';
+                } else {
+                    buttonStatus(false)  
+                    tb.innerHTML = '<em><b><font color=red> <%:NOT RUNNING %></font></b></em>';
+                }
+            }
+        }
+    );
+
+	function cloudflarespeedtest_act_start() {
+        buttonStatus(true)
+		XHR.get(RUN_URL, null, () => {          
+        });
+        setTimeout(() => { window.location = LOG_URL }, 500);
+        return false;	
+	}
+
+    function cloudflarespeedtest_act_stop(){
+        XHR.get(STOP_URL, null, () => {    
+            buttonStatus(false)      
+        });
+        return false;	
+    }
+
+    function buttonStatus(running){
+        document.getElementById('cloudflarespeedtest_start').style.display  =  running ? "none" : "block"
+        document.getElementById('cloudflarespeedtest_stop').style.display   =  running ? "block" : "none"
+    }
+    
+//]]></script>
+<label class="cbi-value-title"><%= translate("Status") %></label>
+<div class="cbi-value-field">
+    <p id="cloudflarespeedtest_status"><em><%:Collecting data...%></em></p>
+</div>
+
+<label class="cbi-value-title"><%= translate("Speed Test") %></label>
+<div class="cbi-value-field">
+    <input id="cloudflarespeedtest_start" type="button" style="display:block;" class="btn cbi-button cbi-button-apply" value="<%= translate('TEST AND APPLY') %>" onclick="cloudflarespeedtest_act_start()" />
+	<input id="cloudflarespeedtest_stop" type="button" style="display:none;" class="btn cbi-button cbi-button-apply" value="<%= translate('STOP') %>" onclick="cloudflarespeedtest_act_stop()" />
+</div>
+
+<%+cbi/valuefooter%>

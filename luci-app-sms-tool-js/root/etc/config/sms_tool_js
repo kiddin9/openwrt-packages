@@ -1,0 +1,15 @@
+
+config sms_tool_js
+	option storage 'SM'
+	option mergesms '0'
+	option pnumber '48'
+	option prefix '1'
+	option lednotify '0'
+	option ussd '0'
+	option pdu '0'
+	option readport ''
+	option sendport ''
+	option sendingroup '0'
+	option information '1'
+	option ussdport ''
+	option atport ''

@@ -1,0 +1,1 @@
+.login-container{padding:20px;display:flex;justify-content:center;align-items:center;height:100vh;background-color:#f2f6ff}.dark .login-container{background-color:#2b2b2b}@media (min-width: 600px){.login-card{width:auto;margin:0 10px}.login-button{width:100%}}.login-card{margin:20px;min-width:400px}.login-title{text-align:center;margin:20px}

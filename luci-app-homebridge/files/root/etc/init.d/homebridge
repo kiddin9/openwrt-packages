@@ -1,0 +1,230 @@
+#!/bin/sh /etc/rc.common
+
+START=98
+STOP=15
+#USE_PROCD=1
+EXTRA_COMMANDS="restart_on start_sub_service stop_sub_service status"
+EXTRA_HELP=<<EOF
+			status Print Homebridge run information
+			restart_on 'section_name':restart of input section name
+			start_sub_service 'section_name':start of input section name
+			stop_sub_service 'section_name':stop of input section name
+EOF
+
+BIN="/usr/bin/homebridge"
+USER="homebridge"
+LOG_FILE="/var/log/homebridge.log"
+CONFIG_BASE="/usr/share/homebridge/devices/"
+NODE_PATH="/usr/lib/node_modules/"
+enabled=0
+model=nil
+interface=nil
+
+main_config() {
+	config_get_bool enabled $1 enabled
+    config_get model $1 model
+	config_get interface $1 interface
+	if [[ "$model"="Main" || "$model"="combine" ]];then
+		local username
+		local port
+		local name
+		local pin
+		config_get username $1 username
+		config_get port $1 port
+		config_get name $1 name
+		config_get pin $1 pin
+		mkdir -p "${CONFIG_BASE}/main/"
+		cat<<-EOF > "${CONFIG_BASE}/main/config.json"
+		{
+			"bridge":{
+				"username":"${username}",
+				"port":${port},
+				"name":"${name}",
+				"pin":"${pin}"
+			},
+			"mdns": {
+			"interface":"${interface}"
+		},
+		"accessories":[
+		],
+		"platforms":[
+EOF
+	fi
+}
+
+restart_on() {
+	echo "restart on function" >> $LOG_FILE
+	section="$1"
+	if [ -n $section ];then
+		stop_sub_service $section
+		sleep 1
+		start_sub_service $section
+	fi
+}
+
+restart(){
+	echo "restart service now" > $LOG_FILE
+	stop
+	start
+}
+
+
+check_plugin(){
+	local plugin_name
+	local platform_name
+	config_get plugin_name $1 platform_type
+	if [ $plugin_name = "MiPhilipsLightPlatform" ]; then
+		platform_name="homebridge-mi-philips-light"
+	fi
+	if [ $plugin_name = "MiOutletPlatform" ]; then
+		platform_name="homebridge-mi-outlet"
+	fi
+	if [ $plugin_name = "ReYeelightPlatform" ]; then
+		platform_name="homebridge-re-yeelight"
+	fi
+	if [ $plugin_name = "MiRobotVacuumPlatform" ];then
+		platform_name="homebridge-mi-robot_vacuum"
+	fi
+	
+	if [ -d ${NODE_PATH}$platform_name ];then
+		echo "$platform_name already installed" >> $LOG_FILE
+	else
+		npm install -g $platform_name >> $LOG_FILE
+	fi
+}
+
+start(){
+	echo "start function" > $LOG_FILE
+	if [ -d $CONFIG_BASE ];then
+		if ! [[ `node -v` ]];then
+			echo "Please Install Environment First" >> $LOG_FILE
+			exit 1
+		fi
+		if [ ! `node-gyp --version` ];then
+			echo "Please Install node-gyp Environment First">> $LOG_FILE
+		fi
+		config_load homebridge
+		config_foreach main_config homebridge
+		echo "Start Homebridge" >> $LOG_FILE
+		export HOME=/root
+		if [ $enabled = "1" ];then
+			# install npm platform
+			config_foreach check_plugin platform
+			# remove invalid folders
+			lua /usr/share/homebridge/remove_folder.lua >> $LOG_FILE
+			if [ "$model" = "independent" ];then
+				echo "Run As Independent Model" >> $LOG_FILE
+				config_foreach start_sub_service platform 
+			fi
+			if [ "$model" = "main" ];then
+				echo "Run As Main Model" >> $LOG_FILE
+				config_foreach gen_node_config platform 
+				cat<<-EOF >> "${CONFIG_BASE}/main/config.json"
+				]
+			}
+EOF
+				pid=$CONFIG_BASE/main/homebridge.pid
+				nohup ${BIN} -U "${CONFIG_BASE}/main/" >> $LOG_FILE 2>&1 </dev/null &
+				echo $! > $pid
+			fi
+			if [ "$model" == "combine" ];then
+				echo "Run As Combine Model" >> $LOG_FILE
+				config_foreach start_sub_service platform 
+				config_foreach gen_node_config platform 
+				cat<<-EOF >> "${CONFIG_BASE}/main/config.json"
+				]
+			}
+EOF
+				pid=$CONFIG_BASE/main/homebridge.pid
+				nohup ${BIN} -U "${CONFIG_BASE}/main/" >> $LOG_FILE 2>&1 </dev/null &
+				echo $! > $pid
+			fi
+		fi
+	else
+		echo "Can't create folder ${CONFIG_BASE}" >> $LOG_FILE
+	fi
+}
+
+gen_node_config() {
+	config_load homebridge
+	local is_independent
+	config_get_bool is_independent $1 is_independent
+	echo $is_independent >> $LOG_FILE
+	if [ $is_independent = 0 ];then
+		echo "Run $1 as Main" >> $LOG_FILE
+		lua /usr/share/homebridge/gen_config.lua $1 main >>$CONFIG_BASE/main/config.json
+	fi
+}
+
+start_sub_service() {
+	echo "start sub service function" >> $LOG_FILE
+	config_load homebridge
+	local is_independent
+	config_get_bool is_independent $1 is_independent
+	if [ $is_independent = 1 ];then
+		echo "Run $1 as independent" >> $LOG_FILE
+		mkdir -p $CONFIG_BASE/$1
+		pid=$CONFIG_BASE/$1/homebridge.pid
+		lua /usr/share/homebridge/gen_config.lua $1 independent >$CONFIG_BASE/$1/config.json
+
+		config_path="${CONFIG_BASE}$1/"
+		nohup ${BIN} -U "${config_path}" >> $LOG_FILE 2>&1 </dev/null & 
+		echo $! > $pid 
+	fi 
+}
+
+stop() {
+	echo "stop function" >> $LOG_FILE
+	killall -9 `which homebridge` >> $LOG_FILE 2>&1
+#	config_load homebridge
+#	stop_main_service
+#	config_foreach stop_sub_service platform
+}
+
+stop_main_service() {
+	echo "stop main service" >> $LOG_FILE
+	pid=$CONFIG_BASE/main/homebridge.pid
+	if [ -f $pid ];then
+		pid_number=$(cat $pid)
+		if kill -0 $pid_number >/dev/null 2>&1;then
+			echo "stopping homebridge main" >> $LOG_FILE
+			kill $pid_number
+		else
+			echo "pid not found main" >> $LOG_FILE
+		fi
+	else
+		echo "file not found main" >> $LOG_FILE
+	fi
+}
+
+stop_sub_service() {
+	echo "stop sub service" >> $LOG_FILE
+	pid=$CONFIG_BASE/$1/homebridge.pid
+	if [ -f $pid ];then
+		pid_number=$(cat $pid)
+		if kill -0 $pid_number > /dev/null 2>&1;then
+			echo "stopping homebridge" >> $LOG_FILE
+			kill $pid_number
+		else
+			echo "pid not found" >>$LOG_FILE
+		fi
+	else
+		echo "file not found" >>$LOG_FILE
+	fi
+}
+
+is_running(){
+	pgrep 'homebridge' > /dev/null 2>&1
+}
+
+status(){
+	echo "status function" >> $LOG_FILE
+	if is_running; then
+		echo "Running"
+	else
+		echo "Stopped"
+		exit 1
+	fi
+}
+
+

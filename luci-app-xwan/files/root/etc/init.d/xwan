@@ -1,0 +1,204 @@
+#!/bin/sh /etc/rc.common
+
+START=19
+
+boot() {
+	XBOOT=1 #do nothing
+}
+
+mwan3_add_one() {
+	local intf=$1
+	uci set mwan3.${intf}=interface
+	uci set mwan3.${intf}.enabled='1'
+	test -n "$family" && uci set mwan3.${intf}.family="$family"
+	uci set mwan3.${intf}.initial_state='online'
+	uci delete mwan3.${intf}.track_ip 2>/dev/null
+	for tip in $track_ip; do uci add_list mwan3.${intf}.track_ip="$tip"; done
+	uci set mwan3.${intf}.track_method='ping'
+	uci set mwan3.${intf}.reliability='1'
+	uci set mwan3.${intf}.count='1'
+	uci set mwan3.${intf}.size='56'
+	uci set mwan3.${intf}.max_ttl='60'
+	uci set mwan3.${intf}.check_quality='0'
+	uci set mwan3.${intf}.timeout='2'
+	uci set mwan3.${intf}.interval='20'
+	uci set mwan3.${intf}.failure_interval='5'
+	uci set mwan3.${intf}.recovery_interval='5'
+	uci set mwan3.${intf}.down='3'
+	uci set mwan3.${intf}.up='3'
+
+	uci set mwan3.${intf}_m100_w100=member
+	uci set mwan3.${intf}_m100_w100.interface="${intf}"
+	uci set mwan3.${intf}_m100_w100.metric='100'
+	uci set mwan3.${intf}_m100_w100.weight='100'
+
+	uci add_list mwan3.balanced.use_member="${intf}_m100_w100"
+}
+
+add_to_zone_wan() {
+	local idx=0
+
+	while uci get firewall.@zone[$idx] >/dev/null 2>&1; do
+		if [ "$(uci get firewall.@zone[$idx].name)" = "wan" ]; then
+			networks=`uci get firewall.@zone[$idx].network`;
+			for nw in $networks; do
+				[ "$nw" = "$1" ] && return
+			done
+			uci set firewall.@zone[$idx].network="`echo $networks $1`"
+			uci commit firewall
+			return
+		fi
+		idx=$((idx + 1))
+	done
+}
+
+add_xwan() {
+	local cfg="$1"
+	local enabled number balanced
+	local device id idx ifname
+	local change=0
+
+	config_get enabled "$cfg" enabled
+	config_get number "$cfg" number
+	config_get balanced "$cfg" balanced
+	config_get family "$cfg" family
+	config_get track_ip "$cfg" track_ip
+
+	xwan_new=$(uci show xwan | md5sum | head -c32)
+	xwan_old=$(uci get mwan3.globals.xwan_md5)
+
+	[ "x$enabled" = "x1" ] || return 0
+
+	[ "x${xwan_new}" = "x${xwan_old}" ] || {
+		while uci delete mwan3.@interface[0] >/dev/null 2>&1; do :; done
+		while uci delete mwan3.@member[0] >/dev/null 2>&1; do :; done
+		while uci delete mwan3.@policy[0] >/dev/null 2>&1; do :; done
+		change=1
+	}
+
+	id=0
+	device=$(uci get network.wan.device 2>/dev/null)
+	ifname=$(uci get network.wan.device 2>/dev/null)
+
+	if [ "x$enabled" = "x1" ] && test $number -ge 1 && test -n "$device$ifname"; then
+		uci get network.wan.metric >/dev/null 2>&1 || {
+			uci set network.wan.metric=40
+			change=1
+		}
+		[ "x$balanced" = "x1" ] && {
+			uci delete mwan3.balanced 2>/dev/null
+			uci set mwan3.balanced=policy
+			uci set mwan3.balanced.last_resort='unreachable'
+			uci get mwan3.wan >/dev/null 2>&1 || {
+				family="" track_ip="$track_ip" mwan3_add_one wan
+				change=1
+			}
+			uci get mwan3.https &>/dev/null || {
+				uci set mwan3.https=rule
+				uci set mwan3.https.sticky='1'
+				uci set mwan3.https.dest_port='443'
+				uci set mwan3.https.proto='tcp'
+				uci set mwan3.https.use_policy='balanced'
+				uci set mwan3.default_rule_v4=rule
+				uci set mwan3.default_rule_v4.dest_ip='0.0.0.0/0'
+				uci set mwan3.default_rule_v4.use_policy='balanced'
+				uci set mwan3.default_rule_v4.family='ipv4'
+				uci set mwan3.default_rule_v6=rule
+				uci set mwan3.default_rule_v6.dest_ip='::/0'
+				uci set mwan3.default_rule_v6.use_policy='balanced'
+				uci set mwan3.default_rule_v6.family='ipv6'
+			}
+		}
+		while test $number -ge 2; do
+			id=$((id + 1))
+			idx=$(printf %02u $id)
+			uci get network.device$idx >/dev/null 2>&1 || {
+				uci set network.device$idx=device
+				test -n "$device" && uci set network.device$idx.device="$device"
+				test -n "$ifname" && uci set network.device$idx.device="$ifname"
+				uci set network.device$idx.type="macvlan"
+				uci set network.device$idx.mode="vepa"
+				uci set network.device$idx.name="mvlan$idx"
+				change=1
+			}
+
+			uci get network.xwan$idx >/dev/null 2>&1 || {
+				uci set network.xwan$idx=interface
+				uci show network.wan | grep "network\.wan\." | sed "s/^network\.wan\.//g;s/=/ /;s,',,g" | while read _k _v; do
+					uci set network.xwan$idx.$_k="$_v"
+				done
+				test -n "$device" && uci set network.xwan$idx.device="mvlan$idx"
+				test -n "$ifname" && uci set network.xwan$idx.device="mvlan$idx"
+				uci set network.xwan$idx.metric=$((40 + id))
+				[ "x`uci get network.wan.proto 2>/dev/null`" = "xstatic" ] && \
+				uci set network.xwan$idx.auto='0'
+				change=1
+			}
+
+			add_to_zone_wan xwan$idx
+
+			[ "x$balanced" = "x1" ] && {
+				uci get mwan3.xwan$idx >/dev/null 2>&1 || {
+					family="$family" track_ip="$track_ip" mwan3_add_one xwan$idx
+					change=1
+				}
+			}
+			test $id -ge $((number - 1)) && break
+		done
+	fi
+
+	#clean up firewall
+	id=$((number))
+	idx=0
+	while uci get firewall.@zone[$idx] >/dev/null 2>&1; do
+		if [ "$(uci get firewall.@zone[$idx].name)" = "wan" ]; then
+			networks=`uci get firewall.@zone[$idx].network`;
+			uci delete firewall.@zone[$idx].network >/dev/null 2>&1
+			for nw in $networks; do
+				num=${nw:4}
+				[ "${nw:0:4}" = "xwan" ] && [ ${#num} = 2 ] && [ $num -ge $id ] && continue
+				uci add_list firewall.@zone[$idx].network="$nw"
+			done
+			uci commit firewall
+			break
+		fi
+		idx=$((idx + 1))
+	done
+	
+	#clean up
+	id=$((number))
+	idx=$(printf %02u $id)
+	while :; do
+		uci get network.device$idx >/dev/null 2>&1 && {
+			uci delete network.device$idx
+			change=1
+		}
+		uci get network.xwan$idx >/dev/null 2>&1 && {
+			uci delete network.xwan$idx
+			change=1
+		}
+		id=$((id + 1))
+		idx=$(printf %02u $id)
+		uci get network.device$idx >/dev/null 2>&1 || uci get network.xwan$idx >/dev/null 2>&1 || break
+	done
+
+	[ "x$change" = "x1" ] && {
+		uci commit network
+		uci set mwan3.globals.xwan_md5="${xwan_new}"
+		uci commit mwan3
+		[ "x$XRELOAD" = "x1" ] && {
+			/etc/init.d/network reload
+			/etc/init.d/firewall reload
+			/etc/init.d/mwan3 reload
+		}
+	}
+}
+
+start() {
+	config_load xwan
+	config_foreach add_xwan xwan
+}
+
+restart() {
+	XRELOAD=1 start
+}

@@ -1,0 +1,213 @@
+<%#
+Module for providing data from a mobile satellite navigation system ( mobile modems, etc.)
+-= Design and Development 2021-2023 =-
+Licensed to the public under the Apache License 2.0.
+-%>
+
+<script type="text/javascript">
+    //<![CDATA[
+
+    const icon = "<%=resource%>/icons/gpoint_icons/marker.png";
+
+    function onClick(id, callback) {
+        document.getElementById(id).addEventListener('click', callback);
+    }
+
+    function flyTo(location, z, done) {
+        const duration = 2500;
+        view.animate({
+            center: location,
+            duration: duration,
+            zoom: z,
+        });
+    }
+
+    function getAddress(lat, lon) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://nominatim.openstreetmap.org/reverse?lat="
+            + lat + "&lon=" + lon + "&zoom=18&format=json", true);
+        xhr.onload = function () {
+            if (xhr.status == 200) {
+                var data = JSON.parse(xhr.responseText);
+                var e = document.getElementById('address');
+                const gMap = "https://www.google.com/maps/place/" + lat + ',' + lon;
+                e.innerHTML = String.format("<a style=\"color:gray; font-size: 18px; text-decoration: none;\"href=\"" + gMap + "\"><br>"
+                    + (data.address.state !== undefined ? data.address.state : "")
+                    + (data.address.road !== undefined ? (", " + data.address.road) : "")
+                    + (data.address.house_number !== undefined ? (", " + data.address.house_number) : "") + "</a>");
+            }
+        }
+        xhr.send(null);
+    }
+
+    function addMarker(longitude, latitude, icon) {
+
+        if (spinerStatus) {
+            map.removeOverlay(marker);
+            zoom = 18;
+            spinerStatus = false;
+        }
+        rasterLayer.setVisible(false);
+
+        lon = longitude;
+        lat = latitude;
+
+        coordinate = ol.proj.fromLonLat([lat, lon]);
+
+        iconFeatures.length = 0; // deleting the layer
+        vectorSource.clear(); // deleting array of features
+
+        var iconFeature = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.transform([lat, lon], 'EPSG:4326', 'EPSG:3857')),
+            name: 'COOR',
+            population: 4000,
+            rainfall: 500
+        });
+
+
+        iconFeatures.push(iconFeature);
+        vectorSource.addFeatures(iconFeatures);
+    }
+
+    function addSpiner() {
+        rasterLayer.setVisible(true);
+        if (!spinerStatus) {
+            map.addOverlay(marker);
+            zoom = 3;
+            spinerStatus = true;
+        }
+    }
+
+
+    function putData(data) {
+        var id = ["latitude", "hdop", "longitude", "altitude", "cog", "spkm", "nsat", "date"];
+        id.forEach(function (item, i, id) {
+            var e = document.getElementById(item);
+            if (e) {
+                e.innerHTML = String.format(data.item);
+            }
+        });
+    }
+
+
+    function addCircle(geofence) {
+        var circle_color = geofence.inzone ? "green" : "red";
+
+        var radius = 38;
+        switch (geofence.area) {
+            case 5:
+                radius = 4890;
+                break;
+            case 6:
+                radius = 1220;
+                break;
+            case 7:
+                radius = 153;
+                break;
+            default:
+                break;
+        }
+
+        map.removeLayer(circle);
+
+        var centerLongitudeLatitude = ol.proj.fromLonLat([parseFloat(geofence.longitude), parseFloat(geofence.latitude)]);
+        var viewProjection = map.getView().getProjection();
+        var pointResolution = ol.proj.getPointResolution(viewProjection, 1, centerLongitudeLatitude);
+        var r = 100 / pointResolution;
+        circle = new ol.layer.Vector({
+            source: new ol.source.Vector({features: [new ol.Feature(new ol.geom.Circle(centerLongitudeLatitude, radius))]}),
+            style: [new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: circle_color,
+                    width: 2
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(0, 0, 255, 0.1)'
+                })
+            })
+            ],
+            zIndex: 6,
+        });
+        map.addLayer(circle);
+    }
+
+
+    var lon = 55.7522;
+    var lat = 37.6156;
+    var zoom = 1;
+    var spinerStatus = true;
+    var CIRCLE_STATUS = true;
+
+    var iconFeatures = [];
+    var coordinate = ol.proj.fromLonLat([lat, lon]);
+
+    var circle = new ol.layer.Vector();
+    var vectorSource = new ol.source.Vector({
+        features: iconFeatures  //add an array of features
+    });
+
+    var rasterLayer = new ol.layer.Tile({
+        source: new ol.source.Stamen({
+            layer: 'toner'
+        })
+    });
+
+    var mapLayer = new ol.layer.Tile({
+        preload: 4,
+        source: new ol.source.OSM()
+    });
+
+    var iconStyle = new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+            anchor: [0.5, 46],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            opacity: 0.75,
+            src: icon
+        }))
+    });
+
+    var vectorLayer = new ol.layer.Vector({
+        source: vectorSource,
+        style: iconStyle
+    });
+
+    var view = new ol.View({
+        center: coordinate,
+        zoom: 1,
+    });
+
+    var map = new ol.Map({
+        controls: ol.control.defaults({zoom: true, attribution: false, rotate: false}),
+        target: 'map',
+        layers: [mapLayer],
+        view: view
+    });
+
+    map.addLayer(vectorLayer);
+    map.addLayer(rasterLayer);
+
+
+    // To display a widget that shows the location of an object
+    const locate = document.createElement('div');
+    locate.className = 'ol-control ol-unselectable locate';
+    locate.innerHTML = '<button id="fmr" title="Find my Router">◎</button>';
+    locate.addEventListener('click', function () {
+        flyTo(coordinate, zoom, function () {
+        });
+    });
+    map.addControl(new ol.control.Control({
+        element: locate
+    }));
+
+    var marker = new ol.Overlay({
+        position: coordinate,
+        positioning: 'center-center',
+        element: document.getElementById('marker'),
+        stopEvent: false
+    });
+
+    map.addOverlay(marker);
+
+    //]]>
+</script>

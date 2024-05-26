@@ -1,0 +1,13 @@
+{
+	"admin/network/snmpd": {
+		"title": "SNMPd",
+		"order": 91,
+		"action": {
+			"type": "cbi",
+			"path": "snmpd"
+		},
+		"depends": {
+			"acl": [ "luci-app-snmpd" ]
+		}
+	}
+}

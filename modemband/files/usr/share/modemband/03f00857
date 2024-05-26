@@ -1,0 +1,8 @@
+_DEVICE=/dev/ttyUSB1
+_DEFAULT_LTE_BANDS="1 2 3 4 5 7 8 12 13 17 18 19 20 21 25 26 28 29 30 38 39 40 41 66"
+
+getinfo() {
+	echo "Qualcomm Snapdragon(TM) X12 LTE-A"
+}
+
+. $RES/_foxconn_common2

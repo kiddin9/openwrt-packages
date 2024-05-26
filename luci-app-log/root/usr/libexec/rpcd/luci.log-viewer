@@ -1,0 +1,77 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /usr/share/libubox/jshn.sh
+
+readonly LOGREAD_CMD="logread"
+readonly DMESG_CMD="dmesg"
+
+make_value() {
+	json_init
+	json_add_string "$1" "$2"
+	json_dump
+	json_cleanup
+}
+
+get_syslog_size() {
+	make_value 'bytes' "`$LOGREAD_CMD | wc -c`"
+}
+
+get_syslog_hash() {
+	make_value 'hash' "`$LOGREAD_CMD -t -l 1`"
+}
+
+get_dmesg_size() {
+	make_value 'bytes' "`$DMESG_CMD | wc -c`"
+}
+
+get_dmesg_hash() {
+	make_value 'hash' "`$DMESG_CMD | tail -n 1`"
+}
+
+get_logfile_size() {
+	make_value 'bytes' "`ls -l "$1" | awk '{printf $5}'`"
+}
+
+case "$1" in
+	list)
+		json_init
+		json_add_object "getSyslogSize"
+		json_close_object
+		json_add_object "getSyslogHash"
+		json_close_object
+		json_add_object "getDmesgSize"
+		json_close_object
+		json_add_object "getDmesgHash"
+		json_close_object
+		json_add_object "getLogfileSize"
+ 			json_add_string 'fpath' 'fpath'
+ 		json_close_object
+		json_dump
+		json_cleanup
+	;;
+	call)
+		case "$2" in
+			getSyslogSize)
+				get_syslog_size
+			;;
+			getSyslogHash)
+				get_syslog_hash
+			;;
+			getDmesgSize)
+				get_dmesg_size
+			;;
+			getDmesgHash)
+				get_dmesg_hash
+			;;
+			getLogfileSize)
+			 if [ -n "$3" ]; then
+				json_load "$3"
+				json_get_var fpath 'fpath'
+				json_cleanup
+				get_logfile_size "$fpath"
+			 fi
+			;;
+		esac
+	;;
+esac

@@ -1,0 +1,62 @@
+# Qualcomm Modems (FoxConn T77W678, Telit LN940, HP LT4220)
+function modem_data(){
+        generic_data
+	# hwinfo
+	MANUF=$(echo "$O" | grep -i $FAMILY)
+	MODEL=$(echo "$O" | grep -A1 -i $FAMILY | tail -1)
+        DEVICE="$MANUF $MODEL"
+	FW=$(echo "$O" | grep -A2 -i $FAMILY | tail -1)
+	ICCID=$(echo "$O" | awk -F [:] '/ICCID:/{gsub("\r","");print $2}')
+	IMSI=$(echo "$O" | grep -A1 -i ICCID | tail -1)
+	IMEI=$(echo "$O" | grep -A2 -i ICCID | tail -1)
+	# signal
+	RADIODATA=$(echo "$O" |grep -A2 RFSTS: | awk 'NR ==2{print $0}')
+	LTE_CA=$(echo "$O" | awk '/SCC/{print $0}' | wc -l)
+	EARFCN=$(echo "$RADIODATA" |awk -F [,] '{print $2}')
+        if [ "$MODE" = "LTE" ]; then
+		REGST=$(echo "$O" | awk -F[,] '/\+CEREG/ {print $2}')
+		LAC=$(echo "$O" | awk -F [,] '/\+CEREG/{gsub("\"","");print $3}')
+		CID=$(echo "$O" | awk -F [,] '/\+CEREG/{gsub("\"","");print $5}')
+                RSRP=$(echo "$RADIODATA" |awk -F [,] '{printf "%.0f\n",$3}')
+		CSQ_RSSI=$(echo "$RADIODATA" |awk -F [,] '{printf "%.0f\n",$4}')
+                RSRQ=$(echo "$RADIODATA" |awk -F [,] '{printf "%.0f\n",$5}')
+                SINR=$(echo "$RADIODATA" |awk -F [,] '{printf "%.0f\n",$16/4+5}')
+		BWDx=$(echo "$O" | awk '/PCC info/{printf "%.0f\n",$8}')
+		PCI=$(echo "$RADIODATA" |awk -F [,] '{print $11}')
+		ENBx=$(echo $CID | sed -e 's/..$//')
+		CELL=$(printf %d 0x${CID: -2})
+		ENBID=$(printf %d 0x$ENBx)
+		case $BWDx in
+			3) BWDL=1 ;;
+			5) BWDL=2 ;;
+			10) BWDL=3 ;;
+			15) BWDL=4 ;;
+			20) BWDL=5 ;;
+		esac
+		if [ $LTE_CA -ge 1 ]; then
+			CA=$(echo "$O" | awk '/SCC/{print $5}')
+			for cc in $CA; do
+				SC=$(echo $cc | sed -e 's/LTE_B//g' -e 's/.$//')
+				SCC="$SCC+$SC"
+			done
+			bw=$(echo "$O" |awk '/SCC/{printf "%.0f\n",$8}')
+			for bwc in $bw; do	
+				bwcc="$bwcc+$bwc"
+			done
+			BWCA=$(($BWDx$bwcc))
+		fi
+        else
+		LAC=$(echo "$O" | awk -F [,] '/\+CREG/{gsub("\"","");print $3}')
+                CID=$(echo "$O" | awk -F [,] '/\+CREG/{gsub("\"","");print $4}')
+                ECIO=$(echo "$RADIODATA" |awk -F [,] '{printf "%.0f\n",$4}')
+		CSQ_RSSI=$(echo "$RADIODATA" |awk -F [,] '{printf "%.0f\n",$6}')
+                SINR=$ECIO
+        fi
+        CHIPTEMP=$(echo "$O" | awk -F [:] '/tsens_tz_sensor0:/{print $2}')
+	LAC_NUM=$(printf %d 0x$LAC)
+	CID_NUM=$(printf %d 0x$CID)
+	if [ $(uci -q get modeminfo.@general[0].decimail) = "1" ]; then
+		LAC=$LAC_NUM
+		CID=$CID_NUM
+	fi
+}

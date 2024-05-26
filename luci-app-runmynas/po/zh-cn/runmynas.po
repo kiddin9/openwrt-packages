@@ -1,0 +1,62 @@
+msgid "runmynas"
+msgstr "runmynas"
+
+msgid "The runmynas service is running."
+msgstr "runmynas已启动"
+
+msgid "The runmynas service is not running."
+msgstr "runmynas服务未启动"
+
+msgid "The runmynas service is not installed."
+msgstr "runmynas服务未安装"
+
+msgid "open runmynas"
+msgstr "打开runmynas"
+
+msgid "stop runmynas"
+msgstr "停止runmynas"
+
+msgid "run runmynas"
+msgstr "启动runmynas"
+
+msgid "uninstall runmynas"
+msgstr "删除runmynas"
+
+msgid "install runmynas"
+msgstr "安装runmynas"
+
+msgid "Collecting data..."
+msgstr "收集数据..."
+
+msgid "storage path"
+msgstr "存储路径（建议插入U盘或硬盘，然后输入路径。例如：/mnt/sda1/runmynas）"
+
+msgid "Storage path could not be empty!"
+msgstr "存储路径不能为空！"
+
+msgid "Version"
+msgstr "系统版本"
+
+msgid "Port (optional)"
+msgstr "端口"
+
+msgid "Password (optional)"
+msgstr "密码"
+
+msgid "standard version"
+msgstr "标准版本"
+
+msgid "full version"
+msgstr "全量版本"
+
+msgid "UserName"
+msgstr "用户名"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "LanAddress"
+msgstr "内网地址"
+
+msgid "WanAddress"
+msgstr "外网地址"

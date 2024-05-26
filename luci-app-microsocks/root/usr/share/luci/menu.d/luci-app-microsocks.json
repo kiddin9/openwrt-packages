@@ -1,0 +1,13 @@
+{
+	"admin/services/microsocks": {
+		"title": "MicroSocks",
+		"action": {
+			"type": "view",
+			"path": "microsocks"
+		},
+		"depends": {
+			"acl": [ "luci-app-microsocks" ],
+			"uci": { "microsocks": true }
+		}
+	}
+}

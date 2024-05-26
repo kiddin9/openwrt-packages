@@ -1,0 +1,6 @@
+
+config modemband
+	option iface 'wan'
+	option wanrestart '0'
+	option modemrestart '0'
+	option notify '0'

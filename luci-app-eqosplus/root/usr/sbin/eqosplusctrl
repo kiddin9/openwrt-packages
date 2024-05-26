@@ -1,0 +1,56 @@
+#!/bin/sh
+
+# Copyright (C) 2006 OpenWrt.org
+# Copyright 2022-2023 sirpdboy <herboy2008@gmail.com>
+NAME=eqosplus
+IDLIST="/var/$NAME.idlist"
+TMPID="/var/$NAME.tmpid"
+
+idlist=`uci show $NAME | grep "enable='1'" | grep "device" | grep -oE '\[.*?\]' | grep -o '[0-9]' `
+
+check_list() {
+	i=$1
+	checki='0'
+	start_time=$(uci -q get $NAME.@device[$i].timestart 2>/dev/null)
+	end_time=$(uci -q get $NAME.@device[$i].timeend 2>/dev/null)
+	wweek=`uci -q get $NAME.@device[$i].week `
+	current_time=$(date +%H:%M)
+	current_weekday=$(date +%u)
+	[ "$start_time" = "$end_time" ] || { 
+	[[ "$start_time" < "$end_time" ]] && { [[ "$current_time" > "$start_time" ]] && [[ "$current_time" < "$end_time" ]] || return ; }
+	[[ "$start_time" > "$end_time" ]] && { [[ "$current_time" < "$start_time" ]] && [[ "$current_time" > "$end_time" ]] || return ; }
+	}
+	for ww in `echo $wweek | sed 's/,/ /g' `; do 
+		if [ $current_weekday = $ww ] || [ 'x0' = x$ww ] ;then 
+		      checki='1'
+		fi
+	done
+	return $re
+}
+
+idlistusr(){
+
+   checki='0'
+   [ -s $IDLIST ] || return
+   for list in $idlist ;do
+	check_list $list
+	if [ $checki == '1' ] ; then
+	     [ `cat $IDLIST  2>/dev/null | grep "!${list}!" | wc -l ` -gt 0 ] || { 
+	         eqosplus add $list
+	         echo "!${list}!" >> $IDLIST ;  cat $IDLIST | sort | uniq  > $TMPID ;cat $TMPID >$IDLIST ;rm -rf $TMPID
+	     }
+        else
+	     [ `cat $IDLIST  2>/dev/null | grep "!${list}!" | wc -l ` -gt 0 ] && {
+	         eqosplus del $list
+		 sed -i "/!$list!/d" $IDLIST >/dev/null 2>&1
+	     }
+	fi
+   done
+}
+
+
+while :;do
+	sleep 30
+	idlistusr
+	sleep 30
+done

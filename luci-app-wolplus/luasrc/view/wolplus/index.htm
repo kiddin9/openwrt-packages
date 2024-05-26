@@ -1,0 +1,22 @@
+<% include("cbi/map") %>
+<script type="text/javascript">
+	function _id2section(id) {
+		var x = id.split(".");
+		return x[2];
+	}
+	function onclick_awake(id) {
+		var section = _id2section(id);
+		var btnXHR = new XHR();
+		btnXHR.post('<%=url([[admin]], [[services]], [[wolplus]], [[awake]])%>/' + section, { token: '<%=token%>' },
+			function(x, data) {
+				if (x.responseText == "_uncommitted_") {
+					txt="<%:Please [Save & Apply] your changes first%>";
+					alert( txt.replace(new RegExp("<%:&%>", "g"), "&") );
+				} else {
+					alert( JSON.parse(x.response).data );
+				}
+			}
+		);
+	}
+</script>
+

@@ -1,0 +1,53 @@
+#!/bin/sh
+
+grep -q api.ipify.org /usr/share/passwall/rules/proxy_host ||
+	sed -i '$a api.ipify.org' /usr/share/passwall/rules/proxy_host
+
+uci -q batch <<-EOF >/dev/null
+	set dhcp.@dnsmasq[0].localuse=1
+	commit dhcp
+	[ -e "/etc/config/ucitrack" ] && {
+	delete ucitrack.@passwall[-1]
+	add ucitrack passwall
+	set ucitrack.@passwall[-1].init=passwall
+	commit ucitrack
+	}
+	delete firewall.passwall
+	set firewall.passwall=include
+	set firewall.passwall.type=script
+	set firewall.passwall.path=/var/etc/passwall.include
+	set firewall.passwall.reload=1
+	commit firewall
+	[ -e "/etc/config/ucitrack" ] && {
+	delete ucitrack.@passwall_server[-1]
+	add ucitrack passwall_server
+	set ucitrack.@passwall_server[-1].init=passwall_server
+	commit ucitrack
+	}
+	delete firewall.passwall_server
+	set firewall.passwall_server=include
+	set firewall.passwall_server.type=script
+	set firewall.passwall_server.path=/var/etc/passwall_server.include
+	set firewall.passwall_server.reload=1
+	commit firewall
+	set uhttpd.main.max_requests=50
+	commit uhttpd
+EOF
+
+[ ! -s "/etc/config/passwall" ] && cp -f /usr/share/passwall/0_default_config /etc/config/passwall
+
+chmod +x /usr/share/passwall/*.sh
+
+## 4.77-5 below upgrade to 4.77-6 above
+[ -e "/etc/config/passwall_show" ] && rm -rf /etc/config/passwall_show
+
+[ "$(uci -q get passwall.@global_xray[0].sniffing)" == "1" ] && [ "$(uci -q get passwall.@global_xray[0].route_only)" != "1" ] && uci -q set passwall.@global_xray[0].sniffing_override_dest=1
+uci -q delete passwall.@global_xray[0].sniffing
+uci -q delete passwall.@global_xray[0].route_only
+uci -q commit passwall
+
+rm -f /tmp/luci-indexcache
+rm -rf /tmp/luci-modulecache/
+killall -HUP rpcd 2>/dev/null
+
+exit 0

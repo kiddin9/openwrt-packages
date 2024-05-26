@@ -1,0 +1,189 @@
+#
+# Copyright (c) 2019-2020 P3TERX <https://p3terx.com>
+#
+# This is free software, licensed under the MIT License.
+# See /LICENSE for more information.
+#
+# https://github.com/P3TERX/Actions-OpenWrt
+# Description: Build OpenWrt using GitHub Actions
+#
+
+name: Build luci-app-pushbot-x86
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH connection to Actions'
+        required: false
+        default: 'false'
+#  schedule:
+#    - cron: 10 14 * * 5
+
+env:
+  SDK_URL: https://downloads.openwrt.org/releases/22.03.0-rc5/targets/x86/64/openwrt-sdk-22.03.0-rc5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+  PackageName: luci-app-pushbot
+  PackageSource_URL: https://github.com/zzsj0928/luci-app-pushbot
+  UPLOAD_Package: true
+  UPLOAD_COWTRANSFER: false
+  UPLOAD_WETRANSFER: true
+  UPLOAD_RELEASE: true
+  TZ: Asia/Shanghai
+  UPLOAD_ZZNAS: false
+  ftp_username: ${{ secrets.FTP_USERNAME }}
+  ftp_psw: ${{ secrets.FTP_PSW }}
+  ftp_ip: ${{ secrets.FTP_IP }}
+  TargetPath: OpenwrtImgs/packages/luci-app-pushbot
+  upload_file: luci-app-pushbot_*
+  whkey: ${{ secrets.WEBHOOK }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        wget $SDK_URL
+        mkdir /workdir/openwrt
+        tar xf openwrt-sdk-* -C /workdir/openwrt --strip-components 1
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+
+    - name: Update feeds
+      run: cd openwrt && ./scripts/feeds update -a
+
+    - name: Install feeds
+      run: cd openwrt && ./scripts/feeds install -a
+      
+    - name: Load custom configuration
+      run: |
+        cd openwrt
+        git clone $PackageSource_URL package/$PackageName
+        make defconfig
+        echo "CONFIG_PACKAGE_$PackageName=y" >> ./.config
+
+
+    - name: SSH connection to Actions
+      uses: P3TERX/ssh2actions@v1.0.0
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+      env:
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
+    - name: Compile the package
+      id: compile
+      run: |
+        send_dingding="curl -s \"https://oapi.dingtalk.com/robot/send?access_token=${whkey}\" -H 'Content-Type: application/json' -d '{\"msgtype\": \"markdown\",\"markdown\": {\"title\":"
+        send_content0="【${PackageName}】正在启动编译！请稍后大约4小时..."
+        markdown_splitline="\n\n---\n\n"
+        GITHUB_WORKFLOW_URL=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+        nowtime=`date "+%Y-%m-%d %H:%M:%S"`
+        eval "$send_dingding \"${send_content0}\",\"text\":\"${nowtime} $markdown_splitline #### <font color=#6A65FF>${send_content0}</font>\n\n[点此链接查看](${GITHUB_WORKFLOW_URL})\"}}'"
+        
+      
+        cd openwrt
+        echo -e "$(nproc) thread compile"
+        make package/$PackageName/compile V=s
+        echo "::set-output name=status::success"
+
+    - name: Check space usage
+      if: (!cancelled())
+      run: df -hT
+
+    - name: Organize files
+      id: organize
+      if: env.UPLOAD_Package == 'true' && !cancelled()
+      run: |
+        cd openwrt/bin/packages/*/base
+        echo "PackagePath=$PWD" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
+
+    - name: Upload package
+      uses: actions/upload-artifact@main
+      if: steps.organize.outputs.status == 'success' && !cancelled()
+      with:
+        name: ${{ env.upload_file }}
+        path: ${{ env.PackagePath }}
+
+    - name: Upload package to cowtransfer
+      id: cowtransfer
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer cow --block 2621440 -s -p 64 --no-progress ${PackagePath}/${upload_file} 2>&1 | tee cowtransfer.log
+        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+
+    - name: Upload firmware to WeTransfer
+      id: wetransfer
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer wet -s -p 16 --no-progress ${PackagePath}/${upload_file} 2>&1 | tee wetransfer.log
+        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
+        
+    - name: Upload firmware to my NAS
+      id: zz-nas
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_ZZNAS == 'true' && !cancelled()
+      run: |
+        send_dingding="curl -s \"https://oapi.dingtalk.com/robot/send?access_token=${whkey}\" -H 'Content-Type: application/json' -d '{\"msgtype\": \"markdown\",\"markdown\": {\"title\":"
+        send_content1="【${PackageName}】编译成功！正在上传固件到NAS..."
+        send_content2="【${PackageName}】编译成功！固件成功上传到NAS。"
+        markdown_splitline="\n\n---\n\n"
+        GITHUB_WORKFLOW_URL=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+        nowtime=`date "+%Y-%m-%d %H:%M:%S"`
+        eval "$send_dingding \"${send_content1}\",\"text\":\"${nowtime} $markdown_splitline #### <font color=#6A65FF>${send_content1}</font>\n\n[点此链接查看](${GITHUB_WORKFLOW_URL})\"}}'"
+        
+        cd openwrt/bin/packages/*/base
+        echo $ftp_psw > /tmp/rsync.psw && chmod 600 /tmp/rsync.psw
+        rsync -avrzP $upload_file_1 $ftp_username@$ftp_ip::$TargetPath/$(date +"%Y.%m.%d-%H%M")/ --password-file=/tmp/rsync.psw
+        echo "::warning file=zz-nas.com::All Released Files Uploaded to ZZ-NAS"
+        
+        nowtime=`date "+%Y-%m-%d %H:%M:%S"`
+        eval "$send_dingding \"${send_content2}\",\"text\":\"${nowtime} $markdown_splitline #### <font color=#92D050>${send_content2}</font>\n\n[点此链接查看](${GITHUB_WORKFLOW_URL})\"}}'"
+
+    - name: Generate release tag
+      id: tag
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
+        touch release.txt
+        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
+        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
+        echo "::set-output name=status::success"
+
+    - name: Upload package to release
+      uses: softprops/action-gh-release@v1
+      if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: ${{ env.PackagePath }}/${{ env.upload_file }}
+
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 1
+        keep_minimum_runs: 3

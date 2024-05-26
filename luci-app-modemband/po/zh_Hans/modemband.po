@@ -1,0 +1,255 @@
+msgid ""
+msgstr ""
+"Language: zh_Hans\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Preferred LTE bands"
+msgstr "首选LTE频段"
+
+msgid "Preferred 5G SA bands"
+msgstr "首选5G SA频段"
+
+msgid "Preferred 5G NSA bands"
+msgstr "首选5G NSA频段"
+
+msgid "Currently set LTE bands"
+msgstr "当前设置的LTE频段"
+
+msgid "Currently set 5G SA bands"
+msgstr "当前设置的5G SA频段"
+
+msgid "Currently set 5G NSA bands"
+msgstr "当前设置的5G NSA频段"
+
+msgid "Preferred LTE/5G Bands"
+msgstr "首选LTE/5G频段"
+
+msgid "Supported LTE bands"
+msgstr "支持的LTE频段"
+
+msgid "Supported 5G SA bands"
+msgstr "支持的5G SA频段"
+
+msgid "Supported 5G NSA bands"
+msgstr "支持的5G NSA频段"
+
+msgid "5G bands cannot be read. Check if your modem supports this technology and if it is in the list of supported modems."
+msgstr "无法获取5G频段，请检查您的调制解调器是否在支持的列表中。"
+
+msgid "LTE bands cannot be read. Check if your modem supports this technology and if it is in the list of supported modems."
+msgstr "无法获取5G频段，请检查您的调制解调器是否在支持的列表中。"
+
+msgid ""
+"Configuration modem frequency bands. More "
+"information about the modemband application on the %seko.one.pl forum%s."
+msgstr ""
+"配置首选调制解调器频段。"
+"更多有关调制解调器应用程序的信息请前往 %sforum eko.one.pl%s。"
+
+msgid "LTE Bands Configuration"
+msgstr "LTE频段配置"
+
+msgid "5G SA Bands Configuration"
+msgstr "5G SA频段配置"
+
+msgid "5G NSA Bands Configuration"
+msgstr "5G NSA频段配置"
+
+msgid "Preferred bands settings"
+msgstr "首选频段设置"
+
+msgid "Modification of the bands"
+msgstr "频段修改"
+
+msgid "Modem information"
+msgstr "调制解调器信息"
+
+msgid "The new bands settings have been sent to the modem. If the changes are not visible, a restart of the connection, modem or router may be required."
+msgstr "新的频段设置已发送到调制解调器，如果您没有看到更改，请重启调制解调器或路由器"
+
+msgid "Apply changes"
+msgstr "应用更改"
+
+msgid "Restore"
+msgstr "恢复"
+
+msgid "Please select a band(s)"
+msgstr "请选择频段"
+
+msgid "Bands configuration"
+msgstr "频段配置"
+
+msgid "Restore default bands"
+msgstr "恢复默认频段"
+
+msgid "Waiting for device..."
+msgstr "等待设备中..."
+
+msgid "Rebooting…"
+msgstr "重启中..."
+
+msgid "Perform reboot"
+msgstr "执行重启"
+
+msgid "Restart"
+msgstr "重启连接"
+
+msgid "Reboot"
+msgstr "重启设备"
+
+msgid "Refresh"
+msgstr "刷新"
+
+msgid "Do you really want to restart the device?"
+msgstr "您确定要重启您的设备吗？"
+
+msgid "Additional options"
+msgstr "其他选项"
+
+msgid "Select the preferred band(s) for the modem."
+msgstr "选择合适的调制解调器频段"
+
+msgid "Do you really want to set up all possible bands for the modem?"
+msgstr "您确定要为调制解调器设置所有可能的频段吗？"
+
+msgid "Preferred bands"
+msgstr "首选频段"
+
+msgid "Configuration"
+msgstr "配置"
+
+msgid "Configuration modemband"
+msgstr "调制解调器配置"
+
+msgid "Configuration panel for modemband and gui application."
+msgstr "调制解调器应用程序和用户界面设置"
+
+msgid "Interface"
+msgstr "界面"
+
+msgid "Network interface for Internet access."
+msgstr "访问以太网络的调制解调器接口"
+
+msgid "WAN restart after making changes to bands."
+msgstr "更改频段后将会重启WAN"
+
+msgid "Modem restart"
+msgstr "重启调制解调器"
+
+msgid "Modem restart after making changes to bands."
+msgstr "更改频段后将会重启调制解调器"
+
+msgid "Restart with AT command"
+msgstr "通过AT指令重启"
+
+msgid "AT command to restart the modem."
+msgstr "通过AT指令重启调制解调器"
+
+msgid "Port for communication with the modem"
+msgstr "与调制解调器通信的端口"
+
+msgid "Please select a port"
+msgstr "请选择端口"
+
+msgid "Select one of the available ttyUSBX ports."
+msgstr "选择可用的ttyUSB端口与调制解调器通信"
+
+msgid "No supported modem was found, quitting..."
+msgstr "不支持的调制解调器，正在退出..."
+
+msgid "Port not found, quitting..."
+msgstr "通信端口未找到，退出..."
+
+msgid "Additional options useful for modem configuration."
+msgstr "配置调制解调器可用的其他选项"
+
+msgid "Connection / router restart"
+msgstr "连接/重启路由器"
+
+msgid "Restart WAN"
+msgstr "重启WAN"
+
+msgid "Hint: The name of the WAN section can be changed in the package settings panel."
+msgstr "提示：您可以在设置面板中更改WAN部分的名称"
+
+msgid "LTE band aggregation at UL (upload)"
+msgstr "UL中LTE频段聚合(上传)"
+
+msgid "No supported modem / router was found..."
+msgstr "找不到支持的调制解调器/路由器..."
+
+msgid "Hint: Option dedicated to the ZTE MF286D router."
+msgstr "提示：专用于中兴MF286D路由器的选项"
+
+msgid "Enable aggregation"
+msgstr "启用聚合"
+
+msgid "Disable aggregation"
+msgstr "禁用聚合"
+
+msgid "Disable"
+msgstr "禁用"
+
+msgid "Enable"
+msgstr "启用"
+
+msgid "Turn off notifications"
+msgstr "关闭通知"
+
+msgid "Appearance and action settings"
+msgstr "外观和动作设置"
+
+msgid "Checking this option disables the notification that appears every time the bands are changed."
+msgstr "选中此选项将禁用每次更改频段时出现的通知"
+
+msgid "Modem settings template"
+msgstr "调制解调器模板配置"
+
+msgid "Modem template configuration"
+msgstr "调制解调器模板配置"
+
+msgid "Settings panel for the modemband application that allows you to customize the package for your modem."
+msgstr "调制解调器带应用程序的设置面板允许您自定义调制解调器的程序包"
+
+msgid "Edit script"
+msgstr "编辑脚本"
+
+msgid "Supported bands depend on the region in which the modem operates. By modifying the DEFAULT_LTE_BANDS variable, you can easily adapt the package to your modem."
+msgstr "支持的频段取决于调制解调器运行的国家。通过修改DEFAULT_LTE_BANDS变量，您可以轻松地使软件包适应您的调制解调器"
+
+msgid "Waiting to read data from the modem..."
+msgstr "等待从调制解调器读取数据..."
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "Template loaded"
+msgstr "上传模板"
+
+msgid "Refresh the view"
+msgstr "刷新视图"
+
+msgid "Reload"
+msgstr "重载"
+
+msgid "Select the modem settings file"
+msgstr "选择调制解调器设置文件"
+
+msgid "Select the template assigned to the Vendor and ProdID of the modem."
+msgstr "选择调制解调器的供应商和产品ID的模板"
+
+msgid "Band selection switch"
+msgstr "频段选择"
+
+msgid "Deselect all"
+msgstr "取消全选"
+
+msgid "Select all"
+msgstr "全选"
+
+msgid "Bands are disabled..."
+msgstr "频段已禁用..."
+
+msgid "Check if you have selected the bands correctly."
+msgstr "请检查你是否选择了正确的频段。"

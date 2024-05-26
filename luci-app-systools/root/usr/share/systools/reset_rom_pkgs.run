@@ -1,0 +1,64 @@
+#!/bin/sh
+
+nonconf_files_of_pkg() {
+    local pkgname="$1"
+    if [ -s /rom/usr/lib/opkg/info/${pkgname}.conffiles ]; then
+        grep -hvxFf /rom/usr/lib/opkg/info/${pkgname}.conffiles \
+            /rom/usr/lib/opkg/info/${pkgname}.list
+    else
+        cat /rom/usr/lib/opkg/info/${pkgname}.list
+    fi
+}
+
+reset_pkg() {
+    local pkgname="$1"
+    local line
+    local dep
+    local deps
+    echo "${pkgname}" | grep -q "^kmod-\
+^kernel$\
+^libc$\
+^libgcc1$\
+^libatomic1$\
+^busybox$\
+" && return
+    if [ -f /rom/usr/lib/opkg/info/${pkgname}.control -a -e /overlay/upper/usr/lib/opkg/info/${pkgname}.control ]; then
+        echo "reset ${pkgname}"
+        if [ -f /rom/usr/lib/opkg/info/${pkgname}.list ]; then
+            nonconf_files_of_pkg "${pkgname}" | while read; do
+		        line="$REPLY"
+                rm -f "/overlay/upper/${line}"
+            done
+            rm -f /overlay/upper/usr/lib/opkg/info/${pkgname}.list
+        fi
+        deps=`grep '^Depends: ' /rom/usr/lib/opkg/info/${pkgname}.control | dd bs=1 skip=8 2>/dev/null | sed 's/,/ /g'`
+        # avoid loop deps
+        rm -f /overlay/upper/usr/lib/opkg/info/${pkgname}.control
+        for dep in $deps ; do
+            reset_pkg "$dep"
+        done
+        rm -f /overlay/upper/usr/lib/opkg/info/${pkgname}.*
+    fi
+}
+
+ls_all_rom_pkgs() {
+	( cd /rom/usr/lib/opkg/info ; find . -maxdepth 1 -name '*.control' | sed -E 's#./(.*).control#\1#g' )
+}
+
+reset_all_rom() {
+    local line
+    ls_all_rom_pkgs | while read; do
+        line="$REPLY"
+        reset_pkg "$line"
+    done
+}
+
+reset_all_rom
+
+touch /overlay/upper/usr/lib/opkg/.upgrading
+
+echo "done, please reboot, it will reboot in 10s"
+
+sleep 10
+reboot
+

@@ -1,0 +1,11 @@
+{
+	"luci-app-vaultwarden": {
+		"description": "Grant UCI access for luci-app-vaultwarden",
+		"read": {
+			"uci": [ "vaultwarden" ]
+		},
+		"write": {
+			"uci": [ "vaultwarden" ]
+		}
+	}
+}

@@ -1,0 +1,11 @@
+--- a/wx-config.in
++++ b/wx-config.in
+@@ -969,7 +969,7 @@ fi
+ 
+ is_monolithic() { [ "x@MONOLITHIC@" = "x1" ]; }
+ is_static()     { [ -n "$this_linkage" ]; }
+-is_installed()  { [ -z "$this_prefix" ]; }
++is_installed()  { [ "$this_prefix" ]; }
+ 
+ 
+ # Is the user after a support utility?

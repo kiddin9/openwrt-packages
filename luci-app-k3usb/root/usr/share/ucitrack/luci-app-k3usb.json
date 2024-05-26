@@ -1,0 +1,4 @@
+{
+	"config": "k3usb",
+	"init": [ "k3usb" ]
+}

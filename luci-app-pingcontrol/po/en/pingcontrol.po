@@ -1,0 +1,20 @@
+msgid "Server availability check"
+msgstr "Server availability check"
+
+msgid "Period of check, sec"
+msgstr "Period of check, sec"
+
+msgid "Ping interface"
+msgstr "Ping interface"
+
+msgid "IP address or hostname of test servers"
+msgstr "IP address or hostname of test servers"
+
+msgid "Failed attempts before iface up/down"
+msgstr "Failed attempts before iface up/down"
+
+msgid "Failed attempts before reboot"
+msgstr "Failed attempts before reboot"
+
+msgid "Configuration name"
+msgstr "Configuration name"

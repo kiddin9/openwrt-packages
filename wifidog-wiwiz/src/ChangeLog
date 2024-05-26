@@ -1,0 +1,886 @@
+# $Id$
+
+2012-05-30
+	* Add many const by champtar
+	* Send http 302 instead of 307 by champtar
+	* Suppress all compilation warnings by champtar
+	* Add transparent proxy support (via iptables REDIRECT) 
+2012-08-28
+	* Fix #836, buffer overflow on long urls reported by Etienne CHAMPETIER
+	* Fix #835, segfaults reported by Etienne CHAMPETIER
+2009-11-03
+	* Fix #625, does not display failure notice when quiet is set to true
+	* Fix #587, change index and rindex to strchr and strrchr
+	* Fix #548, trim leading spaces of the config file's options
+
+2009-09-28 Benoit Grégoire  <benoitg@coeus.ca>
+	* Fix #471, patch by  wichert
+
+2009-09-25 Geneviève Bastien <gbastien@versatic.net>
+	* Release 20090925
+	* Update contrib Makefiles
+
+2009-09-17 Geneviève Bastien <gbastien@versatic.net>
+	* Documented #537
+	* Fixed #472, patch by Jean-Philippe Menil
+	* Fixed #515, using the gateway interface instead of the gateway id in the iptables chain
+
+2009-07-02 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Re-fix #505, #525 and fix #584, sorry about that.
+
+2009-06-26 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Fix #518
+
+2009-02-27 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Fix #488 and #493 (arp_get() in firewall.c couldn't parse lowercase mac's from /proc/net/arp) with patch from	jch@pps.jussieu.fr.  Otherwise wifidog wouldn't work with recent openwrt and Ubuntu.
+	* Fix #525
+	
+2008-09-30 Wichert Akkerman <wichert@wiggy.net>
+	* Add exitcode to iptables failure errors.
+	* Include the gw_id in auth server updates so the client does not have
+	  to keep track of it in a session.
+	* Include the gateway id in the firewall table names. Fixes ticket #466
+	* URL encode the token before transmitting (it was already decoded).
+	  Fixes ticket #473
+	* Clean up compiler warnings.
+	* Security: strncpy may not NUL-terminate strings, so enforce this
+	  ourselves. Fixes ticket #464
+	* Make it possible to protect the status page. Fixes ticket #463.
+
+2008-07-20 Alexandre Carmel-Veilleux <acv@miniguru.ca>
+	* src/util.c: Fixed #include bug that caused segfaults on newer Linux
+
+2008-04-21 Alexandre Carmel-Veilleux <acv@miniguru.ca>
+	* Integrated patch #452 from Wichert Akkerman <wichert@wiggy.net>: Add const to function arguments in libhttpd to enforce more type checking and prevent certain class of problems.
+	* Compatiblity fix: Libhttpd assumes that type u_int is defined. Added an #ifndef/#include <sys/types.h> pair to httpd.h to make sure that assertion is true.
+	* Integrated patch #453 from Wichert Akkerman <wichert@wiggy.net>: Add configurable html to wifidog error messages. This has been a long-requested feature.
+
+2008-04-13 Benoit Grégoire  <bock@step.polymtl.ca>
+	* contrib/build-openwrt-kamikazeipk/wifidog/Makefile:  Add iptables userspace dependencies
+	* Release 1.1.5
+	
+2008-03-24 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Integrate with OpenWRT kamikaze build system
+
+2007-11-01 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Apply portability patches by David Young <dyoung@pobox.com>.  These have been reviewed, but not tested.
+
+2007-10-18 Benoit Grégoire  <bock@step.polymtl.ca>
+	* fw_iptables.c: From Philippe April:  reverted change made in 1241 so we properly remove the entry from mangle.WiFiDog_Incoming when kicking out users, it was affecting statistics 
+	* Update doxygen.cfg.in for latest version and to fix path ambiguity during make dist.
+	* Release 1.1.4
+
+2007-07-06 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Makefile.am:  Slight change in make ipk tagrget.  It seems that sometimes builddir isn't defined.  srcdir works just as well in this case.
+	
+2007-06-27 Benoit Grégoire  <bock@step.polymtl.ca>
+	* util.c:  Fix while loop initialisation bug
+	* conf.h:  Forgot to change the value of NUM_EXT_INTERFACE_DETECT_RETRY to actually make it wait forever.
+	* Remove hardcoded authserver paths.  Can now be defined in the config file (auth server section).
+	* Centralise browser redirect code to simplify code
+	* Add manual logout URL, based in part on work by David Bird
+	* Release 1.1.3 final
+	
+2007-06-24 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Close #321:  Make the Gateway retry forever if it cannot find it's interface.  You never know when someone may finally replug the network cable or something...
+	* Close #332:  Apply patch from Laurent Marchal. biguphpc<AT>gmail<DOT>com
+	* fw_iptables.c:  Fix error in iptables_fw_access().  Rules were created as ACCEPT instead of DROP
+	* firewall.c:  Fix bug in fw_sync_with_authserver().  The traffic for the validation period of a user who validated his account while connected wouldn't get counted.
+	* doc/wifidog_firewall_map.dia:  At long last, full documentation of the firewall.  We would have avoided a lot of stupid mistakes if we produced that sooner.
+	* Release 1.1.3_rc1
+
+2007-05-24 Benoit Grégoire  <bock@step.polymtl.ca>
+	* wdctl_thread.c:  Fix #324, again.  Credit goes to Medea, I misunderstood his instructons.
+	* From David Bird <david@coova.com> libhttpd/: Fix #266 - don't process query string parameters and keep them in that request.path.
+
+2007-05-18 Benoit Grégoire  <bock@step.polymtl.ca>
+	* wdctl_thread.c:  Fix #324
+	
+2007-04-26 Benoit Grégoire  <bock@step.polymtl.ca>
+	* wifidog.conf:  Improve comments and add examples of blocking access to the upstream LAN.
+
+2007-04-26 Benoit Grégoire  <bock@step.polymtl.ca>
+	* conf.h:  The DEFAULT_CHECKINTERVAL was 5 instead of 60 (as stated in the config file) which caused huge needless load on the auth servers, and needless ping traffic towards the clients if it wasn't manually set.
+
+2007-04-09 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Makefile.am:  Slight path fix when using building make ipk.  Tell me if you have trouble with this
+
+2007-01-06 Benoit Grégoire  <bock@step.polymtl.ca>
+	* contrib/ Add contrib dir to collect the scripts and other code distributed with, but not really part of wifidog.
+	* Include the scripts used to build a ipkg on Openwrt RC6 and 0.9
+	* Modify the build system to finally be able to build wifidog directly from the wifidog directory using the same files 
+		used to make the official .ipk, without having to copy ANYTHNG to the openwrt SDK.
+		At last, there is now a new target:  make ipk make ipk OPENWRTSDK=path_to_openwrt_sdk
+	* ipk/ Removed the obsolete OpenWRT RC4 scripts
+	* README.openwrt:  Update
+	* scripts/openwrt/ remove obsolete dir.
+	* contrib/dump_fw.sh:  Convenience script for firewall debugging.
+		
+2007-01-06 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Documentation update in the code
+	* Released 1.1.3_beta6
+
+2006-10-26 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/conf.h: Fix #238 by using $sysconfdir to compute the default config-file location.
+	
+2006-10-08 Alexandre Carmel-Veilleux <acv@miniguru.ca>
+	* Changed my email in a few files.
+	* Broken down some printf's on multiple lines.
+	* Added comments.
+
+2006-09-14 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/util.c, src/conf.h: Fix autodectection of the External interface if not specified in the config file.  If the interface (typically pppoe) wasn't yet fully up when wifidog starts, wifidog would stop every connection from going trough.  It will now retry every second for up to two minutes, and then exit with a fatal error if it can't successfully detect it.
+
+2006-02-23 Philippe April <philippe@ilesansfil.org>
+	* src/fw_iptables.c:
+	* Changed order in the filter.FORWARD chain
+	* Added TCPMSS rule
+	* Fixed deleting the rules on shutdown
+	* Fixed wdctl reset problem
+	* Released 1.1.3_beta4
+
+2006-02-06 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/fw_iptables.c: Fix deleting the rules on shutdown.
+
+2006-01-31 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Release 1.1.3_beta2
+	
+2006-01-31 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/fw_iptables.c:  Add the global ruleset to the nat table to fix #65.
+	Add the table parameter to iptables_load_ruleset() and iptables_compile
+	* libhttpd/protocol.c:  Fix pointer type mismatch
+    * src/conf.c,h:  Remove deprecated option AuthServMaxTries (which was already ignored anyway.	
+	
+2006-01-23 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/conf.h:  Fix the value of DEFAULT_AUTHSERVPATH and completely wrong code comment.  Not the default indicated in the config file and the define are in sync.
+
+2006-01-17 Mina Naguib <mina@ilesansfil.org>
+	* Ingisgnificant cleanup  of CVS artifacts after svn migration
+
+2005-11-24 Philippe April <philippe@ilesansfil.org>
+	* Bad idea
+
+2005-11-01 Max Horvath <max.horvath@maxspot.de>
+	* Added .project to .cvsignore
+
+2005-11-01 Philippe April <philippe@ilesansfil.org>
+	* Added OPTIONS section in wifidog-init (example: enable syslog)
+
+2005-10-09 Philippe April <philippe@ilesansfil.org>
+	* Changed html pages, added info to wdctl status
+
+2005-10-07 Philippe April <philippe@ilesansfil.org>
+	* Released 1.1.3_beta1
+
+2005-10-03 Philippe April <philippe@ilesansfil.org>
+	* libhttpd: Fixed two bugs parsing the GET query string making wifidog segfault
+
+2005-09-24 Mina Naguib <mina@ilesansfil.org>
+	* New wdctl command "restart" which will get wifidog to restart itself
+	while preserving the existing clientlist.  Perfect for 0-downtime
+	upgrading!
+	* safe.c: New safe_fork that croaks if the fork fails, also takes care of
+	closing some global file descriptors for the child
+	* debug.c: Now also logs the PID as part of every entry
+	* gateway.c: Handler for SIGCHLD now waitpid()s with WNOHANG flag to prevent deadlock
+	when the handler is called and another wait() or waitpid() is used
+	* util.c: execute() now uses waitpid() instead of wait() to reap only the child
+	it fork/executed
+	* Extra debugging entries throughout code
+
+2005-09-24 Mina Naguib <mina@ilesansfil.org>
+	* conf.c: Pre-emptive bugfix - harsh lockdown of parsing trusted MAC
+	addresses from config file
+
+2005-09-24 Philippe April <philippe@ilesansfil.org>
+	* (finally) Added {Saul Albert,Jo Walsh,Schuyler}'s patch (thank you!) to send
+	the GW interface's mac address as the node_id if no node_id is specified. It allows
+	the use of generic configuration files without the need to hardcode the
+	node_id in.
+	* Added TrustedMACList configuration variable which allows specifying
+	MAC addresses which are allowed to go through without authentication.
+	* Updated OpenWrt instructions.
+
+2005-09-08 Philippe April <philippe@ilesansfil.org>
+	* Added compile instructions and installation for OpenWrt Whiterussian-rc2
+	* Released 1.1.2
+
+2005-05-30 Mina Naguib <mina@ilesansfil.org>
+	* New wdctl command "restart" which will get wifidog to restart itself while preserving the existing clientlist.  Perfect for 0-downtime upgrading!
+	* safe.c: New safe_fork that croaks if the fork fails, also takes care of closing some global file descriptors for the child
+	* debug.c: Now also logs the PID as part of every entry
+	* gateway.c: Handler for SIGCHLD now waitpid()s with WNOHANG flag to prevent deadlock when the handler is called and another wait() or waitpid() is used
+	* util.c: execute() now uses waitpid() instead of wait() to reap only the child it fork/executed
+	* Extra debugging entries throughout code
+	
+2005-05-24 Mina Naguib <mina@ilesansfil.org>
+	* wdctl.c: Minor bugfix pointed out by David Vincelli: When an invalid
+	command is given to wdctl, the error message showed "Invalid command:
+	wdctl" instead of the actual command supplied
+
+2005-05-23 Philippe April <philippe@ilesansfil.org>
+	* Released 1.1.2_pre1
+
+2005-05-23 Mina Naguib <mina@ilesansfil.org>
+	* fw_uptables.c: When appending call to chain WiFiDog_Outgoing from
+	nat.prerouting, add it via -A (at end) instead of -I 1 (at beginning) to
+	allow for existing nat forwarding.
+
+2005-05-16 Mina Naguib <mina@ilesansfil.org>
+	* centralserver.c: read()s from central server in auth_server_request() are
+	now timed-out (via select).  This is hopefully a bugfix to the
+	thread-freezing problem.
+
+2005-05-06 Mina Naguib <mina@ilesansfil.org>
+	* Bugfix non-RFC compliant HTTP requests using \n instead of \r\n as line
+	terminations as per email from ludocornut@users.sourceforge.net
+
+2005-04-28 Philippe April <philippe@ilesansfil.org>
+	* Released 1.1.2_beta2
+
+2005-04-28 Mina Naguib <mina@ilesansfil.org>
+	* wifidog.conf: Make the default ruleset for validating users = allow all
+	(except sending SMTP)
+
+2005-04-20 Philippe April <philippe@ilesansfil.org>
+	* fw_iptables.c: Insert ourselves at the end of filter.FORWARD instead of
+	at the beginning since important FW instructions are located there on the
+	WRT54Gs when used with some DSL providers and we never execute them
+	otherwise.
+	* Released 1.1.2_beta1
+
+2005-04-03 Philippe April <philippe@ilesansfil.org>
+	* Fixed issue with FAQ
+	* ipkg/rules: If autogen.sh doesn't exist, it's ok. 'configure' will.
+
+2005-04-01 Philippe April <philippe@ilesansfil.org>
+	* Duplicated auth server list in NAT table to fix the issue
+	of using an auth server on port 80, since port 80 was being systematically
+	redirected to 2060 otherwise.
+	* Released 1.1.1
+
+2005-03-29 Mina Naguib <mina@ilesansfil.org>
+	* Added FAQ document copied from wiki
+
+2005-03-22 Philippe April <philippe@ilesansfil.org>
+	* Released 1.1.0
+
+2005-03-20 Mina Naguib <mina@ilesansfil.org>
+	* More verbose debugging output
+
+2005-03-12 Mina Naguib <mina@ilesansfil.org>
+	* More debugging output
+	* Document ugly hack involving tid_fw_thread
+	* SIGPIPE now ignored (as it's comment said) instead of being sent to the
+	handler for SIGCHLD
+	* Bugfix firewall destruction not happening from termination handler - had
+	to move explicit thread kills after, not before, firewall destruction
+
+2005-03-11 Mina Naguib <mina@ilesansfil.org>
+	* If external interface was unspecified in the conf file, try to determine
+	it from the default route
+	* If external interface is known, specify it in the trigger rule in
+	nat.PREROUTING to prevent the rule from matching traffic inbound to the
+	router itself.  This should fix the issue raised by Philippe and Pascal on
+	the mailing list
+	* Bugfix: UNDO ABOVE 2 ITEMS. Aparently you cannot use the "-o" iptables
+	option in nat.PREROUTING which makes knowing external_interface useless
+	* Added new chain in nat.PREROUTING that explicitly allows all traffic to
+	the router's internal IP from the internal interface, effectively
+	addressing the same above problem
+
+2005-03-07 Mina Naguib <mina@ilesansfil.org>
+	* auth.c: Got rid of legacy _http_output and _http_redirect - replaced them
+	with libhttpd functions and http_wifidog_header/http_wifidog_footer
+	* auth.c: When re-directing to auth server now respects SSL setting instead
+	of always http+port 80
+	* auth.c: Better debugging output of what it's doing when it acts on auth
+	server response
+	* A little bit more care with buffers and their sizes
+	* Minor whitespace tweaking and a couple of internal doc typo fixes
+
+2005-03-06 Mina Naguib <mina@ilesansfil.org>
+	* Check return values of pthread_create
+	* Internal documentation touch-ups
+	* auth.c: Bugfix invalid http header sent by _http_output
+	* Bugfix traffic counter read from iptables as long int instead of long
+	long int
+	* Minor insignificant code touch-ups:
+		* Replace pthread_mutex_lock/unlock calls with appropriate
+		LOCK_FOO/UNLOCK_FOO macros for consistency
+		* Lock first before using some variables, not after
+		* Indentation adjustments
+
+2005-03-04 Mina Naguib <mina@ilesansfil.org>
+	* Bugfix huge uptime pointed out to be by Philippe - was caused when the
+	date is set (with ntpclient for example) after wifidog starts
+	* Beautified "Uh oh!" apology screens and redirection screen
+
+2005-03-02 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Ifdef'd out the bits that are Linux specific if __linux__ is not
+	  defined.
+
+2005-03-01 Mina Naguib <mina@ilesansfil.org>
+	* Minor visual tweaks to the web interface
+
+2005-03-01 Philippe April <philippe@ilesansfil.org>
+	* Tagged v1_1_0_beta3
+
+2005-02-28 Mina Naguib <mina@ilesansfil.org>
+	* Do not update the last_updated field on incoming traffic - update it on
+	outgoing traffic only.  This should be a much more reliable indication of
+	client no longer being there
+	* WifiDog status is now viewable with a web browser at
+	http://ip:port/wifidog/status
+	* Added new web hook for http://ip:port/wifidog
+	* Beautified web interface at http://ip:port/wifidog/*
+
+2005-02-24 Mina Naguib <mina@ilesansfil.org>
+	* auth_server_request now returns AUTH_ERROR on error instead of AUTH_VALIDATION_FAILED
+	* centralserver.c: Fix typo (was =+, made it +=) that made the response
+	from the auth server corrupted in memory if the entire response would not
+	fit in 1 packet and retrieved with 1 read() call
+	* Better logging of details and calling of mark_* (auth+online/offline)
+
+2005-02-22 Philippe April <philippe@ilesansfil.org>
+	* Tagged v1_1_0_beta2
+
+2005-02-20 Mina Naguib <mina@ilesansfil.org>
+	* New safe.c with safe_malloc, safe_strdup, safe_asprintf and
+	safe_vasprintf with propper logging and exit when error. Replaced all
+	instances of original with safe versions in all files
+	* Fix memory leak in iptables_fw_counters_update
+	* Partial merge from CaptiveDNS branch: Consolidated much of the networking
+	calls to the auth servers into a magical function called connect_auth_server()
+	that's responsible for dns lookup, connecting, marking servers bad, marking
+	online/auth_online, and refreshing the firewall rules.
+	* Partial merge from CaptiveDNS branch: Added new functions mark_auth_online(),
+	mark_auth_offline() and is_auth_online() - similar in nature to is_online()
+	etc. except tailored to decide on auth servers status - currently being called by
+	connect_auth_server()
+	* Partial merge from CaptiveDNS branch: Different apology in 404 handler
+	depending on whether internet is down or just auth server is down
+	* Partial merge from CaptiveDNS branch: wdctl status now shows status of
+	is_online and is_auth_online
+	* Fixed several inconsistencies regarding the parity and size of
+	incoming/outgoing counters.  Standardized on "unsigned long long int" in
+	declarations and *printf/*scanf formats
+
+2005-02-16 Philippe April <philippe@ilesansfil.org>
+	* ipkg/rules - When we clean, forgot to delete ipkg-build-stamp
+
+2005-02-15 Mina Naguib <mina@ilesansfil.org>
+	* Now also reports wifidog_uptime when it pings the server, as well as
+	shows it in wdctl status
+
+2005-02-13 Mina Naguib <mina@ilesansfil.org>
+	* Completely re-did the iptables rules.  Most of the rules are now in the
+	filter table instead of the nat table.  Also DROPs are now replaced with
+	REJECTs to help tell the user connection refused instead of endless pauses
+	* Bugfix: Traffic from client to router was counted twice in the "outgoing"
+	bytecount since it increased both counters in mangle.* and filter.* - Got
+	rid of TABLE_WIFIDOG_WIFI_TO_GW completely since it's unneeded
+
+2005-02-12 Mina Naguib <mina@ilesansfil.org>
+	* Stricter format rules for all *scan* functions hunting for IPs and MAC addresses
+	* fw_iptables.c: Make sure scanned IP address is a valid IP address
+	* firewall.c: Fix memory leak in arp_get
+	* libhttpd/protocol.c: Abort connection if read non-ascii from client. This
+	is often a telltale sign of a program such as skype using port 80 for
+	non-http requests - this therefore ends the thread as early as possible
+	instead of having it lay around for a while trying to get a valid http
+	request and taking up resources
+	* ping_thread.c: When pinging auth server now also sends sys_uptime, sys_memfree
+	and sys_load
+	* -v commandline option now shows wifidog version
+
+2005-02-11 Philippe April <philippe@ilesansfil.org>
+	* Tagged v1_1_0_beta1
+
+2005-02-11 Philippe April <philippe@ilesansfil.org>
+	* Fixed a bug in counting the traffic between client and gateway
+	* Alpha8
+
+2005-02-04 Mina Naguib <mina@ilesansfil.org>
+	* Partially bugfix apology when offline
+	* ipkg/rules: More tweaking to make it build nicely with recent openwrt
+	buildroots
+
+2005-02-03 Mina Naguib <mina@ilesansfil.org>
+	* Keep track of last times we successfully & unsuccessfully spoke to the
+	auth server/used DNS. Then, if we know we're not online, show a little
+	apology to the user instead of re-directing them to the auth server.
+	* ipkg/rules: Added some extra version detection to auto-detect versions
+	of kernel, iptables and ipkg-utils instead of having them hardcoded.  This
+	makes creating ipkg's work with different OpenWRT releases
+	* fw_iptables.c: Fixed memory leak caused by not freeing return from
+	iptables_compile in iptables_load_ruleset
+	* http.c: Deleted unused call to client_list_find
+	* http.c: /about URL now shows wifidog version
+	* Cosmetic typo fixes
+
+2005-02-03 Philippe April <isf_lists@philippeapril.com>
+	* Ping the users everytime we check their counters, that way we keep them
+	alive
+	* Optional ExternalInterface
+	* Optional GatewayAddress (we discover it. finally.)
+	* We check for the traffic from the clients to the firewall, to catch the
+	traffic the icmp ping is generating
+	* Fixed bug where we were doing the opposite of what desired when checking if authentication server was alive
+	* Bumped to alpha7
+
+2005-01-23 Philippe April <isf_lists@philippeapril.com>
+	* wdctl status will return the auth servers in the linked list
+	* We'll now forward to the auth server to display the used-to-be-ugly
+	messages like "go ahead and validate your account you have 15 minutes"
+	* Bumped to alpha6
+
+2005-01-06 Philippe April <philippe@philippeapril.com>
+	* fw_iptables.c: Changed REJECT to DROP for the end of the table Unknown,
+	  REJECT doesn't seem to be available in the NAT table.
+	* fw_iptables.c: Indented things
+	* fw_iptables.c Fix: Created the authservers table at the beginning and destroy
+	  at exit time only to avoid recreating it everytime
+	* Bumped to alpha5
+
+2005-01-05 Philippe April <philippe@philippeapril.com>
+	* Typo, fixed some spaces (mostly esthetic)
+	* Bumped to alpha4
+
+2004-12-19 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/fw_iptables.c: Tweak of auth_server firewall rule setting
+	  code. (and promptly undone, fixing the cause is better then
+	  fixing the symptom)
+	* src/conf.c: NULL-fill auth_server struct so that
+	  auth_server->last_ip always equals NULL when first filled.
+
+2004-12-16 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/fw_iptables.c: Display iptables command that is run in debug mode.
+	
+2004-12-07 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/firewall.c: Fix reversed incoming and outgoing connections in statistics code
+	* bump version to alpha3
+
+2004-11-29 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* wifidog.conf: Fixed firewall rule bug.
+	* src/fw_iptables.c: Unknown user default block rule not "REJECT"
+	  instead of "DROP"
+
+2004-11-23 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/conf.c: Fixed a NULL pointer dereference in get_ruleset().
+
+2004-11-22 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* libhttpd/api.c: Fix leak in HttpdEndRequest().
+	* src/ping_thread.c: Fix auth_server IP change code with latest
+	  from previous branch.
+	* src/conf.h: Same as above.
+	* src/fw_iptables.c: Same as above.
+	* src/conf.[ch]: Firewall rule set parsing code.
+	* wifidog.conf: Default firewall rule set defined.
+	* src/fw_iptables.[ch]: Firewall rule set enacting code.
+	* configure.in: bumped version to 1.1.0-alpha2
+
+2004-11-18 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/ping_thread.c: Merge phil's bug fixes from stable branch
+	* ipkg/rules:  Merge phil's bug fixes from stable branch
+	* configure.in:  Set version to 1.1.0alpha
+	
+2004-11-18 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/fw_iptables.[ch]: Merged in Phil's patch.
+	* src/*: Added ping_thread hooks to reset authserver table in the
+	  firewall if it notices the auth_servers changing IPs.
+
+2004-11-17 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* libhttpd/*: libhttpd has been taken behind the shed and shot in
+	  the back of the head. The replacement separates the request struct
+	  from the server struct. It's thread safe if none of OUR threads
+	  write to server.
+	* src/*: All the changes to handle the new libhttpd and also to
+	  move over to a worker thread system. http_callback_auth() no
+	  longer spawns a thread either.
+	* *: this update preceded by a cvs tag PRE_NEW_LIBHTTPD.
+	* *: You want to check the mailing list archive also.
+
+2004-11-10 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* libhttpd/protocol.c: select() based timeout.
+
+2004-10-31 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* configure.in: bumped version number to "1.0.2-pre1" since we
+	  already have ile sans fil hot spots advertising "1.0.1".
+
+2004-10-30 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/ping_thread.c: asynch read(). fixed bug in byte counting.
+
+2004-10-29 Philippe April <philippe@philippeapril.com>
+	* ipkg/rules: added conffiles so it does not overwrite config files
+
+2004-10-29 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/ping_thread.c: Much new debugging information
+	* multiple files: Logging for all mutexes
+
+2004-10-28 Philippe April <philippe@philippeapril.com>
+	* ipkg/rules: building ipkg-tools before packaging
+
+2004-10-28 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* multiple files: Implemented a FirewallRule config command, it
+	  doesn't actually do anything yet.
+	* libhttpd: #if 0'd out lots of request parsing code.
+	* libhttpd: changed URL parsing.
+
+2004-10-27 Philippe April <philippe@philippeapril.com>
+	* ipkg/rules: removed --build=mipsel from ./configure
+
+2004-10-26 Philippe April <philippe@philippeapril.com>
+	* ipkg/rules: sed -i is not standard, did a workaround.
+	* ipkg/rules: openwrt's buildroot has changed, modified ipkg
+	accordingly, please read README.openwrt
+
+2004-10-22 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/various: Added wd_gethostbyname, a thread-safe (serialized)
+	  version of gethostbyname.
+
+2004-10-15 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/auth.c: Fixed hard coded port.
+
+2004-10-09 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/gateway.c: More logging on termination_handler.
+
+2004-10-08 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/wdctl_thread.c: Fix wdctl_status to return all connected
+	users.
+
+2004-10-07 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/conf.c: Fixed mark_auth_server_bad() for the case where there
+	is only one auth server.
+	* src/ping_thread.c: Added extra debugging.
+	* src/ping_thread.c: Fixed file descriptor leak.
+	* src/centralserver.c: Fixed many file descriptor leaks.
+	* src/centralserver.c: Failure of read() no longer fatal.
+	* src/centralserver.c: In case of failure, return from
+	auth_server_request() is no longer an undefined authresponse.
+	* src/util.c: Fixed typo in logging.
+	* src/wdctl_thread.c: Added logging when socket path is too long.
+	* src/debug.c: Debug now logs the time of an event.
+
+2004-08-30 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* wifidog.conf: Corrected an example
+	* README.openwrt: Typo fixed, editorial changes
+	* ChangeLog: Benoit's last update entry was set in the future ;-).
+	* All over src/: Compiled with -Wall and fixed all nagging.
+
+2004-08-30 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Makefile.am: Add rpm target
+	* wifidog.spec.in:  Rework spec file.  Now works and include the init script
+	* ipkg/rules:  Deal with the incomplete init.d system of the OpenWrt.   Install scripts/init.d/wifidog as /usr/bin/wifidog-init, and call wifidog-init start from S65wifidog. 
+	* scripts/openwrt/S65wifidog: Add file
+	* scripts/init.d/wifidog:  Fix performance and protability problem.  Make it chkconfig compliant.  Test that chkconfig --add wifidog works (at least on mandrake)
+ 	* src/wdctl.c:  Change some message, make sure wdctl return 0 unless there is an error.
+	
+2004-08-30 Benoit Grégoire  <bock@step.polymtl.ca>
+	* README.openwrt:  Documentation update
+	* Makefile.am:  Make a ipkg target to ease WRT54G installation
+	* ipkg/rules:  Add wdctl and the init.d script.
+	* Add BUILDROOT variable to the build system so we can use it when needed
+	* src/ping_thread.c:  Have the server ping immediately on boot.  Note that this will only help if the second server responds.  The logic of the ping itself should be changed so it iterates in the list until it finds one that responds or exausts the list
+	* wifidog.conf:  Add more doc, and (most) of ISF's default config in comments.
+	* Bump version in anticipation for release
+
+2004-08-29 Guillaume Beaudoin <isf@soli.ca>
+	* wifidog.spec.in: Changed prefix to match scripts/init.d/wifidog.
+	* debian/rules: Configuration and init.d file added.
+	* debian/control: Description and Depends field changed.
+	* Makefile.am: Added scripts directory and ipkg/rules file.
+
+2004-08-29 Pascal Leclerc <pascal@plec.ca>
+	* scripts/init.d/wifidog: Startup/shutdown script for Wifidog deamon
+
+2004-08-29 Guillaume Beaudoin <isf@soli.ca>
+	* wifidog.spec.in: Must be in decending chronological order.
+
+2004-08-29 Guillaume Beaudoin <isf@soli.ca>
+	* wifidog.spec.in: Remove some leftover from libOFX.
+	* Makefile.am: Include debian/* files.
+	* We should now be able to package .deb and .rpm from dist.
+
+2004-08-27 Benoit Grégoire  <bock@step.polymtl.ca>
+	* README.openwrt,src/conf.c,h:  Documentation update
+	* src/gateway.c, src/ping_thread.c, src/wdctl.c, src/wdctl_thread.c:  Fix linking problems related to errno.h and extern int errno 
+	
+2004-08-26 Pascal Leclerc <pascal@plec.ca>
+	* Makefile.am: Remove phpauth from EXTRA_DIST
+
+2004-08-25 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* src/auth.c: Path as changed in 1.26 was preceded by a /, the path already contains a / so it would yield http://host//path/
+
+2004-08-25 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/auth.c:  Remove hardcoded path.
+	
+2004-08-23 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/ping_thread.c:  Send the gateway id to the central server during ping, so the server know which gateway checked in, and then knows for sure that it is up (well, once the server implements it...).
+	
+2004-08-23 Benoit Grégoire  <bock@step.polymtl.ca>
+	* src/centralserver.c:  Fix path for auth by appending /auth/ to auth_server->authserv_path.  Wifidog works again.
+	
+2004-08-20 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Debug output of all HTTP transactions and their responses.
+	* Changed ipkg to use wifidog.conf from the base tree
+	* Send url to central server for link back out
+
+2004-08-19 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Sort of fixed the hanging thread (with an explicit thread kill)
+	* Fixed ping code
+
+2004-08-13 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* All Auth Server configuration now handled by the "AuthServer" 
+	directive.
+	* The "AuthServer" directive is now multi line.
+
+2004-08-11 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Added code to do heartbeat.
+	* Changed AuthServer yet again.
+
+2004-08-09 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* WiFiDog now can read multiple auth servers in its config file.
+	* Added functions to handle the auth servers list.
+	* WiFiDog can failover between servers for its internal requests.
+	* Firewall sets rules for all auth servers.
+
+2004-08-06 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* AuthservPath no longer mandatory in config file.
+
+2004-08-04 Philippe April <wifidog@philippeapril.com>
+    * Renamed iptables.[ch] to fw_iptables.[ch]
+
+2004-08-03 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Fixed broken sockaddr_un usage in wdctl.c and wdctl_thread.c
+
+2004-08-01 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Delete everything in phpauth, it will now live in it's own module (wifidog-auth)
+
+2004-08-01 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Added wdctl facility
+
+2004-07-21 Philippe April <wifidog@philippeapril.com>
+    * Cleaned up the ipkg makefile
+    * Added makefile to build on Debian
+
+2004-07-19 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Build script for OpenWRT ipkg
+
+2004-07-06 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Added cache control to default error message returned.
+
+2004-07-05 Philippe April <papril777@yahoo.com>
+    * Fixed an endless loop in client_list_delete
+
+2004-06-10 Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Added debugging to libhttpd so that httpdGetConnection() traces
+	  its execution into ./httpdGetConnection.log. This should be removed
+	  once it's no longer needed or put within #ifdef DEBUG's.
+
+2004-06-01 Philippe April <papril777@yahoo.com>
+    * Sending User-Agent header to central server
+
+2004-05-28 Philippe April <papril777@yahoo.com>
+    * Fixed bugs implemented after major changes
+
+2004-05-27 Benoit Grégoire  <bock@step.polymtl.ca>
+	* Massive Doxygen update in all files.  IMPORTANT: The new convention is:  @brief in the .h, long description and parameters in the .c
+	* Cleaned up some more issues in my notes taken at the formal review
+	* client_list.c,h:  Make client_list_free_node() private, define and document client_list_mutex here
+	* config.c:  Start the hunt for evil globals:  Get rid of the config global
+	* doc/doxygen.cfg.in:  Enable generation of internal doc, a few other tweaks
+	* Documentation now generates a TODO list and DEPRECATED list, please look at them
+
+2004-05-27  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Cleaned up all the issues brought forward in the code review
+	  on 2004-05-26 at Benoit's. There are to many changes to list
+	  individually.
+
+2004-05-15  Philippe April <papril777@yahoo.com>
+    * Commented out cookie handling in libhttpd because it segfaults if
+    you pass a particular formatting/buggy one
+
+2004-05-14  Philippe April <papril777@yahoo.com>
+    * Fixed crash when receiving SIGPIPE signal with write() would fail
+
+2004-05-13  Philippe April <papril777@yahoo.com>
+    * Advertise to the central server when we logged out a user
+
+2004-05-12  Philippe April <papril777@yahoo.com>
+    * Sending a "stage" when doing authentication for the server
+    to be able to know if it's a login, or just a counters update.
+
+2004-05-11  Philippe April <papril777@yahoo.com>
+    * Now tracking the hotspot id and ip in database
+
+2004-05-07  Philippe April <wifidog@philippeapril.com>
+    * Now we store both incoming and outgoing counters on server
+    and expire if no activity at all on both
+    * Changed the structure of nodes a little
+
+2004-05-07  Philippe April <wifidog@philippeapril.com>
+    * New parameter ExternalInterface
+    * Made possible to count inbound traffic by inserting new rules
+
+2004-05-07  Philippe April <wifidog@philippeapril.com>
+    * Cleaned up common.h from files
+
+2004-05-07  Philippe April <wifidog@philippeapril.com>
+    * Made iptables' tables DEFINEs instead of being hardcoded
+
+2004-05-07  Philippe April <wifidog@philippeapril.com>
+    * Fixed typo
+
+2004-05-06  Philippe April <papril777@yahoo.com>
+    * Cleanups and standardized things
+
+2004-05-06  Philippe April <papril777@yahoo.com>
+    * Cleanups in fw_counter function
+
+2004-05-05  Philippe April <papril777@yahoo.com>
+    * Calling iptables directly instead of using shell scripts
+    for fw_init, fw_destroy and fw_allow/fw_deny
+    * Removed shell script for fw.counters
+    * Fixed memory leaks
+    * Moved most of the iptables-specific (all but the counters)
+    to iptables.c to modularize a bit more
+    * Hack to allow deciding if we want FW calls' messages quiet or not
+
+2004-04-23  Philippe April <papril777@yahoo.com>
+    * Fixed a debug line
+
+2004-04-22  Philippe April <papril777@yahoo.com>
+    * Major changes, cleaned up code
+    * Changed the way firewall tags traffic
+
+2004-04-21  Philippe April <papril777@yahoo.com>
+    * Changed fw.destroy so it cleans up more in a while loop
+
+2004-04-20  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* fixed expiration time
+
+2004-04-20  Philippe April <papril777@yahoo.com>
+    * A lot of changes regarding debugging facilities and added logging
+    to syslog
+    * Removed possibility to specify port on command line
+
+2004-04-19  Philippe April <papril777@yahoo.com>
+	* Changed some debugging severity
+
+2004-04-19  Benoit Grégoire  <bock@step.polymtl.ca>
+	* Properly integrate libhttpd into the source tree ;)  Note that this will create a proper system wide shared library for libghttpd.  Still to be done:  1- Store Mina's patch somewhere,  in case we want to upgrade libhttpd.  2-Add configure option not to build httpd, and use an already installed one.
+
+2004-04-18  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Fixed pthread_cond_timedwait. The mutex needed to be locked as
+	per the POSIX spec, yet Linux or Mac OS X don't care...
+	* Fixed the double SIGTERM handler on Linux...
+
+2004-04-17  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Added work around for uClibc bug in auth.c
+
+2004-04-17  Philippe April <papril777@yahoo.com>
+	* Fixed firewall scripts to make them standard and some firewall functions
+
+2004-04-17  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Updated documentation in firewall.c
+
+2004-04-17  Philippe April <papril777@yahoo.com>
+	* Fixed path returning to gateway in phpauth/login/index.php
+
+2004-04-16  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Merged in libhttpd into the source tree
+
+2004-04-16  Philippe April <papril777@yahoo.com>
+	* Fixed CRLF/formatting in phpauth/login/index.php
+	* Added some documentation for firewall.c, commandline.c
+	* Removed an unnecessary line dist_sysconf_DATA from Makefile.am
+
+2004-04-15  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Changed the locking mechanism, now all access to t_node * structs
+	are properly protected.
+
+2004-04-15  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Connection now closed if counter hasn't change for one full
+	period.
+
+2004-04-14  Philippe April <papril777@yahoo.com>
+	* Fixed shell script hardcoded interface
+
+2004-04-14  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Existing IPs are logged off when they're authenticated again.
+
+2004-04-14  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Fixed clean up so it happens at the right time.
+
+2004-04-14  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Major retooling of insert_userclass(), fixed seg fault.
+	* The program now works as advertised.
+
+2004-04-14  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Switched to threads. Alpha quality build, at best
+
+2004-04-12  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Changed child return value handling, again. Now it's actually
+	using the real value instead of the flag.
+	* The http.c authentication code now closes the http connection
+	from the user.
+
+2004-04-11  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Added extra debugging information.
+	* Fixed return value handling in debugging calls.
+
+2004-04-11  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Removed duplicates signal handling hooks
+	* Additional comments in SIGCHLD handler
+
+2004-04-11  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Node find if's expressions changed
+
+2004-04-11  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* SIGCHLD Handler initializaed outside of deamon mode now.
+
+2004-04-11  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Very large modification. The entire architecture has been reworked
+	so that authentications to the central server are performed in a
+	fork()'d child process and the exit code from that child is then
+	used to set the User Class of the connection.
+	* The UserClasses (global definitions) and Rights (per connection)
+	have been integrated.
+
+2004-03-16  Mina Naguib <minaguib@users.sourceforge.net>
+	* Changed HTTP server tasks to be handled by libhttpd - merged
+	incorporate_libhttpd branch
+
+2004-03-13  Philippe April <papril777@yahoo.com>
+	* Modified the way firewall scripts are called so we can configure
+	them in the config file (a bit more modular than it was)
+	* Added simple linked list to keep track of clients and to
+	keep a counter of the utilization and send it to the auth server
+	* Fixed CRLF/formatting in phpauth/auth/index.php
+	* Hacked phpauth/auth/index.php to handle very basic utilization tracking
+
+2004-03-12  Philippe April <papril777@yahoo.com>
+	* Changed all perror()s into debug()s and added errno.h to common.h
+
+2004-03-10  Philippe April <papril777@yahoo.com>
+	* Small fix to firewall.c so we don't define variables after
+	the function has started (so it builds on gcc-2.95)
+
+2004-03-09  Philippe April <papril777@yahoo.com>
+	* Major changes, not forking anymore for new connections, now using
+	select() instead. It will allow us to efficiently use a linked list to track
+	users and other things. It introduces some bugs and design issues but will
+	be better in the end.
+
+2004-03-09  Philippe April <papril777@yahoo.com>
+	* Small fix in the default.php login page
+	* exit() where the program was supposed to exit but wasn't when the
+	firewall could not be setup
+
+2004-03-09  Alexandre Carmel-Veilleux <acv@acv.ca>
+	* Tiny change to increase cross-platform compatibility. It can now build on OS X and it comes close to building on my old BSD box.
+
+2004-03-08  Benoit Grégoire  <bock@step.polymtl.ca>
+	* Initial CVS import.  Integrate a standrad GNU build system and Doxygen to the build process.  Add Doxygen and CVS headers, .cvsignores, etc.  Note that the imported code is Philippe April (papril777 at yahoo.com)'s work.  Tell me if I forgot anything.  Please note that the paths in the src/fw* scripts are still hardcoded.  Don't forget to update the ChangeLog file every commit and add doxygen comments to your code.  Happy hacking.
+

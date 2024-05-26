@@ -1,0 +1,13 @@
+{
+	"admin/services/spotifyd": {
+		"title": "Spotifyd",
+		"action": {
+			"type": "view",
+			"path": "spotifyd"
+		},
+		"depends": {
+			"acl": [ "luci-app-spotifyd" ],
+			"uci": { "spotifyd": true }
+		}
+	}
+}

@@ -1,0 +1,22 @@
+{
+	"luci-app-dae": {
+		"description": "Grant access to dae configuration",
+		"read": {
+			"file": {
+				"/etc/dae/config.dae": [ "read" ],
+				"/var/log/dae/dae.log": [ "read" ],
+				"/etc/init.d/dae hot_reload": [ "exec" ]
+			},
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": [ "dae" ]
+		},
+		"write": {
+			"file": {
+				"/etc/dae/config.dae": [ "write" ]
+			},
+			"uci": [ "dae" ]
+		}
+	}
+}

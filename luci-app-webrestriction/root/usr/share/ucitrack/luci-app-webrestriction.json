@@ -1,0 +1,4 @@
+{
+	"config": "webrestriction",
+	"init": [ "webrestriction" ]
+}

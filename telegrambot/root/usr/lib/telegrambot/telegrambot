@@ -1,0 +1,185 @@
+#!/bin/sh
+
+PATH='/usr/bin:/usr/sbin:/bin:/sbin'
+
+for v in bot_token chat_id server timeout polling_time enabled log_file plugins; do
+	eval $v=$(uci -q get telegrambot.@telegram_bot[0].${v} 2>/dev/nul)
+done
+
+if [ $enabled -eq 0 ]; then
+	exit 0
+fi
+
+if [ -z "$bot_token" ]; then
+	echo "token is empty"
+	exit 2
+fi
+
+if [ -z "$chat_id" ]; then
+	echo "chat_id is empty"
+	exit 2
+fi
+
+if [ -z "$server" ]; then
+	server="https://api.telegram.org"
+fi
+
+if [ -z "$timeout" ]; then
+	timeout=30
+fi
+
+if [ -z "$polling_time" ]; then
+	polling_time=1
+fi
+
+api="${server}/bot${bot_token}"
+
+if [ ! -d "/tmp/telegrambot" ]; then
+  mkdir /tmp/telegrambot
+fi
+if [ "x$plugins" = "x" ]; then
+	plugins="/usr/lib/telegrambot/plugins"
+fi
+#telegram_log_file=/tmp/telegram-bot/telegram.log
+if [ "x$log_file" = "x" ]; then
+	logfile=/dev/null
+else
+	log_file=${log_file}
+fi
+
+offset_file=/tmp/telegrambot/telegram_offset
+
+command_not_found="Sorry,
+I only recognize *commands*.
+Commands are words beginning with a slash.
+Try it !
+Send [/start](/start) to get my commands list."
+
+command_start="*/memory* return RAM info
+*/leases* current dhcp leases
+*/wll_list* wifi clients
+*/reboot* reboot the device
+*/wol <mac_address>* wake on lan over the Internet
+*/loc* get current location via modemmanager
+*/wanip* WAN ip address
+*/plugins* aviable commands"
+
+curl -k -s -X POST $api/sendMessage \
+	-d chat_id=$chat_id \
+	-d parse_mode=Markdown \
+	--data-urlencode text="$(uci -q get system.@system[0].hostname). TelegramBot started." &> $log_file
+
+if [ -f "$offset_file" ] ; then
+	offset=$( cat $offset_file )
+else
+	offset=0
+	echo $offset > $offset_file
+fi
+
+reply_to_msg () {
+	local msg_id=$1
+	local origin=$2
+	eval local text="$3"
+        curl -k -s -X POST $api/sendMessage \
+		-d reply_to_message_id=$msg_id \
+		-d chat_id=$origin \
+		-d parse_mode=Markdown \
+		--data-urlencode text="$text" &> $log_file
+}
+
+reply_to_location() {
+        local msg_id=$1
+        local origin=$2
+        SLOT=$(mmcli -L | awk '{print $1}' | awk -F [\/] '{print $NF}')
+        GPS="$(echo $(mmcli -m $SLOT  --location-get -J | jsonfilter -e '@["modem"].*["gps"].*'))"
+        LAT=$(echo $GPS | awk '{print $2}')
+        LONG=$(echo $GPS | awk '{print $3}')
+        case $LAT in
+                *[0-9]*)
+                        curl -k -s -X POST $api/sendLocation \
+                                -d reply_to_message_id=$msg_id \
+                                -d chat_id=$origin \
+                                -d parse_mode=Markdown \
+                                -d latitude=$LAT \
+                                -d longitude=$LONG &>$log_file
+                ;;
+                *)
+                        curl -k -s -X POST $api/sendMessage \
+                                -d reply_to_message_id=$msg_id \
+                                -d chat_id=$origin \
+                                -d parse_mode=Markdown \
+                                --data-urlencode text="Location not sended! Check your mmcli settings or GPS antenna." &>$log_file
+                ;;
+        esac
+}
+
+while [ true ]
+do
+	updates=$(curl -s -k -X GET ${api}/getUpdates?offset=${offset}&timeout=${timeout})
+	status=$(jsonfilter -s "$updates" -e $.ok)
+	if [ $status = 'true' ]; then
+		update_ids=$(jsonfilter -s "$updates" -e $.result[*].update_id)
+		for update_id in $update_ids
+		do
+			offset=$((update_id+1))
+			echo $offset > $offset_file
+			origin=$(jsonfilter -s "$updates"  -e "$.result[@.update_id=$update_id].message.chat.id")
+			msg_id=$(jsonfilter -s "$updates"  -e "$.result[@.update_id=$update_id].message.message_id")
+			command=$(jsonfilter -s "$updates" -e "$.result[@.update_id=$update_id].message.text")
+			is_a_cmd=$(jsonfilter -s "$updates" -e "$.result[@.update_id=$update_id].message.entities[*].type")
+			query_ans=$(jsonfilter -s "$updates" -e "$.result[@.update_id=$update_id].callback_query.id")
+			origin_ans=$(jsonfilter -s "$updates"  -e "$.result[@.update_id=$update_id].callback_query.message.chat.id")
+			if [[ "$origin" != "$chat_id" && "$origin_ans" != "$chat_id" ]];then
+				curl -k -s -X POST $api/sendMessage -d reply_to_message_id=$msg_id -d chat_id=$origin -d parse_mode=Markdown --data-urlencode \
+					text="This is a Private bot. If you want to implement one for you, check this out https://github.com/ixiumu/openwrt-telegram-bot" &> $log_file
+				curl -k -s -X POST $api/leaveChat -d chat_id=$origin  &> $telegram_log_file
+			else
+				if [ $(echo "$is_a_cmd" | grep "bot_command") != "" ]; then
+					
+					cmd=$(echo $command | awk '{print $1}')
+					prms=$(echo $command | awk '{$1="";print $0}' | sed 's/^[ \t]*//g')
+					parms=${prms//[\"\&\;\\\>\<\|]/}
+					DATE=`date +%Y-%m-%d_%H:%M:%S`
+					RETURN_TEXT=""
+					if [ $send_hotname == 1 ]; then
+						RETURN_TEXT="$hostname ${RETURN_TEXT}"
+					fi
+					
+					case "$cmd" in
+						("/start"|"/help")
+							reply_to_msg $msg_id $origin "\${command_start}"
+							;;
+						("/reboot")
+                                                	(echo "Call $cmd" | logger -t "telegram_bot" -p daemon.info)&
+	                                                RETURN_TEXT="Command executed!"
+							reply_to_msg $msg_id $origin "\${RETURN_TEXT}" && touch /etc/banner && sleep 5 && reboot
+							;;
+						("/wol")
+							(echo "Call $cmd [$parms]" | logger -t "telegram_bot" -p daemon.info)&
+							RETURN_TEXT="$(${plugins}/wol.sh ${parms})"
+							reply_to_msg $msg_id $origin "\${RETURN_TEXT}"
+                                                        ;;
+						("/loc")
+                                                        reply_to_location $msg_id $origin
+							;;
+						(*)
+							if [ -f "${plugins}/${cmd}.sh" ] ; then
+								(echo "Call $cmd [$parms]" | logger -t "telegram_bot" -p daemon.info)&
+								RETURN_TEXT=$(${plugins}/${cmd}.sh ${parms})
+							else
+                                    		        	RETURN_TEXT="Command *${cmd}* not found!"
+							fi
+
+                                                        reply_to_msg $msg_id $origin "\${RETURN_TEXT}"
+							;;
+                                    	esac
+
+				else
+ 					reply_to_msg $msg_id $origin "\${command_not_found}"
+				fi
+
+			fi
+		done
+	fi
+	sleep $polling_time
+done&

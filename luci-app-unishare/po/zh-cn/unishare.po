@@ -1,0 +1,65 @@
+msgid ""
+msgstr ""
+
+msgid "UniShare"
+msgstr "统一文件共享"
+
+msgid "Configure multiple file sharing protocols in one page (Samba, WebDAV, maybe more in the future?)"
+msgstr "在一个页面中配置多种文件共享协议（Samba，WebDAV，也许以后会支持更多？）"
+
+msgid "Global"
+msgstr "全局"
+
+msgid "Allow Anonymous"
+msgstr "允许匿名用户"
+
+msgid "For logged in users, please manage on the '%s' page"
+msgstr "对于登录用户，请在 '%s' 页面进行管理"
+
+msgid "WebDAV Port"
+msgstr "WebDAV 端口"
+
+msgid "Shares"
+msgstr "共享"
+
+msgid "(The user marked in <b>Bold</b> has write access)"
+msgstr "（<b>加粗</b>的用户具有写权限）"
+
+msgid "Users"
+msgstr "用户"
+
+msgid "Configure Share"
+msgstr "配置共享"
+
+msgid "Read/Write Users"
+msgstr "读写用户"
+
+msgid "Read Only Users"
+msgstr "只读用户"
+
+msgid "Everyone"
+msgstr "任何人"
+
+msgid "Logged Users"
+msgstr "登录用户"
+
+msgid "'Everyone' includes anonymous if enabled, 'Logged Users' includes all users configured in '%s' tab"
+msgstr "'任何人'包括所有登录用户和匿名用户（如果允许匿名用户），'登录用户'包括所有在'%s'标签页配置的用户"
+
+msgid "Note: '/mnt' is not suitable as a writable share, because Windows will recognize the wrong capacity"
+msgstr "注意：'/mnt' 不适合作为可写共享，因为 Windows 会认错容量"
+
+msgid "Name cannot be empty when Path is /"
+msgstr "路径是/时，名称不能为空"
+
+msgid "Path must starts with '/' and not ends with '/'"
+msgstr "路径必须以/开头，且不能以/结尾"
+
+msgid "Name must not contains '%s'"
+msgstr "名称不能包含这些特殊字符'%s'"
+
+msgid "Username must matchs regex '%s'"
+msgstr "用户名必须满足正则表达式'%s'"
+
+msgid "Note: Do not use the 'root' user, as Samba forbids 'root' user login by default"
+msgstr "注意：不要使用 'root' 用户，因为 Samba 默认禁止 'root' 用户登录"

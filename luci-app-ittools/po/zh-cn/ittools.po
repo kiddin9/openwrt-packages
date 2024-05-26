@@ -1,0 +1,44 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "ITTools"
+msgid "开发工具集"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "ITTools is useful tools for developer and people working in IT."
+msgstr "开发工具集是集成了很多有用的网页工具。"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "ITTools status:"
+msgstr "ITTools 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "ITTools is running"
+msgstr "ITTools 运行中"
+
+msgid "ITTools is not running"
+msgstr "ITTools 未运行"
+
+msgid "Open ITTools"
+msgstr "打开 ITTools"
+
+msgid "The free space of Docker is less than 2GB, which may cause the installation to fail."
+msgstr "Docker 可用空间已不足2GB，可能导致安装失败。"
+
+msgid "Please make sure there has enough space"
+msgstr "请确保有足够空间"

@@ -1,0 +1,28 @@
+{
+	"admin/services/qbittorrent": {
+		"title": "qBittorrent",
+		"action": {
+			"type": "firstchild"
+		},
+		"depends": {
+			"acl": [ "luci-app-qbittorrent" ],
+			"uci": { "qbittorrent": true }
+		}
+	},
+	"admin/services/qbittorrent/config": {
+		"title": "Settings",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "qbittorrent/config"
+		}
+	},
+	"admin/services/qbittorrent/log": {
+		"title": "Log",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "qbittorrent/log"
+		}
+	}
+}

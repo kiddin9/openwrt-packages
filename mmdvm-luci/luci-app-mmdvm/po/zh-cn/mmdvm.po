@@ -1,0 +1,322 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2020-08-28\n"
+"Last-Translator: Michael BD7MQB <bd7mqb@qq.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.2.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Advanced"
+msgstr "高级模式"
+
+msgid "AuthKey"
+msgstr "密钥"
+
+msgid "BER"
+msgstr "误码"
+
+msgid "Callsign"
+msgstr "呼号"
+
+msgid "ColorCode"
+msgstr "色码"
+
+msgid "Configuration"
+msgstr "配置"
+
+msgid "DAPNET Gateway Activity"
+msgstr "寻呼消息"
+
+msgid "DMR Server"
+msgstr "DMR服务器"
+
+msgid "DMR Settings"
+msgstr "DMR设置"
+
+msgid "Dashboard"
+msgstr "面板"
+
+msgid "Description"
+msgstr "描述"
+
+msgid "Digital Modes"
+msgstr "数字模式"
+
+msgid "DumpTAData"
+msgstr "允许TA数据"
+
+msgid "Duplex"
+msgstr "双工"
+
+msgid "Duplex or Simplex mode"
+msgstr "双工或单工模式"
+
+msgid "Duplex/Simplex"
+msgstr "双工/单工"
+
+msgid "Dur"
+msgstr "时长"
+
+msgid "Edit MMDVM.ini"
+msgstr "编辑MMDVM.ini"
+
+msgid "Edit P25Gateway.ini"
+msgstr "编辑P25Gateway.ini"
+
+msgid "Edit YSFGateway.ini"
+msgstr "编辑YSFGateway.ini"
+
+msgid "Edit modem port, Rx/Tx offset and etc."
+msgstr "编辑调制解调器端口、接收/发射偏移量等"
+
+msgid "Enable DMR Mode"
+msgstr "启用DMR模式"
+
+msgid "Enable NXDN Mode"
+msgstr "启用NXDN模式"
+
+msgid "Enable P25 Mode"
+msgstr "启用P25模式"
+
+msgid "Enable POCSAG Mode"
+msgstr "启用POCSAG模式"
+
+msgid "Enable YSF Mode"
+msgstr "启用YSF模式"
+
+msgid "Frequency"
+msgstr "频率"
+
+msgid "Gateway Activity"
+msgstr "通联记录"
+
+msgid "General"
+msgstr "通用"
+
+msgid "General Settings"
+msgstr "基本设置"
+
+msgid "Height"
+msgstr "高度"
+
+msgid ""
+"Here you can configure the basic aspects of your device like its callsign or "
+"the operating modes."
+msgstr "在此你可以编辑设备的配置，如呼号、操作模式等"
+
+msgid "ID"
+msgstr ""
+
+msgid "InactivityTimeout"
+msgstr "最大空闲时间"
+
+msgid "Infomation Settings"
+msgstr "信息设置"
+
+msgid "Input file not found, please check your configuration."
+msgstr "文件未找到，请检查你的配置"
+
+msgid "Latitude"
+msgstr "纬度"
+
+msgid "Live Caller"
+msgstr "仪表盘"
+
+msgid "Live Log"
+msgstr "日志"
+
+msgid "Local RF"
+msgstr "本地呼叫"
+
+msgid "Location"
+msgstr "位置(QTH)"
+
+msgid "Longitude"
+msgstr "经度"
+
+msgid "Loss"
+msgstr "丢失"
+
+msgid "MMDVM"
+msgstr ""
+
+msgid "Message"
+msgstr "消息"
+
+msgid "Minutes to disconect when idle"
+msgstr "空闲超时时间（分钟）"
+
+msgid "Mode"
+msgstr "模式"
+
+msgid "Modem Settings"
+msgstr "调制解调器设置"
+
+msgid "NAC"
+msgstr ""
+
+msgid "NXDN Settings"
+msgstr "NXDN设置"
+
+msgid "NetModeHang"
+msgstr "网络模式切换保留时间"
+
+msgid "Network Access Control"
+msgstr "P25访问控制"
+
+msgid "Only the callsign you entered above shall pass in DMR mode"
+msgstr "只允许你的呼号使用DMR模式"
+
+msgid "Only the callsign you entered above shall pass in P25 mode"
+msgstr "只允许你的呼号使用P25模式"
+
+msgid "Only the callsign you entered above shall pass in YSF mode"
+msgstr "只允许你的呼号使用YSF模式"
+
+msgid "Only vaild IDs shall pass on RF transmition by unchecked this"
+msgstr "若不勾上此选项，则只允许有效的ID使用本地射频"
+
+msgid "OverrideUIDCheck"
+msgstr "重写UID检查"
+
+msgid "P25 Settings"
+msgstr "P25设置"
+
+msgid "POCSAG"
+msgstr "寻呼"
+
+msgid "Personal hotspots typically use color code 1"
+msgstr "个人热点一般使用色码1"
+
+msgid "Please edit this file directly in a terminal session."
+msgstr "请直接在命令行模式下编辑此文件"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "TXPower"
+msgstr "功率"
+
+msgid "Radio"
+msgstr "电台"
+
+msgid "RFModeHang"
+msgstr "射频模式保留时间"
+
+msgid "RSSIMappingFile"
+msgstr "RSSI映射文件"
+
+msgid "RXFrequency"
+msgstr "接收频率"
+
+msgid "RXOffset"
+msgstr "接收频偏"
+
+msgid "Revert to Startup"
+msgstr "自动超时重设"
+
+msgid "Revert to Startup reflector when InactivityTimeout"
+msgstr "若空闲超时，自动重设为默认反射器"
+
+msgid "Save & Reload Service"
+msgstr "保存并重启服务"
+
+msgid ""
+"Seconds waiting between 2 modes from <abbr title=\"transmision from local RF"
+"\">RF</abbr>"
+msgstr "来自网络信号的两种数字模式切换所需等待的秒数"
+
+msgid ""
+"Seconds waiting between 2 modes from <abbr title=\"transmision from network"
+"\">Net</abbr>"
+msgstr "来自射频信号的两种数字模式切换所需等待的秒数"
+
+msgid "SelfOnly"
+msgstr "私有"
+
+msgid "Server"
+msgstr "服务器"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Simplex"
+msgstr "单工"
+
+msgid "Src"
+msgstr "源"
+
+msgid "Startup Reflector"
+msgstr "默认反射器"
+
+msgid "TXFrequency"
+msgstr "发射频率"
+
+msgid "TXOffset"
+msgstr "发射频偏"
+
+msgid "Target"
+msgstr "目标"
+
+msgid "The file size is too large for online editing in LuCI (&ge; 100 KB)."
+msgstr "文件太大，无法在线编辑 (&ge; 100 KB)."
+
+msgid "The port of Modem"
+msgstr "调制解调器端口"
+
+msgid "This form allows you to modify the .ini file of the MMDVMHost (%s)."
+msgstr "你可以在这里直接编辑 MMDVMHost 的配置文件 (%s)."
+
+msgid "This form allows you to modify the .ini file of the P25Gateway (%s)."
+msgstr "你可以在这里直接编辑 P25Gateway 的配置文件 (%s)."
+
+msgid "This form allows you to modify the .ini file of the YSFGateway (%s)."
+msgstr "你可以在这里直接编辑 YSFGateway 的配置文件 (%s)."
+
+msgid ""
+"Those infomation will show up at brandmeister.network if you enable DMR mode"
+msgstr "如果启用DMR模式，下面这些信息将会显示在brandmeister.network"
+
+msgid "Time"
+msgstr "时间"
+
+msgid "Timeslot"
+msgstr "时隙"
+
+msgid "URL"
+msgstr ""
+
+msgid "Use the format <abbr title=\"the Unit is Hz\">434500000</abbr>, in Hz"
+msgstr "例如434500000，默认单位是赫兹"
+
+msgid "Use the same format as RXFrequency"
+msgstr "和接收频率的格式一样"
+
+msgid ""
+"Which enables \"Talker Alias\" information to be received by radios that "
+"support this feature"
+msgstr "勾选后可以启用Talker Alias，某些电台可以显示这些信息"
+
+msgid "YSF Settings"
+msgstr "YSF设置"
+
+msgid "Your Callsign in uppercase"
+msgstr "呼号（大写字母）"
+
+msgid "Your DmrId or DmrId + <abbr title=\"ex. 460713301\">2 digitals</abbr>"
+msgstr "DmrId，也可以在Id后面附加两位数字以区分不同的设备"
+
+msgid "e.g. 1 Watt"
+msgstr "比如 1瓦"
+
+msgid "e.g. 110 Meters"
+msgstr "比如 110米"
+
+msgid "e.g. 114.3 E"
+msgstr "比如 114.3 E"
+
+msgid "e.g. 22.10 N"
+msgstr "比如 22.10 N"

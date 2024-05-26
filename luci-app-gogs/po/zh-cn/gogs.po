@@ -1,0 +1,42 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "Gogs is a painless self-hosted Git service."
+msgstr "Gogs 是一个轻松易用的 Git 服务。"
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "HTTP Port"
+msgstr "HTTP 端口"
+
+msgid "SSH Port"
+msgstr "SSH 端口"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Gogs status:"
+msgstr "Gogs 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Gogs is running"
+msgstr "Gogs 运行中"
+
+msgid "Gogs is not running"
+msgstr "Gogs 未运行"
+
+msgid "Open Gogs"
+msgstr "打开 Gogs"
+

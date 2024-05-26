@@ -1,0 +1,16 @@
+#!/bin/sh
+
+[ ! -f /etc/config/mmdvm ] && touch /etc/config/mmdvm
+[ -z `uci -q get mmdvm.P25.Enable` ] && {
+	uci set mmdvm.ircDDB=mmdvmhost
+	uci set mmdvm.ircDDB.Enable=0
+	uci commit mmdvm
+}
+
+ENABLE=$(uci -q get mmdvm.ircDDB.Enable)
+if [ "$ENABLE" != "1" ]; then
+    /etc/init.d/ircddbgateway stop && /etc/init.d/ircddbgateway disable
+    /etc/init.d/timeserver stop && /etc/init.d/timeserver disable
+fi
+
+exit 0

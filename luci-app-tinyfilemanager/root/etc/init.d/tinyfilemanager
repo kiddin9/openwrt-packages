@@ -1,0 +1,118 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2022-2023 muink
+
+. "${IPKG_INSTROOT}/lib/functions.sh"
+
+START=99
+USE_PROCD=1
+VERSION='2.5.3'
+
+EXTRA_COMMANDS="check"
+EXTRA_HELP=\
+"	check		Check for version updates"
+
+CONFIG_NAME='tinyfilemanager'
+TYPEDSECTION='main'
+
+WORKDIR="/www/tinyfilemanager"
+VARDIR="/var/tinyfilemanager"
+CONF="/var/etc/tinyfilemanager.conf"
+
+HOMEPATH="tinyfilemanager/rootfs"
+
+if [ "$(uci -q get $CONFIG_NAME.@$TYPEDSECTION[0].proxy_enabled)" == "1" ]; then
+    export ALL_PROXY=$(uci -q get $CONFIG_NAME.@$TYPEDSECTION[0].proxy_protocol)://$(uci -q get $CONFIG_NAME.@$TYPEDSECTION[0].proxy_server)
+fi
+
+
+
+validate_section() {
+	uci_load_validate $CONFIG_NAME $TYPEDSECTION "$1" "$2" \
+		'use_auth:bool:0' \
+		'auth_users:list(string)' \
+		'readonly_users:list(string)' \
+		'global_readonly:bool:0' \
+		'root_path:directory' \
+		'date_format:or("d.m.o", "d-m-o", "d/m/o", "j.n.o", "j-n-o", "j/n/o", "o.m.d", "o-m-d", "o/m/d", "o.n.j", "o-n-j", "o/n/j"):d.m.o' \
+		'time_format:or("H\:i\:s", "G\:i\:s", "A h\:i\:s", "A g\:i\:s", "h\:i\:s A", "g\:i\:s A"):H\:i\:s' \
+		'show_second:bool:0' \
+		'favicon_path:file' \
+		'exclude_items:list(string)' \
+		'online_viewer:or("0", "google", "microsoft"):0' \
+		'max_upload_size:and(uinteger,max(2048))'
+}
+
+init_config() {
+	sed -n '/\/\/ --- EDIT BELOW CONFIGURATION CAREFULLY ---/,/\/\/ --- EDIT BELOW CAREFULLY OR DO NOT EDIT AT ALL ---/{ \
+		s|// --- EDIT BELOW CONFIGURATION CAREFULLY ---|\<?php|; \
+		s|// --- EDIT BELOW CAREFULLY OR DO NOT EDIT AT ALL ---|?\>|; \
+		/\/\/ if User has the external config file, try to use it to override the default config above/,/^}/d; \
+		p \
+	}' "$WORKDIR/index.php" > "$1"
+
+	sed -Ei "s|(^\\\$root_path =)(.+)|\1 \\\$_SERVER['DOCUMENT_ROOT'].'/$HOMEPATH';|; \
+			 s|(^\\\$root_url =)(.+)|\1 '$HOMEPATH';|; \
+
+			 s|(^\\\$default_timezone =)(.+)|\1 '$(uci -q get system.@system[0].zonename)';| \
+	" "$1"
+}
+
+apply_config() {
+	[ "$2" == "0" ] || { >&2 echo "section $1 validation failed"; return 1; }
+
+	local _conf="$CONF"
+
+	local auth_users=$(echo "$auth_users"|sed -E "s/('[^']+'|[^' ]+)/'\1'/g; s|:|' => '|g; s|''|'|g; s|' '|',\\\n    '|g; s|^|   |")
+	local readonly_users=$(echo "$readonly_users"|sed -E "s/('[^']+'|[^' ]+)/'\1'/g; s|''|'|g; s|' '|',\\\n    '|g; s|^|   |")
+
+	local exclude_items=$(echo "$exclude_items"|sed -E "s/('[^']+'|[^' ]+)/'\1'/g; s|''|'|g; s|' '|',\\\n    '|g; s|^|   |")
+
+[ "$use_auth" -eq "1" ] && sed -Ei "s|(^\\\$use_auth =)(.+)|\1 true;|" "$_conf" || sed -Ei "s|(^\\\$use_auth =)(.+)|\1 false;|" "$_conf"
+[ "$global_readonly" -eq "1" ] && sed -Ei "s|(^\\\$global_readonly =)(.+)|\1 true;|" "$_conf" || sed -Ei "s|(^\\\$global_readonly =)(.+)|\1 false;|" "$_conf"
+sed -Ei "/^\\\$auth_users /,/\);/{/^ /d}" "$_conf" && sed -Ei "/^\\\$auth_users /a\ $auth_users" "$_conf"
+sed -Ei "/^\\\$readonly_users /,/\);/{/^ /d}" "$_conf" && sed -Ei "/^\\\$readonly_users /a\ $readonly_users" "$_conf"
+sed -Ei "/^\\\$exclude_items /{s|array\(\);|array(\n);|}" "$_conf" && sed -Ei "/^\\\$exclude_items /a\ $exclude_items" "$_conf"
+sed -Ei "s|(^\\\$default_timezone =)(.+)|\1 '$(uci -q get system.@system[0].zonename)';|" "$_conf"
+if [ -n "$root_path" ]; then
+	sed -Ei "s|(^\\\$root_path =)(.+)|\1 \\\$_SERVER['DOCUMENT_ROOT'].'/${HOMEPATH}$root_path';|; \
+			 s|(^\\\$root_url =)(.+)|\1 '${HOMEPATH}$root_path';| \
+	" "$_conf"
+fi
+sed -Ei "s|(^\\\$datetime_format =)(.+)|\1 '$date_format $time_format';|" "$_conf"
+[ "$show_second" -eq "0" ] && sed -Ei "/^\\\$datetime_format =/{s|:s||}" "$_conf"
+sed -Ei "s|(^\\\$favicon_path =)(.+)|\1 '$favicon_path';|" "$_conf"
+if [ "$online_viewer" == "0" ]; then sed -Ei "s|(^\\\$online_viewer =)(.+)|\1 false;|" "$_conf"
+else sed -Ei "s|(^\\\$online_viewer =)(.+)|\1 '$online_viewer';|" "$_conf"
+fi
+if [ "$(( $max_upload_size +0 ))" == "0" ]; then sed -Ei "s|(^\\\$max_upload_size_bytes =)(.+)|\1 26214400;|" "$_conf" #25M
+else sed -Ei "s|(^\\\$max_upload_size_bytes =)(.+)|\1 $(( $max_upload_size * 1024**2 ));|" "$_conf"
+fi
+}
+
+start_service() {
+	mkdir /var/etc 2>/dev/null
+	touch "$CONF"
+	ln -s "$CONF" "$WORKDIR/config.php" 2>/dev/null
+	init_config "$CONF"
+
+	config_load "$CONFIG_NAME"
+	config_foreach validate_section "$TYPEDSECTION" apply_config
+}
+
+service_triggers() {
+	procd_add_reload_trigger "$CONFIG_NAME" 'system'
+}
+
+check() {
+	local owner='prasathmani'
+	local repo='tinyfilemanager'
+	mkdir $VARDIR 2>/dev/null
+	curl -sSL https://api.github.com/repos/$owner/$repo/releases \
+		| grep '"tag_name":' | sed "/$VERSION/,\${/$VERSION/b;d}" \
+		| sed -E 's|",||g; s|^.+"([^"]+)|\1|g' \
+	> "$VARDIR/releaseslist"
+}
+
+restart() {
+	start
+}

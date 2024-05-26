@@ -1,0 +1,26 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Shortcutmenu"
+msgstr "网页快捷菜单"
+
+msgid "Shortcutmenu is used to provide quick access to web pages."
+msgstr "网页快捷菜单用于提供网页的快捷入口。"
+
+msgid "Lists"
+msgstr "列表"
+
+msgid "Webname"
+msgstr "名称"
+
+msgid "Weburl"
+msgstr "网址"
+
+msgid "Webpath"
+msgstr "路径"
+
+msgid "Weburl<font color=\"green\">(without http:// or https:// )</font>"
+msgstr "网址<font color=\"green\">(不需要带 http:// 或者 https:// )</font>"
+
+msgid "Operator"
+msgstr "操作"

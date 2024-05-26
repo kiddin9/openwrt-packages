@@ -1,0 +1,27 @@
+msgid "Cloudreve"
+msgstr "Cloudreve"
+
+msgid "Self-hosted file management and sharing system, supports multiple storage providers."
+msgstr "Cloudreve 可助你即刻构建出兼备自用或公用的网盘服务，通过多种存储策略的支持、虚拟文件系统等特性实现灵活的文件管理体验。"
+
+msgid "Default login username: admin@cloudreve.org, password: password."
+msgstr "默认登录用户名：admin@cloudreve.org，密码：password。"
+
+msgid "Open Web Interface"
+msgstr "打开Web界面"
+
+msgid "Cloudreve Run Status"
+msgstr "Cloudreve 运行状态"
+
+msgid "Running"
+msgstr "运行中"
+
+msgid "Not running"
+msgstr "未运行"
+
+msgid "Enable"
+msgstr "启用"
+
+msgid "Port"
+msgstr "端口"
+

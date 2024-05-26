@@ -1,0 +1,57 @@
+<%#
+ Copyright routers are listed at https://github.com/sirpdboy/poweroffdevice
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+
+<%+header%>
+<style title="text/css">
+h2 {
+	margin: 1rem;
+}
+
+</style>
+
+<h2 name="content"><%:Power Off Device%></h2>
+<p><%:Turn off the power to the device you are using%></p>
+<p class="alert-message warning"><%:WARNING: Power off might result in a reboot on a device which not support power off.%></p>
+
+<script type="text/javascript">//<![CDATA[
+	var tries = 0;
+	function ok() {
+		window.location = "<%=controller%>/admin";
+	}
+
+	function check() {
+		if (tries++ < 12)
+			window.setTimeout(ping, 5000);
+		else
+			alert("<%:Device unreachable%>");
+	}
+
+	function ping() {
+		var img = document.createElement("img");
+
+		img.onload = ok;
+		img.onerror = check;
+		img.src = "<%=resource%>/icons/loading.gif?" + Math.random();
+
+		document.getElementById("pw-message").innerHTML ="<%:Device shutdown complete!%>";
+	}
+
+	function pw(button) {
+		button.style.display = "none";
+		document.getElementById("pw-message").parentNode.style.display = "";
+
+		(new XHR()).post("<%=controller%>/admin/system/poweroffdevice/call", { token: "<%=token%>" }, check);
+	}
+//]]></script>
+
+<input class="cbi-button cbi-button-apply" type="button" value="<%:Perform Power Off%>" onclick="pw(this)" />
+
+<p class="alert-message" style="display:none">
+	<img src="<%=resource%>/icons/loading.gif" alt="<%:Loading%>" style="vertical-align:middle" />
+	<span id="pw-message"><%:Shutting Down...%></span>
+</p>
+
+<%+footer%>

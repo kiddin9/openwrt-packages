@@ -1,0 +1,14 @@
+{
+	"luci-app-cellled": {
+		"description": "Grant UCI access for luci-app-cellled",
+		"read": {
+			"file": {
+				"/usr/bin/mmcli": [ "exec" ]
+			},
+			"uci": [ "cellled" ]
+		},
+		"write": {
+			"uci": [ "cellled" ]
+		}
+	}
+}

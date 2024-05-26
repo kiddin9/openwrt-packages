@@ -1,0 +1,415 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: luci-app-natmap\n"
+"Language: zh-Hans\n"
+
+#: natmap.js:337
+msgid ".<br />If you want to send to a group/channel, please create a non-Chinese group/channel (for easier chatid lookup, you can rename it later).<br />Add the bot to the group, send a message, and use https://api.telegram.org/bot token /getUpdates to obtain the chatid."
+msgstr "。<br />如需通过群组/频道推送，请创建一个非中文的群组或频道（便于查找 chatid，后续再更名）。<br />将机器人添加至群组，发送信息后通过 https://api.telegram.org/bot token /getUpdates 获取 chatid 。"
+
+#: natmap.js:354
+msgid ".<br />Send a message to the created bot to initiate a conversation."
+msgstr "。<br />与创建的机器人发一条消息，开启对话。"
+
+#: natmap.js:393
+msgid ".<br />Since the asynchronous push queue is used, only whether the put into the queue is successful is detected."
+msgstr "。<br />由于使用异步推送队列，所以仅检测放入队列是否成功。"
+
+#: natmap.js:196
+msgid "0 will forward to the out port get from STUN"
+msgstr "填写 0 ，则转发到从STUN获取的外部端口"
+
+#: natmap.js:276 natmap.js:458 natmap.js:683
+msgid "Advanced Settings"
+msgstr "高级设置"
+
+#: natmap.js:624 natmap.js:663
+msgid "Allow IPv6"
+msgstr "允许 IPv6"
+
+#: natmap.js:574
+msgid "API Key"
+msgstr "API 密钥"
+
+#: natmap.js:145
+msgid "Bind port"
+msgstr "绑定端口"
+
+#: natmap.js:329
+msgid "Chat ID"
+msgstr "会话ID"
+
+#: natmap.js:334 natmap.js:352 natmap.js:374 natmap.js:390 natmap.js:426
+msgid "Click here"
+msgstr "点击此处"
+
+#: natmap.js:502
+msgid "Cloudflare Origin Rule"
+msgstr "Cloudflare Origin Rule"
+
+#: natmap.js:503
+msgid "Cloudflare Redirect Rule"
+msgstr "Cloudflare Redirect Rule"
+
+#: natmap.js:510
+msgid "Cloudflare Token"
+msgstr "Cloudflare 令牌"
+
+#: natmap.js:521
+msgid "Cloudflare Zone ID"
+msgstr "Cloudflare Zone ID"
+
+#: natmap.js:731
+msgid "custom script"
+msgstr "自定义脚本"
+
+#: natmap.js:732
+msgid "custom script path,such as /etc/natmap/custom.sh .argument format:"
+msgstr "自定义脚本路径，例如：/etc/natmap/custom.sh 。参数格式如下："
+
+#: natmap.js:66
+msgid "Custom Settings"
+msgstr "自定义设置"
+
+#: natmap.js:499
+msgid "Emby"
+msgstr "Emby"
+
+#: natmap.js:565
+msgid "EMBY URL"
+msgstr "Emby URL"
+
+#: natmap.js:758
+msgid "enable"
+msgstr "启用"
+
+#: natmap.js:722
+msgid "Enable custom script's config"
+msgstr "启用自定义脚本"
+
+#: natmap.js:156
+msgid "Enable Forward"
+msgstr "启用转发"
+
+#: natmap.js:492
+msgid "Enable link setting"
+msgstr "启用关联设置"
+
+#: natmap.js:307
+msgid "Enable Notify"
+msgstr "启用通知"
+
+#: natmap.js:741
+msgid "External IP"
+msgstr "外部 ip"
+
+#: natmap.js:748
+msgid "External Port"
+msgstr "外部端口"
+
+#: natmap.js:173
+msgid "firewall dnat"
+msgstr "firewall dnat"
+
+#: natmap.js:139
+msgid "For TCP mode"
+msgstr "用于 tcp 模式"
+
+#: natmap.js:170
+msgid "Forward mode"
+msgstr "转发模式"
+
+#: natmap.js:63
+msgid "Forward Settings"
+msgstr "转发设置"
+
+#: natmap.js:183
+msgid "Forward target"
+msgstr "转发目标"
+
+#: natmap.js:195
+msgid "Forward target port"
+msgstr "转发目标端口"
+
+#: natmap.js:62
+msgid "General Settings"
+msgstr "常规设置"
+
+#: natmap.js:350
+msgid "Get Bot"
+msgstr "获取机器人"
+
+#: natmap.js:332
+msgid "Get chat_id"
+msgstr "获取 chat_id"
+
+#: natmap.js:372 natmap.js:388 natmap.js:424
+msgid "Get Instructions"
+msgstr "获取介绍"
+
+#: natmap.js:322
+msgid "Gotify"
+msgstr "Gotify"
+
+#: natmap.js:446
+msgid "Gotify priority"
+msgstr "Gotify 通知优先级"
+
+#: natmap.js:436
+msgid "Gotify Token"
+msgstr "Gotify 令牌"
+
+#: natmap.js:422
+msgid "Gotify url"
+msgstr "Gotify URL"
+
+#: natmap.js:363
+msgid "http proxy"
+msgstr "http 代理"
+
+#: natmap.js:138
+msgid "HTTP server"
+msgstr "HTTP 服务器"
+
+#: natmap.js:175
+msgid "ikuai"
+msgstr "ikuai"
+
+#: natmap.js:251
+msgid "Ikuai Mapping Protocol"
+msgstr "端口映射协议"
+
+#: natmap.js:264
+msgid "Ikuai Mapping Wan Interface"
+msgstr "端口映射外网接口"
+
+#: natmap.js:241
+msgid "Ikuai Password"
+msgstr "爱快密码"
+
+#: natmap.js:231
+msgid "Ikuai Username"
+msgstr "爱快用户名"
+
+#: natmap.js:218
+msgid "Ikuai Web URL"
+msgstr "爱快 URL"
+
+#: natmap.js:100
+msgid "IPv4 and IPv6"
+msgstr "IPv4 和 IPv6"
+
+#: natmap.js:101
+msgid "IPv4 only"
+msgstr "仅 IPv4"
+
+#: natmap.js:633 natmap.js:672
+msgid "IPv6 Address"
+msgstr "IPv6 地址"
+
+#: natmap.js:102
+msgid "IPv6 only"
+msgstr "仅 IPv6"
+
+#: natmap.js:117
+msgid "Keep-alive interval"
+msgstr "keep-alive 间隔"
+
+#: natmap.js:65
+msgid "Link Settings"
+msgstr "关联设置"
+
+#: natmap.js:286 natmap.js:471 natmap.js:697
+msgid "Max Retries"
+msgstr "最大重试次数"
+
+#: natmap.js:287 natmap.js:472 natmap.js:698
+msgid "max retries,default 0 means execute only once"
+msgstr "最大重试次数，默认 0 表示仅执行一次调用"
+
+#: natmap.js:78
+msgid "Name"
+msgstr "名称"
+
+#: natmap.js:174
+msgid "natmap"
+msgstr "natmap"
+
+#: natmap.js:57
+msgid "NatMap Settings"
+msgstr "NatMap 设置"
+
+#: natmap.js:315
+msgid "Notify channel"
+msgstr "通知通道"
+
+#: natmap.js:64
+msgid "Notify Settings"
+msgstr "通知设置"
+
+#: natmap.js:533
+msgid "Origin Rule Name"
+msgstr "Origin Rules 名称"
+
+#: natmap.js:619 natmap.js:658
+msgid "Password"
+msgstr "密码"
+
+#: natmap.js:87
+msgid "Protocol"
+msgstr "协议"
+
+#: natmap.js:320
+msgid "PushPlus"
+msgstr "PushPlus"
+
+#: natmap.js:370
+msgid "PushPlus Token"
+msgstr "PushPlus 令牌"
+
+#: natmap.js:500
+msgid "qBittorrent"
+msgstr "qBittorrent"
+
+#: natmap.js:544
+msgid "Redirect Rule Name"
+msgstr "重定向规则名称"
+
+#: natmap.js:554
+msgid "Redirect Rule Target URL"
+msgstr "重定向规则目标URL"
+
+#: natmap.js
+msgid "can used with ddns to redirect to the specified URL, such as http://1.2.3.4:1234 or http://abc.com:1234/abc ."
+msgstr "可以配合 ddns 使用，重定向到指定 URL ，例如 http://1.2.3.4:1234 或 http://abc.com:1234/abc 。"
+
+#: natmap.js
+msgid "<br />if want to use natmap outter_port, NEW_PORT must be used instead of the port in the URL, such as http://1.2.3.4:1234/NEW_PORT/abc ."
+msgstr "<br />如果想要使用 natmap 的 外部端口 outter_port ，则使用 NEW_PORT 替代 URL 中的端口，例如 http://1.2.3.4:1234/NEW_PORT/abc 。"        
+
+#: natmap.js:97
+msgid "Restrict to address family"
+msgstr "地址族限制"
+
+#: natmap.js:297 natmap.js:482 natmap.js:708
+msgid "Retry Interval"
+msgstr "重试间隔时间"
+
+#: natmap.js:298 natmap.js:483 natmap.js:709
+msgid "Retry Interval, unit is seconds, default 0 is 3 seconds"
+msgstr "单次重试间隔时间，单位是秒，默认 0 表示 3秒"
+
+#: natmap.js:644
+msgid "RPC URL"
+msgstr "RPC URL"
+
+#: natmap.js:414
+msgid "Self-built Server Url"
+msgstr "自建服务器 URL"
+
+#: natmap.js:321
+msgid "ServerChan"
+msgstr "Server酱"
+
+#: natmap.js:404
+msgid "ServerChan Advanced Settings"
+msgstr "Server酱 高级设置"
+
+#: natmap.js:385
+msgid "ServerChan sendkey"
+msgstr "Server酱 sendkey"
+
+#: natmap.js:496
+msgid "Service"
+msgstr "服务"
+
+#: natmap.js:584
+msgid "Set to False if you want to use HTTP"
+msgstr "如果使用 HTTP，请勿勾选"
+
+#: natmap.js:127
+msgid "STUN server"
+msgstr "STUN 服务器"
+
+#: natmap.js:265
+msgid "such as adsl_1 or wan"
+msgstr "例如：adsl_1 或 wan"
+
+#: natmap.js:416
+msgid "such as http://127.0.0.1:8080 or http://ikuai.lan:8080 ."
+msgstr "例如：http://127.0.0.1:8080 或 http://ikuai.lan:8080 。"
+
+#: natmap.js:220 natmap.js:607 natmap.js:646
+msgid "such as http://127.0.0.1:8080 or http://ikuai.lan:8080.if use host,must close Rebind protection in DHCP/DNS."
+msgstr "例如：http://127.0.0.1:8080 或 http://ikuai.lan:8080。如果使用 host ，必须关闭 DHCP/DNS 中的重绑定保护。"
+
+#: natmap.js:252
+msgid "such as tcp or udp or tcp+udp"
+msgstr "例如：tcp 或 udp 或 tcp+udp"
+
+#: natmap.js:208
+msgid "Target_Interface"
+msgstr "目标接口"
+
+#: natmap.js:90 natmap.js:256
+msgid "TCP"
+msgstr "TCP"
+
+#: natmap.js:255
+msgid "TCP+UDP"
+msgstr "TCP+UDP"
+
+#: natmap.js:319
+msgid "Telegram Bot"
+msgstr "Telegram bot"
+
+#: natmap.js:347
+msgid "Telegram Token"
+msgstr "Telegram 令牌"
+
+#: natmap.js:501
+msgid "Transmission"
+msgstr "Transmission"
+
+#: natmap.js:91 natmap.js:257
+msgid "UDP"
+msgstr "UDP"
+
+#: natmap.js:594
+msgid "Update host with IP"
+msgstr "使用 IP 更新 host"
+
+#: natmap.js:583
+msgid "Update HTTPS Port"
+msgstr "更新 HTTPS 端口"
+
+#: natmap.js:614 natmap.js:653
+msgid "Username"
+msgstr "用户名"
+
+#: natmap.js:108
+msgid "Wan Interface"
+msgstr "WAN 接口"
+
+#: natmap.js:605
+msgid "Web UI URL"
+msgstr "网页 URL"
+
+msgid "Cloudflare DNS Type"
+msgstr "Cloudflare DNS 类型"
+
+msgid "cloudflare dns type, eg: AAAA、HTTPS、SRV, default: AAAA(IP4P)."
+msgstr "cloudflare dns 类型，例如： AAAA、HTTPS、SRV，默认为AAAA(IP4P)。"
+
+msgid "Cloudflare DDNS Domain"
+msgstr "Cloudflare DDNS 域名"
+
+msgid "cloudflare ddns domain, eg: www.example.com."
+msgstr "cloudflare ddns 域名，例如：www.example.com。"
+
+msgid "<br />before use it, must add dns record in cloudflare DNS."
+msgstr "<br />使用之前，必须在 cloudflare dns 中添加对应dns记录。"

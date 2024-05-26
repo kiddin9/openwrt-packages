@@ -1,0 +1,450 @@
+#!/bin/sh /etc/rc.common
+#
+# Copyright (C) 2014-2017 Jian Chang <aa65535@live.com>
+#               2018-2023 honwen <https://github.com/honwen>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+
+START=90
+STOP=15
+
+NAME=shadowsocks
+EXTRA_COMMANDS="rules healthcheck"
+EXTRA_HELP="	rules		Start IPTABLES inject\n	healthcheck	Check if service health"
+CRON_FILE=/etc/crontabs/root
+WATCHDOG_ENDPOINT='accounts.gstatic.com'
+# WATCHDOG_ENDPOINT='cp.cloudflare.com'
+
+DNSMASQDIR=$(sed -n 's+conf-dir=++p' /var/etc/dnsmasq.conf.* 2>/dev/null)
+[ "V$DNSMASQDIR" = "V" ] && DNSMASQDIR=/var/dnsmasq.d
+
+uci_get_by_name() {
+	local ret=$(uci get $NAME.$1.$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+uci_get_by_type() {
+	local ret=$(uci get $NAME.@$1[0].$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+uci_bool_by_name() {
+	case "$(uci_get_by_name $1 $2)" in
+	1 | on | true | yes | enabled) return 0 ;;
+	esac
+	return 1
+}
+
+uci_bool_by_type() {
+	case "$(uci_get_by_type $1 $2)" in
+	1 | on | true | yes | enabled) return 0 ;;
+	esac
+	return 1
+}
+
+validate_server() {
+	[ "$(uci get $NAME.$1 2>/dev/null)" = "servers" ]
+}
+
+has_valid_server() {
+	for server in $@; do
+		validate_server $server && return 0
+	done
+	return 1
+}
+
+get_arg_udp() {
+	local server=$(uci_get_by_type transparent_proxy udp_relay_server)
+	[ "$server" = "same" ] || validate_server $server && echo "-u"
+}
+
+get_arg_out() {
+	case "$(uci_get_by_type access_control self_proxy 1)" in
+	1) echo "-o" ;;
+	2) echo "-O" ;;
+	esac
+}
+
+get_arg_tnd() {
+	uci_bool_by_type $1 no_delay && echo "--tcp-no-delay"
+	uci_bool_by_type $1 fast_open && echo "--tcp-fast-open"
+}
+
+get_server_ips() {
+	echo $(uci_get_by_name $1 server)
+}
+
+get_lan_hosts() {
+	uci_bool_by_name $1 enable &&
+		echo "$(uci_get_by_name $1 type),$(uci_get_by_name $1 host)"
+}
+
+get_plugin_config() {
+	local plugin=$(uci_get_by_name $1 plugin)
+	local plugin_opts=$(uci_get_by_name $1 plugin_opts)
+	if [ -n "$plugin" ]; then
+		echo $plugin >>/var/run/ss-plugin
+		echo -e "\n        \"plugin\": \"$plugin\","
+		if [ -n "$plugin_opts" ]; then
+			echo "        \"plugin_opts\": \"$plugin_opts\","
+		fi
+	fi
+}
+
+get_crypto_config() {
+	local key=$(uci_get_by_name $1 key)
+	local password=$(uci_get_by_name $1 password)
+	if [ -n "$key" ]; then
+		echo "\"key\": \"$key\","
+	elif [ -n "$password" ]; then
+		echo "\"password\": \"$password\","
+	else
+		logger -st $NAME -p3 "The password or key is not set."
+	fi
+}
+
+get_mode_weight_config() {
+	local tcp_weight=$(uci_get_by_name $1 tcp_weight 1)
+	local udp_weight=$(uci_get_by_name $1 udp_weight 1)
+	[ "V$tcp_weight" = "V0" -a "V$udp_weight" = "V0" ] && return # failsafe with no config
+	echo
+	if [ "V$tcp_weight" = "V0" ]; then
+		echo "        \"mode\": \"udp_only\","
+		echo "        \"udp_weight\": $udp_weight,"
+	elif [ "V$udp_weight" = "V0" ]; then
+		echo "        \"mode\": \"tcp_only\","
+		echo "        \"tcp_weight\": $tcp_weight,"
+	else
+		echo "        \"tcp_weight\": $tcp_weight,"
+		echo "        \"udp_weight\": $udp_weight,"
+	fi
+}
+
+get_udp_config() {
+	udp_max_associations=$(uci_get_by_type general udp_max_associations 512)
+	echo -e "\n    \"udp_timeout\": $(uci_get_by_type general udp_timeout 300),"
+	if [ $udp_max_associations -gt 0 ]; then
+		echo "    \"udp_max_associations\": ${udp_max_associations},"
+	fi
+}
+
+gen_server_config() {
+	validate_server $1 && cat <<-EOF
+		      {
+		        "address": "$(uci_get_by_name $1 server)",
+		        "port": $(uci_get_by_name $1 server_port),
+		        "method": "$(uci_get_by_name $1 encrypt_method)",
+		        $(get_crypto_config $1)$(get_plugin_config $1)$(get_mode_weight_config $1)
+		        "timeout": $(uci_get_by_name $1 timeout 60)
+		      },
+	EOF
+}
+
+gen_config_file() {
+	local config_file=/var/etc/$NAME.$2.json
+	local protocol=$2
+	local mode='tcp_and_udp'
+	case "$protocol" in
+	http) mode='tcp_only' ;;
+	redir) mode='tcp_only' ;;
+	redir-U) protocol='redir' ;;
+	redir-u)
+		protocol='redir'
+		mode='udp_only'
+		;;
+	esac
+
+	cat <<-EOF | sed 's+},__$+}+g' >$config_file
+		{
+		    "servers": [
+					$(for server in $1; do gen_server_config $server; done)__
+		    ],
+		    "locals": [{
+		      "mode": "$mode",
+		      "protocol": "$protocol",
+		      "local_address": "0.0.0.0",
+		      "local_port": $3
+		    }],$(get_udp_config)
+		    "outbound_fwmark": 255,
+		    "nofile": 51200
+		}
+	EOF
+	echo $config_file
+}
+
+ss_cleandns() {
+	uci_bool_by_type general no_dns_injection && return 0
+
+	rm -f $DNSMASQDIR/ss.conf $DNSMASQDIR/ss-servers.conf 2>/dev/null
+	([ -x /etc/init.d/dnsmasq-extra ] && /etc/init.d/dnsmasq reload || /etc/init.d/dnsmasq restart) >/dev/null 2>&1
+}
+
+ss_injectdns() {
+	uci_bool_by_type general no_dns_injection && return 0
+
+	echo >&2 "# Info: $NAME dnsmasq injecting..."
+
+	mkdir -p $DNSMASQDIR
+	DNSconf=$DNSMASQDIR/ss-servers.conf
+	tmpDNSconf=$DNSMASQDIR/ss.conf
+	echo "all-servers" >$tmpDNSconf
+	config_load $NAME
+	for server in $(config_foreach get_server_ips servers | sort -u | grep -v '[0-9]$'); do
+		cat <<-EOF >>$tmpDNSconf
+			ipset=/${server}/ss_spec_dst_sp
+			server=/${server}/#
+			server=/${server}/223.5.5.5
+			server=/${server}/119.29.29.29
+			server=/${server}/114.114.114.114
+			server=/${server}/80.80.80.80
+			server=/${server}/208.67.222.222#443
+			server=/${server}/208.67.220.220#5353
+		EOF
+	done
+
+	(grep -q 'no-resolv' /etc/dnsmasq.conf /etc/dnsmasq.d/* /var/dnsmasq.d/* /var/etc/dnsmasq.conf.* 2 >/dev/null) &&
+		sed "/\/#$/d" -i $tmpDNSconf
+	sort -u $tmpDNSconf | sed '/\/\//d; /\/127.0.0.1\//d' >$DNSconf
+	rm -f $tmpDNSconf
+
+	echo "server=/${WATCHDOG_ENDPOINT}/127.0.0.1#$(uci_get_by_type port_forward local_port 5300)" >>$DNSconf
+	[ -x /etc/init.d/dnsmasq-extra ] || {
+		echo "server=/${WATCHDOG_ENDPOINT}/208.67.222.222#443" >>$DNSconf
+		echo "server=/${WATCHDOG_ENDPOINT}/114.114.115.115" >>$DNSconf
+		echo "server=/${WATCHDOG_ENDPOINT}/80.80.80.80" >>$DNSconf
+	}
+
+	DNSPROBE_DOMAIN='t.cn'
+	cat <<-EOF >>$DNSconf
+		server=/$DNSPROBE_DOMAIN/223.5.5.5
+		server=/$DNSPROBE_DOMAIN/119.29.29.29
+		server=/$DNSPROBE_DOMAIN/114.114.114.114
+	EOF
+
+	/etc/init.d/dnsmasq reload >/dev/null 2>&1
+	# wait-for-dns, timeout 10s
+	if which wait4x >/dev/null 2>&1; then # use [wait4x]
+		wait4x http http://$DNSPROBE_DOMAIN --no-redirect -q
+	elif which wait-for >/dev/null 2>&1; then # use [wait-for]
+		wait-for -t=10s http --url=http://$DNSPROBE_DOMAIN >/dev/null 2>&1
+	else # use [ping]
+		for _ in $(seq 10); do if ping -4 -q -c 1 -s 0 -W 1 -w 1 $DNSPROBE_DOMAIN >/dev/null 2>&1; then break; fi; done
+	fi
+	echo >&2 "# Info: $NAME dnsmasq injected."
+}
+
+start_rules() {
+	config_load $NAME
+	/usr/bin/ss-rules \
+		-s "$(config_foreach get_server_ips servers | sort -u)" \
+		-l "$(uci_get_by_type transparent_proxy local_port 1234)" \
+		-B "$(uci_get_by_type access_control wan_bp_list)" \
+		-b "$(uci_get_by_type access_control wan_bp_ips)" \
+		-W "$(uci_get_by_type access_control wan_fw_list)" \
+		-w "$(uci_get_by_type access_control wan_fw_ips)" \
+		-I "$(uci_get_by_type access_control lan_ifaces)" \
+		-d "$(uci_get_by_type access_control lan_target)" \
+		-a "$(config_foreach get_lan_hosts lan_hosts)" \
+		-e "$(uci_get_by_type access_control ipt_ext)" \
+		$(get_arg_out) $(get_arg_udp)
+}
+
+rules() {
+	pidof sslocal >/dev/null || return 0
+	start_rules || /usr/bin/ss-rules -f
+}
+
+start_redir() {
+	has_valid_server $1 || return 0
+	cd /var/run/ssservice
+	sslocal -d $(get_arg_tnd transparent_proxy) \
+		-c=$(gen_config_file "$1" "redir$2" $(uci_get_by_type transparent_proxy local_port 1234)) \
+		--daemonize-pid=/var/run/ss-redir$2.pid
+	cd - >/dev/null
+	for _ in $(seq 10); do if pgrep -f sslocal >/dev/null; then break; else sleep 1; fi; done
+}
+
+ss_redir() {
+	command -v sslocal >/dev/null 2>&1 || return 1
+	local main_server=$(uci_get_by_type transparent_proxy main_server)
+	has_valid_server "$main_server" || return 1
+	local udp_relay_server=$(uci_get_by_type transparent_proxy udp_relay_server)
+	if [ "$udp_relay_server" = "same" ]; then
+		start_redir "$main_server" -U
+	else
+		start_redir "$main_server"
+		start_redir "$udp_relay_server" -u
+	fi
+}
+
+start_local() {
+	has_valid_server $1 || return 0
+	cd /var/run/ssservice
+	sslocal -d $(get_arg_tnd ${2}_proxy) \
+		-c=$(gen_config_file "$1" "$2" $(uci_get_by_type ${2}_proxy local_port 1080)) \
+		--daemonize-pid=/var/run/ss-local-$2.pid
+	cd - >/dev/null
+}
+
+ss_local() {
+	command -v sslocal >/dev/null 2>&1 || return 0
+	start_local "$(uci_get_by_type http_proxy server)" "http"
+	start_local "$(uci_get_by_type socks_proxy server)" "socks"
+}
+
+start_tunnel() {
+	has_valid_server $1 || return 0
+	cd /var/run/ssservice
+	local config=$(gen_config_file "$1" "tunnel" $(uci_get_by_type port_forward local_port 5300))
+	uci_get_by_type port_forward destination '8.8.4.4:53' | sed 's+:+ +g' | while read addr port; do
+		sed -i $config \
+			-e "/local_address/i\      \"forward_address\": \"$addr\"," \
+			-e "/local_address/i\      \"forward_port\": $port,"
+	done
+	sslocal -d $(get_arg_tnd port_forward) \
+		-c=$config --daemonize-pid=/var/run/ss-tunnel.pid
+	cd - >/dev/null
+}
+
+ss_tunnel() {
+	command -v sslocal >/dev/null 2>&1 || return 0
+	start_tunnel "$(uci_get_by_type port_forward server)"
+}
+
+start() {
+	pidof sslocal >/dev/null && return 0
+	mkdir -p /var/run/ssservice /var/etc
+	local t0=$(date '+%s')
+	echo >&2 "# Info: starting..."
+
+	has_valid_server $(uci_get_by_type transparent_proxy main_server) && ss_injectdns
+	ss_redir && rules
+	ss_local
+	ss_tunnel
+	has_valid_server $(uci_get_by_type transparent_proxy main_server) && add_cron
+	echo >&2 "# Info: started. CostTime: $(($(date '+%s') - $t0))s"
+}
+
+boot() {
+	echo 'exit 0' >/var/etc/$NAME.include
+	sysctl -w net.ipv4.tcp_fastopen=3
+	local delay=$(uci_get_by_type general startup_delay 0)
+	(sleep $delay && start >/dev/null 2>&1) &
+	return 0
+}
+
+kill_all() {
+	for it in $@; do
+		kill -9 $(pgrep -f $it) >/dev/null 2>&1
+	done
+}
+
+stop() {
+	/usr/bin/ss-rules -f
+	kill_all sslocal
+	if [ -f /var/run/ss-plugin ]; then
+		kill_all $(sort -u /var/run/ss-plugin)
+		rm -f /var/run/ss-plugin
+	fi
+	rm -rf /var/run/ssservice
+	ss_cleandns
+	del_cron
+}
+
+add_cron() {
+	[ -f $CRON_FILE ] || return 0
+	uci_bool_by_type transparent_proxy no_healthcheck && return 0
+
+	sed -i '/shadowsocks_healthcheck/d' $CRON_FILE
+	echo '0   */3   * * *  rm -f /var/log/shadowsocks_healthcheck.log 2>&1' >>$CRON_FILE
+	echo '*    *    * * * /etc/init.d/shadowsocks healthcheck >> /var/log/shadowsocks_healthcheck.log 2>&1' >>$CRON_FILE
+	/etc/init.d/cron restart
+}
+
+del_cron() {
+	[ -f $CRON_FILE ] || return 0
+	uci_bool_by_type transparent_proxy no_healthcheck && return 0
+
+	sed -i '/shadowsocks_healthcheck/d' $CRON_FILE
+	/etc/init.d/cron restart
+}
+
+healthcheck() {
+	command -v sslocal >/dev/null 2>&1 || return 1
+	has_valid_server $(uci_get_by_type transparent_proxy main_server) || return 1
+	uci_bool_by_type transparent_proxy no_healthcheck && return 0
+
+	LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
+	pgrep -f "sslocal" >/dev/null 2>&1 || {
+		echo "[${LOGTIME}] Problem decteted, restarting ${NAME}..."
+		stop >/dev/null 2>&1
+		start >/dev/null 2>&1
+		return 0
+	}
+	iptables -n -t nat -L PREROUTING | grep -q '_SPEC_LAN_DG' || {
+		echo "[${LOGTIME}] Problem decteted, restarting ${NAME}..."
+		stop >/dev/null 2>&1
+		start >/dev/null 2>&1
+		return 0
+	}
+
+	cat_connect() {
+		target="$1"
+		retry=${2:-1}
+		timeout=5
+		[ $retry -lt 1 ] && return 1
+		if which wait4x >/dev/null 2>&1; then # use [wait4x]
+			wait4x http $target || cat_connect $target $((retry - 1))
+		elif which wait-for >/dev/null 2>&1; then # use [wait-for]
+			wait-for -t=10s http --url=$target >/dev/null 2>&1 || cat_connect $target $((retry - 1))
+		else # use [curl]
+			ret_code=$(curl -s --connect-timeout $timeout "$target" -w %{http_code} -o /dev/null | tail -n1)
+			# echo -n "[ $retry $ret_code ] "
+			[ "x$ret_code" = "x200" -o "x$ret_code" = "x204" ] && return 0 || sleep 1 && cat_connect $target $((retry - 1))
+		fi
+	}
+
+	TRPORT=$(uci_get_by_type transparent_proxy local_port 1234)
+	GOOGLE=$(ping -4 -q -c 1 -s 0 -W 1 -w 1 ${WATCHDOG_ENDPOINT} 2>/dev/null | sed '1{s/[^(]*(//;s/).*//;q}')
+	DNSPOD=119.29.29.98 #DNSPOD HTTPDNS (Inside GFW)
+
+	if [ "Z$GOOGLE" = "Z" ]; then
+		iptables -t nat -I OUTPUT -p tcp -d $DNSPOD -j RETURN
+		cat_connect "http://${DNSPOD}/d"
+		if [ "Z$?" = "Z0" ]; then
+			echo "[${LOGTIME}] Problem-DNS decteted, restarting ${NAME}..."
+			[ -x /etc/init.d/dnsmasq-extra ] && /etc/init.d/dnsmasq-extra restart || /etc/init.d/dnsmasq restart
+			stop >/dev/null 2>&1
+			start >/dev/null 2>&1
+		else
+			echo '['$LOGTIME'] Network Problem. Do nothing.'
+		fi
+		iptables -t nat -D OUTPUT -p tcp -d $DNSPOD -j RETURN
+		return 0
+	fi
+
+	iptables -t nat -I OUTPUT -p tcp -d $GOOGLE -j REDIRECT --to-port $TRPORT
+	iptables -t nat -I OUTPUT -p tcp -d $DNSPOD -j RETURN
+	cat_connect "http://${GOOGLE}/generate_204" 3
+	if [ "Z$?" = "Z0" ]; then
+		echo "[${LOGTIME}] ${NAME} No Problem."
+	else
+		# cat_connect "http://wifi.vivo.com.cn/generate_204"
+		# cat_connect "http://www.qualcomm.cn/generate_204"
+		cat_connect "http://${DNSPOD}/d"
+		if [ "Z$?" = "Z0" ]; then
+			echo "[${LOGTIME}] Problem decteted, restarting ${NAME}..."
+			[ -x /etc/init.d/haproxy-tcp ] && /etc/init.d/haproxy-tcp restart
+			stop >/dev/null 2>&1
+			start >/dev/null 2>&1
+		else
+			echo '['$LOGTIME'] Network Problem. Do nothing.'
+		fi
+	fi
+
+	iptables -t nat -D OUTPUT -p tcp -d $GOOGLE -j REDIRECT --to-port $TRPORT
+	iptables -t nat -D OUTPUT -p tcp -d $DNSPOD -j RETURN
+	return 0
+}

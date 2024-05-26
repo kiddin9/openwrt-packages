@@ -1,0 +1,4 @@
+config homeassistant
+	option 'config_path' ''
+	option 'image_name' 'homeassistant/home-assistant:latest'
+	option 'time_zone' ''

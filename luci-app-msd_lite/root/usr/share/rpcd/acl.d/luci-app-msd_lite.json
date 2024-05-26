@@ -1,0 +1,11 @@
+{
+	"luci-app-msd_lite": {
+		"description": "Grant UCI access for luci-app-msd_lite",
+		"read": {
+			"uci": [ "msd_lite" ]
+		},
+		"write": {
+			"uci": [ "msd_lite" ]
+		}
+	}
+}

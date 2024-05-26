@@ -1,0 +1,18 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+START=65
+EXTRA_COMMANDS="status"
+EXTRA_HELP="        status Print the status of the service"
+
+
+start() {
+	/usr/bin/wifidog-init start
+}
+
+stop() {
+	/usr/bin/wifidog-init stop
+}
+
+status() {
+	/usr/bin/wifidog-init status
+}

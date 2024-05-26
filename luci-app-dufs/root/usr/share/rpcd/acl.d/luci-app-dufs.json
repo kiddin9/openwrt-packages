@@ -1,0 +1,14 @@
+{
+	"luci-app-dufs": {
+		"description": "Grant access to Dufs configuration",
+		"read": {
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": [ "dufs" ]
+		},
+		"write": {
+			"uci": [ "dufs" ]
+		}
+	}
+}

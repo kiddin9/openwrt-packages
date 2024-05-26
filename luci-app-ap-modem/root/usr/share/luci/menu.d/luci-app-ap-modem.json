@@ -1,0 +1,14 @@
+{
+	"admin/network/ap_modem": {
+		"title": "Access AP / Modem",
+		"order": 99,
+		"action": {
+			"type": "view",
+			"path": "ap_modem"
+		},
+		"depends": {
+			"acl": [ "luci-app-ap-modem" ],
+			"uci": { "ap_modem": true }
+		}
+	}
+}

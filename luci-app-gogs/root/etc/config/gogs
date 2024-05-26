@@ -1,0 +1,6 @@
+config main
+	option 'http_port' '3001'
+	option 'ssh_port' '3022'
+	option 'image_name' 'gogs/gogs:latest'
+	option 'config_path' ''
+

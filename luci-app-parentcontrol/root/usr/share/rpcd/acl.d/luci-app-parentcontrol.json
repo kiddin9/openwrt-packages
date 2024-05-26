@@ -1,0 +1,11 @@
+{
+	"luci-app-parentcontrol": {
+		"description": "Grant UCI access for luci-app-parentcontrol",
+		"read": {
+			"uci": [ "parentcontrol" ]
+		},
+		"write": {
+			"uci": [ "parentcontrol" ]
+		}
+	}
+}

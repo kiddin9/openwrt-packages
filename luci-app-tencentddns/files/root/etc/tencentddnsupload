@@ -1,0 +1,41 @@
+#!/bin/bash
+
+function rand(){
+    min=$1
+    max=$(($2-$min+1))
+    num=$(date +%s%N)
+    echo $(($num%$max+$min))
+}
+
+runflag=$1
+if [[ $1 -eq 1 ]]; then
+    uin=$2
+    domain=$3
+    subdomain=$4
+    siteid=`uci get tencentddns.base.siteid`
+    siteurl="openwrt"
+    siteapp="openwrt"
+    plugintype="ddns"
+    if [[ ! $siteid ]]; then
+    	siteid="openwrt_"$(rand 1 50)
+    	uci set tencentddns.base.siteid=$siteid
+		  uci commit tencentddns
+    fi
+    . /usr/share/libubox/jshn.sh
+    json_init
+    json_add_string "action" "save_config"
+    json_add_string "plugin_type" "ddns"
+    json_add_object "data"
+    json_add_string "site_id" $siteid
+    json_add_string "site_url" $siteurl
+    json_add_string "site_app" $siteapp
+    json_add_string "uin" $uin
+    json_add_string "cust_sec_on" "2"
+    json_add_object "others"
+    json_add_string "domain" $domain
+    json_add_string "sub_domain" $subdomain
+
+
+    postdata=`json_dump`
+    `curl -X POST https://openapp.qq.com/api/public/index.php/upload  -H "Content-Type: application/json" --data-raw "$postdata"`
+fi

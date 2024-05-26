@@ -1,0 +1,35 @@
+msgid "Syncthing"
+msgstr "Syncthing"
+
+msgid "Syncthing Synchronization Tool"
+msgstr "Syncthing 存储同步工具"
+
+msgid "Open Syncthing page"
+msgstr "打开储存同步页面"
+
+msgid "GUI access address"
+msgstr "GUI访问地址"
+
+msgid "Use 0.0.0.0:8384 to monitor all access."
+msgstr "使用0.0.0.0:8384监听所有访问。"
+
+msgid "Configuration file directory"
+msgstr "配置文件存储目录"
+
+msgid "Only the configuration saved in /etc/syncthing will be automatically backed up!"
+msgstr "只有保存在 /etc/syncthing 的配置会被自动备份！"
+
+msgid "User"
+msgstr "用户"
+
+msgid "The default is syncthing, but it may cause permission denied. Syncthing officially does not recommend running as root."
+msgstr "默认为syncthing，但可能引起权限不足问题。Syncthing官方不建议以root身份运行。"
+
+msgid "Thread limit"
+msgstr "线程限制"
+
+msgid "0 to match the number of CPUs (default), >0 to explicitly specify concurrency."
+msgstr "使用0来匹配CPU核心数，或输入大于0的数来显式指定并发数。"
+
+msgid "Explicitly specify nice. 0 is the highest and 19 is the lowest. (negative values are not allowed to be set temporarily)"
+msgstr "显式指定进程Nice值。其中0最高，19最低。（暂不允许设置负值）"

@@ -1,0 +1,32 @@
+#!/bin/sh /etc/rc.common
+# Copyright (c) 2011-2015 OpenWrt.org
+
+START=99
+
+start() {
+	if [ ! -f "/var/run/cellled.pid" ]; then
+		/usr/bin/cellled >/dev/null 2>&1 &
+		PID=$(pgrep -f /usr/bin/cellled)
+		if [ $PID ]; then
+			echo $PID > /var/run/cellled.pid
+		fi
+	fi
+	return 0
+}
+
+stop() {
+	rm -f /var/run/cellled.pid
+	kill $(pgrep -f /usr/bin/cellled) >/dev/null 2>&1
+	/etc/init.d/led start
+}
+
+restart(){
+	stop
+	sleep 1
+	start
+}
+
+boot() {
+	(sleep 5 && start >/dev/null 2>&1) &
+	return 0
+}

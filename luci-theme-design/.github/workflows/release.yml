@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  repository_dispatch:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Initialization Environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          echo -e "Total CPU cores\t: $(nproc)"
+          cat /proc/cpuinfo | grep 'model name'
+          free -h
+          uname -a
+          [ -f /proc/version ] && cat /proc/version
+          [ -f /etc/issue.net ] && cat /etc/issue.net
+          [ -f /etc/issue ] && cat /etc/issue
+          ulimit -a
+
+      - name: Download SDK
+        run: |
+          wget https://archive.openwrt.org/releases/18.06.9/targets/x86/64/openwrt-sdk-18.06.9-x86-64_gcc-7.3.0_musl.Linux-x86_64.tar.xz
+          xz -d openwrt-sdk-18.06.9-x86-64_gcc-7.3.0_musl.Linux-x86_64.tar.xz
+          tar -xf openwrt-sdk-18.06.9-x86-64_gcc-7.3.0_musl.Linux-x86_64.tar
+          mv openwrt-sdk-18.06.9-x86-64_gcc-7.3.0_musl.Linux-x86_64 openwrt-sdk
+
+      - name: Build
+        id: build
+        run: | 
+          cd openwrt-sdk
+          git clone  --depth=1 -b "${{ github.ref_name }}" https://github.com/gngpp/luci-theme-design.git package/luci-theme-design
+          ./scripts/feeds update -a && ./scripts/feeds install -a
+          echo "CONFIG_PACKAGE_luci-theme-design=y" >> .config
+          make defconfig
+          make package/luci-theme-design/compile V=s -j$(nproc)
+          TARGET="$(find bin/ | grep  luci-theme-design)"
+          echo "TARGET=$(pwd)/$TARGET"
+          echo "TARGET=$(pwd)/$TARGET" >> $GITHUB_OUTPUT
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+        with:
+        # Optionally strip `v` prefix
+          strip_v: false
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v1
+        if: steps.build.outputs.status == 'success' && !cancelled()
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          name: ${{ steps.tag.outputs.tag }}
+          tag_name: ${{ steps.tag.outputs.tag }}
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            ${{ steps.build.outputs.TARGET }}
+            LICENSE

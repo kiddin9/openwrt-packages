@@ -1,0 +1,10 @@
+<div class="cbi-map">
+	<iframe id="terminal" style="width: 100%; min-height: 600px; border: none; border-radius: 3px;"></iframe>
+</div>
+<script type="text/javascript">
+  const el = document.querySelectorAll(".cbi-value") 
+  for (let i = 0; i < el.length; i++) {
+    el[i].style.display = "none";
+  }
+	document.getElementById("terminal").src = "http://" + window.location.hostname + ":7682";
+</script>

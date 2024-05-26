@@ -1,0 +1,397 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: luci-app-natmap\n"
+"Language: en\n"
+
+#: natmap.js:62
+msgid "General Settings"
+msgstr "General Settings"
+
+#: natmap.js:63
+msgid "Forward Settings"
+msgstr "Forward Settings"
+
+#: natmap.js:64
+msgid "Notify Settings"
+msgstr "Notify Settings"
+
+#: natmap.js:65
+msgid "Link Settings"
+msgstr "Link Settings"
+
+#: natmap.js:66
+msgid "Custom Settings"
+msgstr "Custom Settings"
+
+#: natmap.js:78
+msgid "Name"
+msgstr "Name"
+
+#: natmap.js:87
+msgid "Protocol"
+msgstr "Protocol"
+
+#: natmap.js:90 natmap.js:256
+msgid "TCP"
+msgstr "TCP"
+
+#: natmap.js:91 natmap.js:257
+msgid "UDP"
+msgstr "UDP"
+
+#: natmap.js:97
+msgid "Restrict to address family"
+msgstr "Restrict to address family"
+
+#: natmap.js:100
+msgid "IPv4 and IPv6"
+msgstr "IPv4 and IPv6"
+
+#: natmap.js:101
+msgid "IPv4 only"
+msgstr "IPv4 only"
+
+#: natmap.js:102
+msgid "IPv6 only"
+msgstr "IPv6 only"
+
+#: natmap.js:108
+msgid "Wan Interface"
+msgstr "Wan Interface"
+
+#: natmap.js:117
+msgid "Keep-alive interval"
+msgstr "Keep-alive interval"
+
+#: natmap.js:127
+msgid "STUN server"
+msgstr "STUN server"
+
+#: natmap.js:138
+msgid "HTTP server"
+msgstr "HTTP server"
+
+#: natmap.js:139
+msgid "For TCP mode"
+msgstr "For TCP mode"
+
+#: natmap.js:145
+msgid "Bind port"
+msgstr "Bind port"
+
+#: natmap.js:156
+msgid "Enable Forward"
+msgstr "Enable Forward"
+
+#: natmap.js:170
+msgid "Forward mode"
+msgstr "Forward mode"
+
+#: natmap.js:173
+msgid "firewall dnat"
+msgstr "firewall dnat"
+
+#: natmap.js:174
+msgid "natmap"
+msgstr "natmap"
+
+#: natmap.js:175
+msgid "ikuai"
+msgstr "ikuai"
+
+#: natmap.js:183
+msgid "Forward target"
+msgstr "Forward target"
+
+#: natmap.js:195
+msgid "Forward target port"
+msgstr "Forward target port"
+
+#: natmap.js:196
+msgid "0 will forward to the out port get from STUN"
+msgstr "0 will forward to the out port get from STUN"
+
+#: natmap.js:208
+msgid "Target_Interface"
+msgstr "Target_Interface"
+
+#: natmap.js:218
+msgid "Ikuai Web URL"
+msgstr "Ikuai Web URL"
+
+#: natmap.js:220 natmap.js:607 natmap.js:646
+msgid "such as http://127.0.0.1:8080 or http://ikuai.lan:8080.if use host,must close Rebind protection in DHCP and DNS"
+msgstr "such as http://127.0.0.1:8080 or http://ikuai.lan:8080.if use host,must close Rebind protection in DHCP and DNS"
+
+#: natmap.js:231
+msgid "Ikuai Username"
+msgstr "Ikuai Username"
+
+#: natmap.js:241
+msgid "Ikuai Password"
+msgstr "Ikuai Password"
+
+#: natmap.js:251
+msgid "Ikuai Mapping Protocol"
+msgstr "Ikuai Mapping Protocol"
+
+#: natmap.js:252
+msgid "such as tcp or udp or tcp+udp"
+msgstr "such as tcp or udp or tcp+udp"
+
+#: natmap.js:255
+msgid "TCP+UDP"
+msgstr "TCP+UDP"
+
+#: natmap.js:264
+msgid "Ikuai Mapping Wan Interface"
+msgstr "Ikuai Mapping Wan Interface"
+
+#: natmap.js:265
+msgid "such as adsl_1 or wan"
+msgstr "such as adsl_1 or wan"
+
+#: natmap.js:276 natmap.js:458 natmap.js:683
+msgid "Advanced Settings"
+msgstr "Advanced Settings"
+
+#: natmap.js:286 natmap.js:471 natmap.js:697
+msgid "Max Retries"
+msgstr "Max Retries"
+
+#: natmap.js:287 natmap.js:472 natmap.js:698
+msgid "max retries,default 0 means execute only once"
+msgstr "max retries,default 0 means execute only once"
+
+#: natmap.js:297 natmap.js:482 natmap.js:708
+msgid "Retry Interval"
+msgstr "Retry Interval"
+
+#: natmap.js:298 natmap.js:483 natmap.js:709
+msgid "Retry Interval, unit is seconds, default 0 is 3 seconds"
+msgstr "Retry Interval, unit is seconds, default 0 is 3 seconds"
+
+#: natmap.js:307
+msgid "Enable Notify"
+msgstr "Enable Notify"
+
+#: natmap.js:315
+msgid "Notify channel"
+msgstr "Notify channel"
+
+#: natmap.js:319
+msgid "Telegram Bot"
+msgstr "Telegram Bot"
+
+#: natmap.js:320
+msgid "PushPlus"
+msgstr "PushPlus"
+
+#: natmap.js:321
+msgid "ServerChan"
+msgstr "ServerChan"
+
+#: natmap.js:322
+msgid "Gotify"
+msgstr "Gotify"
+
+#: natmap.js:329
+msgid "Chat ID"
+msgstr "Chat ID"
+
+#: natmap.js:332
+msgid "Get chat_id"
+msgstr "Get chat_id"
+
+#: natmap.js:334 natmap.js:352 natmap.js:374 natmap.js:390 natmap.js:426
+msgid "Click here"
+msgstr "Click here"
+
+#: natmap.js:337
+msgid "<br />If you want to send to a group/channel, please create a non-Chinese group/channel (for easier chatid lookup, you can rename it later).<br />Add the bot to the group, send a message, and use https://api.telegram.org/bot token /getUpdates to obtain the chatid."
+msgstr "<br />If you want to send to a group/channel, please create a non-Chinese group/channel (for easier chatid lookup, you can rename it later).<br />Add the bot to the group, send a message, and use https://api.telegram.org/bot token /getUpdates to obtain the chatid."
+
+#: natmap.js:350
+msgid "Get Bot"
+msgstr "Get Bot"
+
+#: natmap.js:354
+msgid "<br />Send a message to the created bot to initiate a conversation."
+msgstr "<br />Send a message to the created bot to initiate a conversation."
+
+#: natmap.js:363
+msgid "http proxy"
+msgstr "http proxy"
+
+#: natmap.js:372 natmap.js:388 natmap.js:424
+msgid "Get Instructions"
+msgstr "Get Instructions"
+
+#: natmap.js:385
+msgid "ServerChan sendkey"
+msgstr "ServerChan sendkey"
+
+#: natmap.js:393
+msgid "<br />Since the asynchronous push queue is used, only whether the put into the queue is successful is detected."
+msgstr "<br />Since the asynchronous push queue is used, only whether the put into the queue is successful is detected."
+
+#: natmap.js:404
+msgid "ServerChan Advanced Settings"
+msgstr "ServerChan Advanced Settings"
+
+#: natmap.js:414
+msgid "Self-built Server Url"
+msgstr "Self-built Server Url"
+
+#: natmap.js:416
+msgid "such as http://127.0.0.1:8080 or http://ikuai.lan:8080"
+msgstr "such as http://127.0.0.1:8080 or http://ikuai.lan:8080"
+
+#: natmap.js:422
+msgid "Gotify url"
+msgstr "Gotify url"
+
+#: natmap.js:446
+msgid "Gotify priority"
+msgstr "Gotify priority"
+
+#: natmap.js:492
+msgid "Enable link setting"
+msgstr "Enable link setting"
+
+#: natmap.js:496
+msgid "Service"
+msgstr "Service"
+
+#: natmap.js:499
+msgid "Emby"
+msgstr "Emby"
+
+#: natmap.js:500
+msgid "qBittorrent"
+msgstr "qBittorrent"
+
+#: natmap.js:501
+msgid "Transmission"
+msgstr "Transmission"
+
+#: natmap.js:502
+msgid "Cloudflare Origin Rule"
+msgstr "Cloudflare Origin Rule"
+
+#: natmap.js:503
+msgid "Cloudflare Redirect Rule"
+msgstr "Cloudflare Redirect Rule"
+
+#: natmap.js:574
+msgid "API Key"
+msgstr "API Key"
+
+#: natmap.js:565
+msgid "EMBY URL"
+msgstr "EMBY URL"
+
+#: natmap.js:583
+msgid "Update HTTPS Port"
+msgstr "Update HTTPS Port"
+
+#: natmap.js:584
+msgid "Set to False if you want to use HTTP"
+msgstr "Set to False if you want to use HTTP"
+
+#: natmap.js:594
+msgid "Update host with IP"
+msgstr "Update host with IP"
+
+#: natmap.js:605
+msgid "Web UI URL"
+msgstr "Web UI URL"
+
+#: natmap.js:614 natmap.js:653
+msgid "Username"
+msgstr "Username"
+
+#: natmap.js:619 natmap.js:658
+msgid "Password"
+msgstr "Password"
+
+#: natmap.js:624 natmap.js:663
+msgid "Allow IPv6"
+msgstr "Allow IPv6"
+
+#: natmap.js:633 natmap.js:672
+msgid "IPv6 Address"
+msgstr "IPv6 Address"
+
+#: natmap.js:644
+msgid "RPC URL"
+msgstr "RPC URL"
+
+#: natmap.js:722
+msgid "Enable custom script's config"
+msgstr "Enable custom script's config"
+
+#: natmap.js:731
+msgid "custom script"
+msgstr "custom script"
+
+#: natmap.js:732
+msgid "custom script path,such as /etc/natmap/custom.sh"
+msgstr "custom script path,such as /etc/natmap/custom.sh"
+
+#: natmap.js:741
+msgid "External IP"
+msgstr "External IP"
+
+#: natmap.js:748
+msgid "External Port"
+msgstr "External Port"
+
+#: natmap.js:758
+msgid "enable"
+msgstr "enable"
+
+#: natmap.js:57
+msgid "NatMap Settings"
+msgstr "NatMap Settings"
+
+#: natmap.js:510
+msgid "Cloudflare Token"
+msgstr "Cloudflare Token"
+
+#: natmap.js:521
+msgid "Cloudflare Zone ID"
+msgstr "Cloudflare Zone ID"
+
+#: natmap.js:533
+msgid "Origin Rule Name"
+msgstr "Origin Rule Name"
+
+#: natmap.js:544
+msgid "Redirect Rule Name"
+msgstr "Redirect Rule Name"
+
+#: natmap.js:347
+msgid "Telegram Token"
+msgstr "Telegram Token"
+
+#: natmap.js:370
+msgid "PushPlus Token"
+msgstr "PushPlus Token"
+
+#: natmap.js:436
+msgid "Gotify Token"
+msgstr "Gotify Token"
+
+#: natmap.js:554
+msgid "Redirect Rule Target URL"
+msgstr "Redirect Rule Target URL"
+
+#: natmap.js:567
+msgid "such as http://127.0.0.1:8080 or http://ikuai.lan:8080.if use host,must close Rebind protection in DHCP/DNS"
+msgstr "such as http://127.0.0.1:8080 or http://ikuai.lan:8080.if use host,must close Rebind protection in DHCP/DNS"
+

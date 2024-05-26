@@ -1,0 +1,9 @@
+#!/bin/sh
+
+uci get sysuh3c.@login[0].ifname >/dev/null 2>&1 && exit 0
+WAN_IF=$(uci get network.wan.device 2>/dev/null)
+[ $? -ne 0 ] && exit 0
+uci set sysuh3c.@login[0].ifname=$WAN_IF
+uci commit sysuh3c
+
+exit 0

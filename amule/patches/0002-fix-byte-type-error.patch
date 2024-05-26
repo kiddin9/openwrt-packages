@@ -1,0 +1,2285 @@
+From 3817cad41242b0cf376e6e69da22f32ae8f32355 Mon Sep 17 00:00:00 2001
+From: W_Y_CPP <383152993@qq.com>
+Date: Thu, 2 Dec 2021 00:51:00 -0800
+Subject: [PATCH] fix byte type error
+
+---
+ src/BarShader.cpp                        |  2 +-
+ src/BaseClient.cpp                       | 28 +++++++++---------
+ src/BitVector.h                          |  2 +-
+ src/ClientCredits.cpp                    |  4 +--
+ src/ClientCredits.h                      |  8 +++---
+ src/ClientCreditsList.cpp                | 14 ++++-----
+ src/ClientCreditsList.h                  |  8 +++---
+ src/ClientList.cpp                       |  2 +-
+ src/ClientTCPSocket.cpp                  |  8 +++---
+ src/ClientTCPSocket.h                    |  6 ++--
+ src/ClientUDPSocket.cpp                  |  4 +--
+ src/ClientUDPSocket.h                    |  4 +--
+ src/DownloadClient.cpp                   | 18 ++++++------
+ src/DownloadQueue.cpp                    |  8 +++---
+ src/EMSocket.cpp                         |  6 ++--
+ src/EMSocket.h                           |  6 ++--
+ src/EncryptedDatagramSocket.cpp          | 10 +++----
+ src/EncryptedStreamSocket.cpp            | 10 +++----
+ src/FileArea.cpp                         | 10 +++----
+ src/FileArea.h                           |  8 +++---
+ src/FileLock.h                           |  2 +-
+ src/GapList.h                            |  2 +-
+ src/IPFilterScanner.cpp                  |  2 +-
+ src/KnownFile.cpp                        | 12 ++++----
+ src/KnownFile.h                          |  2 +-
+ src/MemFile.cpp                          |  8 +++---
+ src/MemFile.h                            | 10 +++----
+ src/MuleCollection.cpp                   |  2 +-
+ src/MuleColour.h                         | 18 ++++++------
+ src/MuleUDPSocket.cpp                    |  2 +-
+ src/MuleUDPSocket.h                      |  2 +-
+ src/OtherFunctions.cpp                   | 32 ++++++++++-----------
+ src/Packet.cpp                           | 36 ++++++++++++------------
+ src/Packet.h                             | 26 ++++++++---------
+ src/Parser.cpp                           |  2 +-
+ src/PartFile.cpp                         |  6 ++--
+ src/PartFile.h                           |  2 +-
+ src/PartFileConvert.cpp                  |  2 +-
+ src/PrefsUnifiedDlg.cpp                  |  2 +-
+ src/RLE.cpp                              |  4 +--
+ src/SHA.cpp                              | 18 ++++++------
+ src/SHA.h                                |  4 +--
+ src/SHAHashSet.h                         |  8 +++---
+ src/SafeFile.cpp                         |  2 +-
+ src/Scanner.cpp                          |  2 +-
+ src/SearchList.cpp                       |  4 +--
+ src/SearchList.h                         |  2 +-
+ src/ServerList.cpp                       |  4 +--
+ src/ServerSocket.cpp                     |  2 +-
+ src/ServerSocket.h                       |  2 +-
+ src/ServerUDPSocket.cpp                  | 10 +++----
+ src/ServerUDPSocket.h                    |  2 +-
+ src/Statistics.cpp                       |  2 +-
+ src/Tag.cpp                              |  4 +--
+ src/Tag.h                                | 12 ++++----
+ src/ThreadTasks.cpp                      |  4 +--
+ src/UploadBandwidthThrottler.cpp         |  2 +-
+ src/UploadClient.cpp                     | 10 +++----
+ src/kademlia/kademlia/Kademlia.cpp       |  2 +-
+ src/kademlia/kademlia/Search.cpp         |  2 +-
+ src/kademlia/kademlia/SearchManager.cpp  |  4 +--
+ src/kademlia/net/KademliaUDPListener.cpp |  2 +-
+ src/libs/common/StringFunctions.cpp      |  4 +--
+ src/libs/ec/cpp/ECSocket.cpp             | 12 ++++----
+ src/libs/ec/cpp/ECTag.cpp                |  4 +--
+ src/updownclient.h                       | 36 ++++++++++++------------
+ src/utils/aLinkCreator/src/md4.cpp       |  8 +++---
+ src/utils/aLinkCreator/src/md4.h         |  2 +-
+ src/utils/fileview/KadFiles.cpp          |  4 +--
+ 69 files changed, 257 insertions(+), 257 deletions(-)
+
+diff --git a/src/BarShader.cpp b/src/BarShader.cpp
+index 047f90d..9ddfd51 100644
+--- a/src/BarShader.cpp
++++ b/src/BarShader.cpp
+@@ -124,7 +124,7 @@ void CBarShader::FillRange(uint64 start, uint64 end, const CMuleColour& colour)
+ 	}
+ 
+ 	// precision for small files: end must be increased by one
+-	// think of each byte as a visible block, then start points to
++	// think of each uint8_t as a visible block, then start points to
+ 	// the beginning of its block, but end points to the END of its block
+ 	end++;
+ 
+diff --git a/src/BaseClient.cpp b/src/BaseClient.cpp
+index cf1093a..aa77e69 100644
+--- a/src/BaseClient.cpp
++++ b/src/BaseClient.cpp
+@@ -361,7 +361,7 @@ void CUpDownClient::ClearHelloProperties()
+ 	m_bUnicodeSupport = false;
+ }
+ 
+-bool CUpDownClient::ProcessHelloPacket(const byte* pachPacket, uint32 nSize)
++bool CUpDownClient::ProcessHelloPacket(const uint8_t* pachPacket, uint32 nSize)
+ {
+ 	const CMemFile data(pachPacket,nSize);
+ 	uint8 hashsize = data.ReadUInt8();
+@@ -459,7 +459,7 @@ void CUpDownClient::Safe_Delete()
+ }
+ 
+ 
+-bool CUpDownClient::ProcessHelloAnswer(const byte* pachPacket, uint32 nSize)
++bool CUpDownClient::ProcessHelloAnswer(const uint8_t* pachPacket, uint32 nSize)
+ {
+ 	const CMemFile data(pachPacket,nSize);
+ 	bool bIsMule = ProcessHelloTypePacket(data);
+@@ -840,7 +840,7 @@ void CUpDownClient::SendMuleInfoPacket(bool bAnswer, bool OSInfo)
+ 	}
+ }
+ 
+-bool CUpDownClient::ProcessMuleInfoPacket(const byte* pachPacket, uint32 nSize)
++bool CUpDownClient::ProcessMuleInfoPacket(const uint8_t* pachPacket, uint32 nSize)
+ {
+ 	uint8 protocol_version;
+ 
+@@ -1173,7 +1173,7 @@ void CUpDownClient::SendHelloTypePacket(CMemFile* data)
+ }
+ 
+ 
+-void CUpDownClient::ProcessMuleCommentPacket(const byte* pachPacket, uint32 nSize)
++void CUpDownClient::ProcessMuleCommentPacket(const uint8_t* pachPacket, uint32 nSize)
+ {
+ 	if (!m_reqfile) {
+ 		throw CInvalidPacket(wxT("Comment packet for unknown file"));
+@@ -1977,7 +1977,7 @@ void CUpDownClient::RequestSharedFileList()
+ }
+ 
+ 
+-void CUpDownClient::ProcessSharedFileList(const byte* pachPacket, uint32 nSize, wxString& pszDirectory)
++void CUpDownClient::ProcessSharedFileList(const uint8_t* pachPacket, uint32 nSize, wxString& pszDirectory)
+ {
+ 	if (m_iFileListRequested > 0) {
+ 		m_iFileListRequested--;
+@@ -2103,7 +2103,7 @@ void CUpDownClient::SendSignaturePacket()
+ 		}
+ 	}
+ 	//end v2
+-	byte achBuffer[250];
++	uint8_t achBuffer[250];
+ 
+ 	uint8 siglen = theApp->clientcredits->CreateSignature(credits, achBuffer,  250, ChallengeIP, byChaIPKind );
+ 	wxCHECK2(siglen != 0, return);
+@@ -2124,7 +2124,7 @@ void CUpDownClient::SendSignaturePacket()
+ }
+ 
+ 
+-void CUpDownClient::ProcessPublicKeyPacket(const byte* pachPacket, uint32 nSize)
++void CUpDownClient::ProcessPublicKeyPacket(const uint8_t* pachPacket, uint32 nSize)
+ {
+ 	theApp->clientlist->AddTrackClient(this);
+ 
+@@ -2160,7 +2160,7 @@ void CUpDownClient::ProcessPublicKeyPacket(const byte* pachPacket, uint32 nSize)
+ }
+ 
+ 
+-void CUpDownClient::ProcessSignaturePacket(const byte* pachPacket, uint32 nSize)
++void CUpDownClient::ProcessSignaturePacket(const uint8_t* pachPacket, uint32 nSize)
+ {
+ 	// here we spread the good guys from the bad ones ;)
+ 
+@@ -2248,7 +2248,7 @@ void CUpDownClient::SendSecIdentStatePacket()
+ }
+ 
+ 
+-void CUpDownClient::ProcessSecIdentStatePacket(const byte* pachPacket, uint32 nSize)
++void CUpDownClient::ProcessSecIdentStatePacket(const uint8_t* pachPacket, uint32 nSize)
+ {
+ 	if ( nSize != 5 ) {
+ 		return;
+@@ -2344,7 +2344,7 @@ void CUpDownClient::SendPublicIPRequest()
+ 	}
+ }
+ 
+-void CUpDownClient::ProcessPublicIPAnswer(const byte* pbyData, uint32 uSize)
++void CUpDownClient::ProcessPublicIPAnswer(const uint8_t* pbyData, uint32 uSize)
+ {
+ 	if (uSize != 4) {
+ 		throw wxString(wxT("Wrong Packet size on Public IP answer"));
+@@ -2527,7 +2527,7 @@ bool CUpDownClient::SendChatMessage(const wxString& message)
+ 
+ /* Kad stuff */
+ 
+-void CUpDownClient::SetBuddyID(const byte* pucBuddyID)
++void CUpDownClient::SetBuddyID(const uint8_t* pucBuddyID)
+ {
+ 	if( pucBuddyID == NULL ){
+ 		md4clr(m_achBuddyID);
+@@ -2722,7 +2722,7 @@ void CUpDownClient::ProcessChatMessage(wxString message)
+ 							m_strCaptchaChallenge = captcha.GetCaptchaText();
+ 							m_nChatCaptchaState = CA_CHALLENGESENT;
+ 							m_cCaptchasSent++;
+-							CMemFile fileAnswer((byte*) memstr.GetOutputStreamBuffer()->GetBufferStart(), memstr.GetLength());
++							CMemFile fileAnswer((uint8_t*) memstr.GetOutputStreamBuffer()->GetBufferStart(), memstr.GetLength());
+ 							CPacket* packet = new CPacket(fileAnswer, OP_EMULEPROT, OP_CHATCAPTCHAREQ);
+ 							theStats::AddUpOverheadOther(packet->GetPacketSize());
+ 							AddLogLineN(CFormat(wxT("sent Captcha %s (%d)")) % m_strCaptchaChallenge % packet->GetPacketSize());
+@@ -2756,7 +2756,7 @@ void CUpDownClient::ProcessChatMessage(wxString message)
+ 					m_cCaptchasSent = 0;
+ 					m_strCaptchaChallenge.Clear();
+ 					CPacket* packet = new CPacket(OP_CHATCAPTCHARES, 1, OP_EMULEPROT, false);
+-					byte statusResponse = 0; // status response
++					uint8_t statusResponse = 0; // status response
+ 					packet->CopyToDataBuffer(0, &statusResponse, 1);
+ 					theStats::AddUpOverheadOther(packet->GetPacketSize());
+ 					SafeSendPacket(packet);
+@@ -2766,7 +2766,7 @@ void CUpDownClient::ProcessChatMessage(wxString message)
+ 					m_strCaptchaChallenge.Clear();
+ 					m_strCaptchaPendingMsg.Clear();
+ 					CPacket* packet = new CPacket(OP_CHATCAPTCHARES, 1, OP_EMULEPROT, false);
+-					byte statusResponse = (m_cCaptchasSent < 3) ? 1 : 2; // status response
++					uint8_t statusResponse = (m_cCaptchasSent < 3) ? 1 : 2; // status response
+ 					packet->CopyToDataBuffer(0, &statusResponse, 1);
+ 					theStats::AddUpOverheadOther(packet->GetPacketSize());
+ 					SafeSendPacket(packet);
+diff --git a/src/BitVector.h b/src/BitVector.h
+index 9576a11..f4f2474 100644
+--- a/src/BitVector.h
++++ b/src/BitVector.h
+@@ -113,7 +113,7 @@ public:
+ 			bool foundFalse = false;
+ 			uint32 lastByte = m_bytes;
+ 			if (m_bits & 7) {
+-				// uneven: check bits of last byte individually
++				// uneven: check bits of last uint8_t individually
+ 				lastByte--;
+ 				for (uint32 i = m_bits & 0xfffffff8; !foundFalse && i < m_bits; i++) {
+ 					foundFalse = !get(i);
+diff --git a/src/ClientCredits.cpp b/src/ClientCredits.cpp
+index 2804292..6439ac8 100644
+--- a/src/ClientCredits.cpp
++++ b/src/ClientCredits.cpp
+@@ -195,7 +195,7 @@ void CClientCredits::Verified(uint32 dwForIP)
+ 		memcpy(m_pCredits->abySecureIdent, m_abyPublicKey, m_nPublicKeyLen);
+ 		if (GetDownloadedTotal() > 0){
+ 			// for security reason, we have to delete all prior credits here
+-			// in order to save this client, set 1 byte
++			// in order to save this client, set 1 uint8_t
+ 			m_pCredits->downloaded = 1;
+ 			m_pCredits->uploaded = 1;
+ 			AddDebugLogLineN( logCredits, wxT("Credits deleted due to new SecureIdent") );
+@@ -205,7 +205,7 @@ void CClientCredits::Verified(uint32 dwForIP)
+ }
+ 
+ 
+-bool CClientCredits::SetSecureIdent(const byte* pachIdent, uint8 nIdentLen)
++bool CClientCredits::SetSecureIdent(const uint8_t* pachIdent, uint8 nIdentLen)
+ { // verified Public key cannot change, use only if there is not public key yet
+ 	if (MAXPUBKEYSIZE < nIdentLen || m_pCredits->nKeySize != 0 ) {
+ 		return false;
+diff --git a/src/ClientCredits.h b/src/ClientCredits.h
+index ae194c2..b89f7c5 100644
+--- a/src/ClientCredits.h
++++ b/src/ClientCredits.h
+@@ -45,7 +45,7 @@ public:
+ 	uint32		nLastSeen;
+ 	uint16		nReserved3;
+ 	uint8		nKeySize;
+-	byte		abySecureIdent[MAXPUBKEYSIZE];
++	uint8_t		abySecureIdent[MAXPUBKEYSIZE];
+ };
+ 
+ enum EIdentState{
+@@ -65,7 +65,7 @@ public:
+ 	~CClientCredits();
+ 
+ 	const CMD4Hash& GetKey() const			{return m_pCredits->key;}
+-	const byte*	GetSecureIdent() const	{return m_abyPublicKey;}
++	const uint8_t*	GetSecureIdent() const	{return m_abyPublicKey;}
+ 	uint8	GetSecIDKeyLen() const			{return m_nPublicKeyLen;}
+ 	const CreditStruct* GetDataStruct() const	{return m_pCredits;}
+ 	void	ClearWaitStartTime();
+@@ -75,7 +75,7 @@ public:
+ 	uint64	GetDownloadedTotal() const;
+ 	float	GetScoreRatio(uint32 dwForIP, bool cryptoavail);
+ 	void	SetLastSeen();
+-	bool	SetSecureIdent(const byte* pachIdent, uint8 nIdentLen); // Public key cannot change, use only if there is not public key yet
++	bool	SetSecureIdent(const uint8_t* pachIdent, uint8 nIdentLen); // Public key cannot change, use only if there is not public key yet
+ 	uint32	m_dwCryptRndChallengeFor;
+ 	uint32	m_dwCryptRndChallengeFrom;
+ 	EIdentState	GetCurrentIdentState(uint32 dwForIP) const; // can be != m_identState
+@@ -89,7 +89,7 @@ private:
+ 	EIdentState		m_identState;
+ 	void			InitalizeIdent();
+ 	CreditStruct*	m_pCredits;
+-	byte			m_abyPublicKey[80];			// even keys which are not verified will be stored here, and - if verified - copied into the struct
++	uint8_t			m_abyPublicKey[80];			// even keys which are not verified will be stored here, and - if verified - copied into the struct
+ 	uint8			m_nPublicKeyLen;
+ 	uint32			m_dwIdentIP;
+ 	uint32			m_dwSecureWaitTime;
+diff --git a/src/ClientCreditsList.cpp b/src/ClientCreditsList.cpp
+index 3bea9fe..d61e8d4 100644
+--- a/src/ClientCreditsList.cpp
++++ b/src/ClientCreditsList.cpp
+@@ -326,7 +326,7 @@ void CClientCreditsList::InitalizeCrypting()
+ }
+ 
+ 
+-uint8 CClientCreditsList::CreateSignature(CClientCredits* pTarget, byte* pachOutput, uint8 nMaxSize, uint32 ChallengeIP, uint8 byChaIPKind, void* sigkey)
++uint8 CClientCreditsList::CreateSignature(CClientCredits* pTarget, uint8_t* pachOutput, uint8 nMaxSize, uint32 ChallengeIP, uint8 byChaIPKind, void* sigkey)
+ {
+ 	CryptoPP::RSASSA_PKCS1v15_SHA_Signer* signer =
+ 		static_cast<CryptoPP::RSASSA_PKCS1v15_SHA_Signer *>(sigkey);
+@@ -345,7 +345,7 @@ uint8 CClientCreditsList::CreateSignature(CClientCredits* pTarget, byte* pachOut
+ 	try {
+ 		CryptoPP::SecByteBlock sbbSignature(signer->SignatureLength());
+ 		CryptoPP::AutoSeededX917RNG<CryptoPP::DES_EDE3> rng;
+-		byte abyBuffer[MAXPUBKEYSIZE+9];
++		uint8_t abyBuffer[MAXPUBKEYSIZE+9];
+ 		uint32 keylen = pTarget->GetSecIDKeyLen();
+ 		memcpy(abyBuffer,pTarget->GetSecureIdent(),keylen);
+ 		// 4 additional bytes random data send from this client
+@@ -373,7 +373,7 @@ uint8 CClientCreditsList::CreateSignature(CClientCredits* pTarget, byte* pachOut
+ }
+ 
+ 
+-bool CClientCreditsList::VerifyIdent(CClientCredits* pTarget, const byte* pachSignature, uint8 nInputSize, uint32 dwForIP, uint8 byChaIPKind)
++bool CClientCreditsList::VerifyIdent(CClientCredits* pTarget, const uint8_t* pachSignature, uint8 nInputSize, uint32 dwForIP, uint8 byChaIPKind)
+ {
+ 	wxASSERT( pTarget );
+ 	wxASSERT( pachSignature );
+@@ -383,10 +383,10 @@ bool CClientCreditsList::VerifyIdent(CClientCredits* pTarget, const byte* pachSi
+ 	}
+ 	bool bResult;
+ 	try {
+-		CryptoPP::StringSource ss_Pubkey((byte*)pTarget->GetSecureIdent(),pTarget->GetSecIDKeyLen(),true,0);
++		CryptoPP::StringSource ss_Pubkey((uint8_t*)pTarget->GetSecureIdent(),pTarget->GetSecIDKeyLen(),true,0);
+ 		CryptoPP::RSASSA_PKCS1v15_SHA_Verifier pubkey(ss_Pubkey);
+ 		// 4 additional bytes random data send from this client +5 bytes v2
+-		byte abyBuffer[MAXPUBKEYSIZE+9];
++		uint8_t abyBuffer[MAXPUBKEYSIZE+9];
+ 		memcpy(abyBuffer,m_abyMyPublicKey,m_nMyPublicKeyLen);
+ 		uint32 challenge = pTarget->m_dwCryptRndChallengeFor;
+ 		wxASSERT ( challenge != 0 );
+@@ -455,7 +455,7 @@ bool CClientCreditsList::Debug_CheckCrypting(){
+ 	CryptoPP::RSASSA_PKCS1v15_SHA_Signer priv(rng, 384);
+ 	CryptoPP::RSASSA_PKCS1v15_SHA_Verifier pub(priv);
+ 
+-	byte abyPublicKey[80];
++	uint8_t abyPublicKey[80];
+ 	CryptoPP::ArraySink asink(abyPublicKey, 80);
+ 	pub.DEREncode(asink);
+ 	int8 PublicKeyLen = asink.TotalPutLength();
+@@ -467,7 +467,7 @@ bool CClientCreditsList::Debug_CheckCrypting(){
+ 	newcredits.SetSecureIdent(m_abyMyPublicKey,m_nMyPublicKeyLen);
+ 	newcredits.m_dwCryptRndChallengeFrom = challenge;
+ 	// create signature with fake priv key
+-	byte pachSignature[200];
++	uint8_t pachSignature[200];
+ 	memset(pachSignature,0,200);
+ 	uint8 sigsize = CreateSignature(&newcredits,pachSignature,200,0,false, &priv);
+ 
+diff --git a/src/ClientCreditsList.h b/src/ClientCreditsList.h
+index 3b3aa6c..70b3c31 100644
+--- a/src/ClientCreditsList.h
++++ b/src/ClientCreditsList.h
+@@ -39,13 +39,13 @@ public:
+ 	~CClientCreditsList();
+ 
+ 	// return signature size, 0 = Failed | use sigkey param for debug only
+-	uint8	CreateSignature(CClientCredits* pTarget, byte* pachOutput, uint8 nMaxSize, uint32 ChallengeIP, uint8 byChaIPKind, void* sigkey = NULL);
+-	bool	VerifyIdent(CClientCredits* pTarget, const byte* pachSignature, uint8 nInputSize, uint32 dwForIP, uint8 byChaIPKind);
++	uint8	CreateSignature(CClientCredits* pTarget, uint8_t* pachOutput, uint8 nMaxSize, uint32 ChallengeIP, uint8 byChaIPKind, void* sigkey = NULL);
++	bool	VerifyIdent(CClientCredits* pTarget, const uint8_t* pachSignature, uint8 nInputSize, uint32 dwForIP, uint8 byChaIPKind);
+ 
+ 	CClientCredits* GetCredit(const CMD4Hash& key);
+ 	void	Process();
+ 	uint8	GetPubKeyLen() const			{return m_nMyPublicKeyLen;}
+-	const byte*	GetPublicKey() const		{return m_abyMyPublicKey;}
++	const uint8_t*	GetPublicKey() const		{return m_abyMyPublicKey;}
+ 	bool	CryptoAvailable() const;
+ 	void	SaveList();
+ protected:
+@@ -61,7 +61,7 @@ private:
+ 	uint32		m_nLastSaved;
+ 	// A void* to avoid having to include the large CryptoPP.h file
+ 	void*		m_pSignkey;
+-	byte		m_abyMyPublicKey[80];
++	uint8_t		m_abyMyPublicKey[80];
+ 	uint8		m_nMyPublicKeyLen;
+ };
+ 
+diff --git a/src/ClientList.cpp b/src/ClientList.cpp
+index f26cce4..9b8b7ec 100644
+--- a/src/ClientList.cpp
++++ b/src/ClientList.cpp
+@@ -923,7 +923,7 @@ bool CClientList::IncomingBuddy(Kademlia::CContact* contact, Kademlia::CUInt128*
+ 	CUpDownClient* pNewClient = new CUpDownClient(contact->GetTCPPort(), contact->GetIPAddress(), 0, 0, NULL, false, true );
+ 	pNewClient->SetKadPort(contact->GetUDPPort());
+ 	pNewClient->SetKadState(KS_INCOMING_BUDDY);
+-	byte ID[16];
++	uint8_t ID[16];
+ 	contact->GetClientID().ToByteArray(ID);
+ 	pNewClient->SetUserHash(CMD4Hash(ID));
+ 	buddyID->ToByteArray(ID);
+diff --git a/src/ClientTCPSocket.cpp b/src/ClientTCPSocket.cpp
+index 73e5d21..ccd6016 100644
+--- a/src/ClientTCPSocket.cpp
++++ b/src/ClientTCPSocket.cpp
+@@ -298,7 +298,7 @@ void CClientTCPSocket::Safe_Delete_Client()
+ }
+ 
+ 
+-bool CClientTCPSocket::ProcessPacket(const byte* buffer, uint32 size, uint8 opcode)
++bool CClientTCPSocket::ProcessPacket(const uint8_t* buffer, uint32 size, uint8 opcode)
+ {
+ 	#ifdef __PACKET_RECV_DUMP__
+ 	//printf("Rec: OPCODE %x \n",opcode);
+@@ -1016,7 +1016,7 @@ bool CClientTCPSocket::ProcessPacket(const byte* buffer, uint32 size, uint8 opco
+ }
+ 
+ 
+-bool CClientTCPSocket::ProcessExtPacket(const byte* buffer, uint32 size, uint8 opcode)
++bool CClientTCPSocket::ProcessExtPacket(const uint8_t* buffer, uint32 size, uint8 opcode)
+ {
+ 	#ifdef __PACKET_RECV_DUMP__
+ 	//printf("Rec: OPCODE %x \n",opcode);
+@@ -1637,7 +1637,7 @@ bool CClientTCPSocket::ProcessExtPacket(const byte* buffer, uint32 size, uint8 o
+ 				break;
+ 			}
+ 			CUInt128 fileid = data.ReadUInt128();
+-			byte fileid2[16];
++			uint8_t fileid2[16];
+ 			fileid.ToByteArray(fileid2);
+ 			const CMD4Hash fileHash(fileid2);
+ 			if (theApp->sharedfiles->GetFileByID(fileHash) == NULL) {
+@@ -1816,7 +1816,7 @@ bool CClientTCPSocket::ProcessExtPacket(const byte* buffer, uint32 size, uint8 o
+ 	return true;
+ }
+ 
+-bool CClientTCPSocket::ProcessED2Kv2Packet(const byte* buffer, uint32 size, uint8 opcode)
++bool CClientTCPSocket::ProcessED2Kv2Packet(const uint8_t* buffer, uint32 size, uint8 opcode)
+ {
+ 	#ifdef __PACKET_RECV_DUMP__
+ 	//printf("Rec: OPCODE %x ED2Kv2\n",opcode);
+diff --git a/src/ClientTCPSocket.h b/src/ClientTCPSocket.h
+index ba65265..5476663 100644
+--- a/src/ClientTCPSocket.h
++++ b/src/ClientTCPSocket.h
+@@ -78,9 +78,9 @@ protected:
+ private:
+ 	CUpDownClient*	m_client;
+ 
+-	bool	ProcessPacket(const byte* packet, uint32 size, uint8 opcode);
+-	bool	ProcessExtPacket(const byte* packet, uint32 size, uint8 opcode);
+-	bool	ProcessED2Kv2Packet(const byte* packet, uint32 size, uint8 opcode);
++	bool	ProcessPacket(const uint8_t* packet, uint32 size, uint8 opcode);
++	bool	ProcessExtPacket(const uint8_t* packet, uint32 size, uint8 opcode);
++	bool	ProcessED2Kv2Packet(const uint8_t* packet, uint32 size, uint8 opcode);
+ 	void	ResetTimeOutTimer();
+ 	void	SetClient(CUpDownClient* client);
+ 
+diff --git a/src/ClientUDPSocket.cpp b/src/ClientUDPSocket.cpp
+index 924363a..0619304 100644
+--- a/src/ClientUDPSocket.cpp
++++ b/src/ClientUDPSocket.cpp
+@@ -75,7 +75,7 @@ void CClientUDPSocket::OnReceive(int errorCode)
+ }
+ 
+ 
+-void CClientUDPSocket::OnPacketReceived(uint32 ip, uint16 port, byte* buffer, size_t length)
++void CClientUDPSocket::OnPacketReceived(uint32 ip, uint16 port, uint8_t* buffer, size_t length)
+ {
+ 	wxCHECK_RET(length >= 2, wxT("Invalid packet."));
+ 
+@@ -137,7 +137,7 @@ void CClientUDPSocket::OnPacketReceived(uint32 ip, uint16 port, byte* buffer, si
+ }
+ 
+ 
+-void CClientUDPSocket::ProcessPacket(byte* packet, int16 size, int8 opcode, uint32 host, uint16 port)
++void CClientUDPSocket::ProcessPacket(uint8_t* packet, int16 size, int8 opcode, uint32 host, uint16 port)
+ {
+ 	switch (opcode) {
+ 		case OP_REASKCALLBACKUDP: {
+diff --git a/src/ClientUDPSocket.h b/src/ClientUDPSocket.h
+index 162acaa..d894a32 100644
+--- a/src/ClientUDPSocket.h
++++ b/src/ClientUDPSocket.h
+@@ -37,8 +37,8 @@ protected:
+ 	void	OnReceive(int errorCode);
+ 
+ private:
+-	void	OnPacketReceived(uint32 ip, uint16 port, byte* buffer, size_t length);
+-	void	ProcessPacket(byte* packet, int16 size, int8 opcode, uint32 host, uint16 port);
++	void	OnPacketReceived(uint32 ip, uint16 port, uint8_t* buffer, size_t length);
++	void	ProcessPacket(uint8_t* packet, int16 size, int8 opcode, uint32 host, uint16 port);
+ };
+ 
+ #endif // CLIENTUDPSOCKET_H
+diff --git a/src/DownloadClient.cpp b/src/DownloadClient.cpp
+index c364f74..37f81a8 100644
+--- a/src/DownloadClient.cpp
++++ b/src/DownloadClient.cpp
+@@ -568,7 +568,7 @@ void CUpDownClient::SetDownloadState(uint8 byNewState)
+ }
+ /* eMule 0.30c implementation, i give it a try (Creteil) END ... */
+ 
+-void CUpDownClient::ProcessHashSet(const byte* packet, uint32 size)
++void CUpDownClient::ProcessHashSet(const uint8_t* packet, uint32 size)
+ {
+ 	if ((!m_reqfile) || md4cmp(packet,m_reqfile->GetFileHash().GetHash())) {
+ 		throw wxString(wxT("Wrong fileid sent (ProcessHashSet)"));
+@@ -830,7 +830,7 @@ The requests will still not exceed 180k, but may be smaller to
+ fill a gap.
+ */
+ 
+-void CUpDownClient::ProcessBlockPacket(const byte* packet, uint32 size, bool packed, bool largeblocks)
++void CUpDownClient::ProcessBlockPacket(const uint8_t* packet, uint32 size, bool packed, bool largeblocks)
+ {
+ 	// Ignore if no data required
+ 	if (!(GetDownloadState() == DS_DOWNLOADING || GetDownloadState() == DS_NONEEDEDPARTS)) {
+@@ -930,7 +930,7 @@ void CUpDownClient::ProcessBlockPacket(const byte* packet, uint32 size, bool pac
+ 						return;
+ 					}
+ 					// Write to disk (will be buffered in part file class)
+-					lenWritten = m_reqfile->WriteToBuffer( size - header_size, (byte*)(packet + header_size), nStartPos, nEndPos, cur_block->block, this);
++					lenWritten = m_reqfile->WriteToBuffer( size - header_size, (uint8_t*)(packet + header_size), nStartPos, nEndPos, cur_block->block, this);
+ 				} else {
+ 					// Packed
+ 					wxASSERT( (long int)size > 0 );
+@@ -942,10 +942,10 @@ void CUpDownClient::ProcessBlockPacket(const byte* packet, uint32 size, bool pac
+ 					if (lenUnzipped > (BLOCKSIZE + 300)) {
+ 						lenUnzipped = (BLOCKSIZE + 300);
+ 					}
+-					byte *unzipped = new byte[lenUnzipped];
++					uint8_t *unzipped = new uint8_t[lenUnzipped];
+ 
+ 					// Try to unzip the packet
+-					int result = unzip(cur_block, (byte*)(packet + header_size), (size - header_size), &unzipped, &lenUnzipped);
++					int result = unzip(cur_block, (uint8_t*)(packet + header_size), (size - header_size), &unzipped, &lenUnzipped);
+ 
+ 					// no block can be uncompressed to >2GB, 'lenUnzipped' is obviously erroneous.
+ 					if (result == Z_OK && ((int)lenUnzipped >= 0)) {
+@@ -1046,7 +1046,7 @@ void CUpDownClient::ProcessBlockPacket(const byte* packet, uint32 size, bool pac
+ 	}
+ }
+ 
+-int CUpDownClient::unzip(Pending_Block_Struct *block, byte *zipped, uint32 lenZipped, byte **unzipped, uint32 *lenUnzipped, int iRecursion)
++int CUpDownClient::unzip(Pending_Block_Struct *block, uint8_t *zipped, uint32 lenZipped, uint8_t **unzipped, uint32 *lenUnzipped, int iRecursion)
+ {
+ 	int err = Z_DATA_ERROR;
+ 
+@@ -1112,7 +1112,7 @@ int CUpDownClient::unzip(Pending_Block_Struct *block, byte *zipped, uint32 lenZi
+ 			newLength = lenZipped * 2;
+ 		}
+ 		// Copy any data that was successfully unzipped to new array
+-		byte *temp = new byte[newLength];
++		uint8_t *temp = new uint8_t[newLength];
+ 		wxASSERT( zS->total_out - block->totalUnzipped <= newLength );
+ 		memcpy(temp, (*unzipped), (zS->total_out - block->totalUnzipped));
+ 		delete [] (*unzipped);
+@@ -1601,7 +1601,7 @@ void CUpDownClient::SendAICHRequest(CPartFile* pForFile, uint16 nPart){
+ 	SafeSendPacket(packet);
+ }
+ 
+-void CUpDownClient::ProcessAICHAnswer(const byte* packet, uint32 size)
++void CUpDownClient::ProcessAICHAnswer(const uint8_t* packet, uint32 size)
+ {
+ 	if (m_fAICHRequested == FALSE){
+ 		throw wxString(wxT("Received unrequested AICH Packet"));
+@@ -1643,7 +1643,7 @@ void CUpDownClient::ProcessAICHAnswer(const byte* packet, uint32 size)
+ }
+ 
+ 
+-void CUpDownClient::ProcessAICHRequest(const byte* packet, uint32 size)
++void CUpDownClient::ProcessAICHRequest(const uint8_t* packet, uint32 size)
+ {
+ 	if (size != 16 + 2 + CAICHHash::GetHashSize()) {
+ 		throw wxString(wxT("Received AICH Request Packet with wrong size"));
+diff --git a/src/DownloadQueue.cpp b/src/DownloadQueue.cpp
+index 7033cd1..6128fe2 100644
+--- a/src/DownloadQueue.cpp
++++ b/src/DownloadQueue.cpp
+@@ -1114,7 +1114,7 @@ void CDownloadQueue::ProcessLocalRequests()
+ 		if (iSize > 0) {
+ 			// create one 'packet' which contains all buffered OP_GETSOURCES ED2K packets to be sent with one TCP frame
+ 			// server credits: (16+4)*regularfiles + (16+4+8)*largefiles +1
+-			CScopedPtr<CPacket> packet(new CPacket(new byte[iSize], dataTcpFrame.GetLength(), true, false));
++			CScopedPtr<CPacket> packet(new CPacket(new uint8_t[iSize], dataTcpFrame.GetLength(), true, false));
+ 			dataTcpFrame.Seek(0, wxFromStart);
+ 			dataTcpFrame.Read(packet->GetPacket(), iSize);
+ 			uint32 size = packet->GetPacketSize();
+@@ -1591,7 +1591,7 @@ void CDownloadQueue::KademliaSearchFile(uint32_t searchID, const Kademlia::CUInt
+ 			//ctemp->SetServerIP(serverip);
+ 			//ctemp->SetServerPort(serverport);
+ 			ctemp->SetKadPort(udp);
+-			byte cID[16];
++			uint8_t cID[16];
+ 			pcontactID->ToByteArray(cID);
+ 			ctemp->SetUserHash(CMD4Hash(cID));
+ 			break;
+@@ -1609,7 +1609,7 @@ void CDownloadQueue::KademliaSearchFile(uint32_t searchID, const Kademlia::CUInt
+ 			// from this firewalled source, the compare method will match them.
+ 			ctemp->SetSourceFrom(SF_KADEMLIA);
+ 			ctemp->SetKadPort(udp);
+-			byte cID[16];
++			uint8_t cID[16];
+ 			pcontactID->ToByteArray(cID);
+ 			ctemp->SetUserHash(CMD4Hash(cID));
+ 			pbuddyID->ToByteArray(cID);
+@@ -1634,7 +1634,7 @@ void CDownloadQueue::KademliaSearchFile(uint32_t searchID, const Kademlia::CUInt
+ 			ctemp->SetSourceFrom(SF_KADEMLIA);
+ 			ctemp->SetKadPort(udp);
+ 			ctemp->SetIP(ED2KID); // need to set the IP address, which cannot be used for TCP but for UDP
+-			byte cID[16];
++			uint8_t cID[16];
+ 			pcontactID->ToByteArray(cID);
+ 			ctemp->SetUserHash(CMD4Hash(cID));
+ 		}
+diff --git a/src/EMSocket.cpp b/src/EMSocket.cpp
+index 3ccaa7e..e3e45a0 100644
+--- a/src/EMSocket.cpp
++++ b/src/EMSocket.cpp
+@@ -199,7 +199,7 @@ void CEMSocket::OnReceive(int nErrorCode)
+ 		}
+ 
+ 		uint32 readMax;
+-		byte *buf;
++		uint8_t *buf;
+ 		if (pendingHeaderSize < PACKET_HEADER_SIZE) {
+ 			delete[] pendingPacket;
+ 			pendingPacket = NULL;
+@@ -213,7 +213,7 @@ void CEMSocket::OnReceive(int nErrorCode)
+ 				OnError(ERR_TOOBIG);
+ 				return;
+ 			}
+-			pendingPacket = new byte[readMax + 1];
++			pendingPacket = new uint8_t[readMax + 1];
+ 			buf = pendingPacket;
+ 		} else {
+ 			buf = pendingPacket + pendingPacketSize;
+@@ -529,7 +529,7 @@ SocketSentBytes CEMSocket::Send(uint32 maxNumberOfBytesToSend, uint32 minFragSiz
+ 				sent = 0;
+ 				delete curPacket;
+ 
+-				CryptPrepareSendData((byte*)sendbuffer, sendblen);
++				CryptPrepareSendData((uint8_t*)sendbuffer, sendblen);
+ 			}
+ 
+ 			// At this point we've got a packet to send in sendbuffer. Try to send it. Loop until entire packet
+diff --git a/src/EMSocket.h b/src/EMSocket.h
+index 4d00361..4866aa5 100644
+--- a/src/EMSocket.h
++++ b/src/EMSocket.h
+@@ -99,15 +99,15 @@ private:
+ 	bool	pendingOnReceive;
+ 
+ 	// Download partial header
+-	byte	pendingHeader[PACKET_HEADER_SIZE];
++	uint8_t	pendingHeader[PACKET_HEADER_SIZE];
+ 	uint32	pendingHeaderSize;
+ 
+ 	// Download partial packet
+-	byte*	pendingPacket;
++	uint8_t*	pendingPacket;
+ 	uint32  pendingPacketSize;
+ 
+ 	// Upload control
+-	byte*	sendbuffer;
++	uint8_t*	sendbuffer;
+ 	uint32	sendblen;
+ 	uint32	sent;
+ 
+diff --git a/src/EncryptedDatagramSocket.cpp b/src/EncryptedDatagramSocket.cpp
+index 842686f..73de612 100644
+--- a/src/EncryptedDatagramSocket.cpp
++++ b/src/EncryptedDatagramSocket.cpp
+@@ -42,7 +42,7 @@
+ 
+ 	- Additional Comments:
+ 		- For obvious reasons the UDP handshake is actually no handshake. If a different Encryption method (or better a different Key) is to be used this has to be negotiated in a TCP connection
+-		- SemiRandomNotProtocolMarker is a Byte which has a value unequal any Protocol header byte. This is a compromise, turning in complete randomness (and nice design) but gaining a lower CPU usage
++		- SemiRandomNotProtocolMarker is a Byte which has a value unequal any Protocol header uint8_t. This is a compromise, turning in complete randomness (and nice design) but gaining a lower CPU usage
+ 		- Kad/Ed2k Marker are only indicators, which possibility could be tried first, and should not be trusted
+ 
+ ****************************** Server Packets
+@@ -66,7 +66,7 @@
+ 
+ 	- Additional Comments:
+ 		- For obvious reasons the UDP handshake is actually no handshake. If a different Encryption method (or better a different Key) is to be used this has to be negotiated in a TCP connection
+-		- SemiRandomNotProtocolMarker is a Byte which has a value unequal any Protocol header byte. This is a compromise, turning in complete randomness (and nice design) but gaining a lower CPU usage
++		- SemiRandomNotProtocolMarker is a Byte which has a value unequal any Protocol header uint8_t. This is a compromise, turning in complete randomness (and nice design) but gaining a lower CPU usage
+ 
+ ****************************** KAD Packets
+ 
+@@ -86,7 +86,7 @@
+ 
+ 	- Additional Comments:
+ 		- For obvious reasons the UDP handshake is actually no handshake. If a different Encryption method (or better a different Key) is to be used this has to be negotiated in a TCP connection
+-		- SemiRandomNotProtocolMarker is a Byte which has a value unequal any Protocol header byte. This is a compromise, turning in complete randomness (and nice design) but gaining a lower CPU usage
++		- SemiRandomNotProtocolMarker is a Byte which has a value unequal any Protocol header uint8_t. This is a compromise, turning in complete randomness (and nice design) but gaining a lower CPU usage
+ 		- Kad/Ed2k Marker are only indicators, which possibility could be tried first, and should not be trusted
+ */
+ 
+@@ -309,7 +309,7 @@ int CEncryptedDatagramSocket::EncryptSendClient(uint8_t **buf, int bufLen, const
+ 
+ 	sendbuffer.SetKey(md5, true);
+ 
+-	// create the semi random byte encryption header
++	// create the semi random uint8_t encryption header
+ 	uint8_t semiRandomNotProtocolMarker = 0;
+ 	int i;
+ 	for (i = 0; i < 128; i++) {
+@@ -444,7 +444,7 @@ int CEncryptedDatagramSocket::EncryptSendServer(uint8_t** ppbyBuf, int nBufLen,
+ 	CRC4EncryptableBuffer sendbuffer;
+ 	sendbuffer.SetKey(md5, true);
+ 
+-	// create the semi random byte encryption header
++	// create the semi random uint8_t encryption header
+ 	uint8_t bySemiRandomNotProtocolMarker = 0;
+ 	int i;
+ 
+diff --git a/src/EncryptedStreamSocket.cpp b/src/EncryptedStreamSocket.cpp
+index da579ce..9fb5acc 100644
+--- a/src/EncryptedStreamSocket.cpp
++++ b/src/EncryptedStreamSocket.cpp
+@@ -180,7 +180,7 @@ void CEncryptedStreamSocket::SetConnectionEncryption(bool bEnabled, const uint8_
+ /* Internals, common to base class */
+ 
+ // unfortunately sending cannot be made transparent for the derived class, because of WSA_WOULDBLOCK
+-// together with the fact that each byte must pass the keystream only once
++// together with the fact that each uint8_t must pass the keystream only once
+ int CEncryptedStreamSocket::Write(const void* lpBuf, uint32_t nBufLen)
+ {
+ 	//printf("Starting write for %s\n", (const char*) unicode2char(GetPeer()));
+@@ -403,7 +403,7 @@ void CEncryptedStreamSocket::StartNegotiation(bool bOutgoing)
+ 
+ 		m_cryptDHA.Randomize((CryptoPP::AutoSeededRandomPool&)GetRandomPool(), DHAGREEMENT_A_BITS); // our random a
+ 		wxASSERT( m_cryptDHA.MinEncodedSize() <= DHAGREEMENT_A_BITS / 8 );
+-		CryptoPP::Integer cryptDHPrime((byte*)dh768_p, PRIMESIZE_BYTES);  // our fixed prime
++		CryptoPP::Integer cryptDHPrime((uint8_t*)dh768_p, PRIMESIZE_BYTES);  // our fixed prime
+ 		// calculate g^a % p
+ 		CryptoPP::Integer cryptDHGexpAmodP = a_exp_b_mod_c(CryptoPP::Integer(2), m_cryptDHA, cryptDHPrime);
+ 		wxASSERT( m_cryptDHA.MinEncodedSize() <= PRIMESIZE_BYTES );
+@@ -590,8 +590,8 @@ int CEncryptedStreamSocket::Negotiate(const uint8* pBuffer, uint32 nLen)
+ 					wxASSERT( !m_cryptDHA.IsZero() );
+ 					uint8_t aBuffer[PRIMESIZE_BYTES + 1];
+ 					m_pfiReceiveBuffer.Read(aBuffer, PRIMESIZE_BYTES);
+-					CryptoPP::Integer cryptDHAnswer((byte*)aBuffer, PRIMESIZE_BYTES);
+-					CryptoPP::Integer cryptDHPrime((byte*)dh768_p, PRIMESIZE_BYTES);  // our fixed prime
++					CryptoPP::Integer cryptDHAnswer((uint8_t*)aBuffer, PRIMESIZE_BYTES);
++					CryptoPP::Integer cryptDHPrime((uint8_t*)dh768_p, PRIMESIZE_BYTES);  // our fixed prime
+ 					CryptoPP::Integer cryptResult = a_exp_b_mod_c(cryptDHAnswer, m_cryptDHA, cryptDHPrime);
+ 
+ 					m_cryptDHA = 0;
+@@ -694,7 +694,7 @@ int CEncryptedStreamSocket::SendNegotiatingData(const void* lpBuf, uint32_t nBuf
+ 		}
+ 
+ 		if (nBufLen - nStartCryptFromByte > 0) {
+-			//printf("Crypting negotiation data on %s starting on byte %i\n", (const char*) unicode2char(GetPeer()), nStartCryptFromByte);
++			//printf("Crypting negotiation data on %s starting on uint8_t %i\n", (const char*) unicode2char(GetPeer()), nStartCryptFromByte);
+ 			//DumpMem(lpBuf, nBufLen, wxT("Pre-encryption:"));
+ 			m_pfiSendBuffer.RC4Crypt((uint8*)lpBuf + nStartCryptFromByte, pBuffer + nStartCryptFromByte, nBufLen - nStartCryptFromByte);
+ 			//DumpMem(pBuffer, nBufLen, wxT("Post-encryption:"));
+diff --git a/src/FileArea.cpp b/src/FileArea.cpp
+index 8a018b9..da0204b 100644
+--- a/src/FileArea.cpp
++++ b/src/FileArea.cpp
+@@ -230,7 +230,7 @@ void CFileArea::ReadAt(CFileAutoClose& file, uint64 offset, size_t count)
+ 		void *p = mmap(NULL, m_length, PROT_READ, MAP_SHARED, file.fd(), offStart);
+ 		if (p != MAP_FAILED) {
+ 			m_file = &file;
+-			m_mmap_buffer = (byte*) p;
++			m_mmap_buffer = (uint8_t*) p;
+ 			m_buffer = m_mmap_buffer + (offset - offStart);
+ 
+ 			// add to list to catch errors correctly
+@@ -240,7 +240,7 @@ void CFileArea::ReadAt(CFileAutoClose& file, uint64 offset, size_t count)
+ 	}
+ 	file.Unlock();
+ #endif
+-	m_buffer = new byte[count];
++	m_buffer = new uint8_t[count];
+ 	file.ReadAt(m_buffer, offset, count);
+ }
+ 
+@@ -257,7 +257,7 @@ void CFileArea::StartWriteAt(CFileAutoClose& file, uint64 offset, size_t count)
+ 		if (p != MAP_FAILED)
+ 		{
+ 			m_file = &file;
+-			m_mmap_buffer = (byte*) p;
++			m_mmap_buffer = (uint8_t*) p;
+ 			m_buffer = m_mmap_buffer + (offset - offStart);
+ 
+ 			// add to list to catch errors correctly
+@@ -266,13 +266,13 @@ void CFileArea::StartWriteAt(CFileAutoClose& file, uint64 offset, size_t count)
+ 		}
+ 		file.Unlock();
+ 	}
+-	m_buffer = new byte[count];
++	m_buffer = new uint8_t[count];
+ }
+ #else
+ void CFileArea::StartWriteAt(CFileAutoClose&, uint64, size_t count)
+ {
+ 	Close();
+-	m_buffer = new byte[count];
++	m_buffer = new uint8_t[count];
+ }
+ #endif
+ 
+diff --git a/src/FileArea.h b/src/FileArea.h
+index 4006151..17c6dee 100644
+--- a/src/FileArea.h
++++ b/src/FileArea.h
+@@ -22,7 +22,7 @@
+ #ifndef FILEAREA_H
+ #define FILEAREA_H
+ 
+-#include "Types.h"		// Needed for byte
++#include "Types.h"		// Needed for uint8_t
+ 
+ class CFileAreaSigHandler;
+ class CFileAutoClose;
+@@ -78,7 +78,7 @@ public:
+ 	 * Get buffer that contains data readed or to write.
+ 	 * @return allocated buffer or NULL if not initialized
+ 	 */
+-	byte *GetBuffer() const { return m_buffer; };
++	uint8_t *GetBuffer() const { return m_buffer; };
+ 
+ 	/**
+ 	 * Report error pending
+@@ -97,11 +97,11 @@ private:
+ 	 * If mapped points inside m_mmap_buffer area otherwise
+ 	 * point to an allocated buffer to be freed.
+ 	 */
+-	byte *m_buffer;
++	uint8_t *m_buffer;
+ 	/**
+ 	 * Pointer to memory mapped area or NULL if not mapped.
+ 	 */
+-	byte *m_mmap_buffer;
++	uint8_t *m_mmap_buffer;
+ 	/**
+ 	 * Length of the mapped region, currently used only for munmap.
+ 	 */
+diff --git a/src/FileLock.h b/src/FileLock.h
+index 9758bdd..6a8a171 100644
+--- a/src/FileLock.h
++++ b/src/FileLock.h
+@@ -91,7 +91,7 @@ private:
+ 
+ 	/** Locks or unlocks the lock-file, returning true on success. */
+ 	bool SetLock(bool doLock) {
+-		// lock/unlock first byte in the file
++		// lock/unlock first uint8_t in the file
+ 		OVERLAPPED ov;
+ 		ov.Offset = ov.OffsetHigh = 0;
+ 		BOOL ret;
+diff --git a/src/GapList.h b/src/GapList.h
+index 41c4af7..490180f 100644
+--- a/src/GapList.h
++++ b/src/GapList.h
+@@ -52,7 +52,7 @@ private:
+ 		incomplete,
+ 		unknown
+ 	};
+-	std::vector<byte> m_partsComplete;
++	std::vector<uint8_t> m_partsComplete;
+ 
+ 	// get size of any part
+ 	uint32 GetPartSize(uint16 part) const { return part == m_iPartCount - 1 ? m_sizeLastPart : PARTSIZE; }
+diff --git a/src/IPFilterScanner.cpp b/src/IPFilterScanner.cpp
+index 7cd5ae0..b81df8e 100644
+--- a/src/IPFilterScanner.cpp
++++ b/src/IPFilterScanner.cpp
+@@ -1771,7 +1771,7 @@ YY_BUFFER_STATE yyip_scan_string (yyconst char * yystr )
+ 
+ /** Setup the input buffer state to scan the given bytes. The next call to yyiplex() will
+  * scan from a @e copy of @a bytes.
+- * @param bytes the byte buffer to scan
++ * @param bytes the uint8_t buffer to scan
+  * @param len the number of bytes in the buffer pointed to by @a bytes.
+  *
+  * @return the newly allocated buffer state object.
+diff --git a/src/KnownFile.cpp b/src/KnownFile.cpp
+index 0e39630..6c5c389 100644
+--- a/src/KnownFile.cpp
++++ b/src/KnownFile.cpp
+@@ -358,7 +358,7 @@ void CKnownFile::SetFileSize(uint64 nFileSize)
+ 	//Hash[  1]: 31D6CFE0D16AE931B73C59D7E0C089C0	*special part hash*
+ 	//
+ 	//
+-	//File size: 1*PARTSIZE + 1 byte
++	//File size: 1*PARTSIZE + 1 uint8_t
+ 	//File hash: 2F620AE9D462CBB6A59FE8401D2B3D23
+ 	//Nr. hashs: 2
+ 	//Hash[  0]: 121795F0BEDE02DDC7C5426D0995F53F
+@@ -382,7 +382,7 @@ void CKnownFile::SetFileSize(uint64 nFileSize)
+ 	//Hash[  3]: 31D6CFE0D16AE931B73C59D7E0C089C0	*special part hash*
+ 	//
+ 	//
+-	//File size: 3*PARTSIZE + 1 byte
++	//File size: 3*PARTSIZE + 1 uint8_t
+ 	//File hash: 797ED552F34380CAFF8C958207E40355
+ 	//Nr. hashs: 4
+ 	//Hash[  0]: FC7FD02CCD6987DCF1421F4C0AF94FB8
+@@ -788,8 +788,8 @@ void CKnownFile::CreateHashFromHashlist(const ArrayOfCMD4Hash& hashes, CMD4Hash*
+ {
+ 	wxCHECK_RET(hashes.size(), wxT("No input to hash from in CreateHashFromHashlist"));
+ 
+-	std::vector<byte> buffer(hashes.size() * MD4HASH_LENGTH);
+-	std::vector<byte>::iterator it = buffer.begin();
++	std::vector<uint8_t> buffer(hashes.size() * MD4HASH_LENGTH);
++	std::vector<uint8_t>::iterator it = buffer.begin();
+ 
+ 	for (size_t i = 0; i < hashes.size(); ++i) {
+ 		it = STLCopy_n(hashes[i].GetHash(), MD4HASH_LENGTH, it);
+@@ -811,7 +811,7 @@ void CKnownFile::CreateHashFromFile(CFileAutoClose& file, uint64 offset, uint32
+ }
+ 
+ 
+-void CKnownFile::CreateHashFromInput(const byte* input, uint32 Length, CMD4Hash* Output, CAICHHashTree* pShaHashOut )
++void CKnownFile::CreateHashFromInput(const uint8_t* input, uint32 Length, CMD4Hash* Output, CAICHHashTree* pShaHashOut )
+ {
+ 	wxASSERT_MSG(Output || pShaHashOut, wxT("Nothing to do in CreateHashFromInput"));
+ 	{ wxCHECK_RET(input, wxT("No input to hash from in CreateHashFromInput")); }
+@@ -820,7 +820,7 @@ void CKnownFile::CreateHashFromInput(const byte* input, uint32 Length, CMD4Hash*
+ 	CMemFile data(input, Length);
+ 
+ 	uint32 Required = Length;
+-	byte   X[64*128];
++	uint8_t   X[64*128];
+ 
+ 	uint32	posCurrentEMBlock = 0;
+ 	uint32	nIACHPos = 0;
+diff --git a/src/KnownFile.h b/src/KnownFile.h
+index 0ef7559..ae78715 100644
+--- a/src/KnownFile.h
++++ b/src/KnownFile.h
+@@ -333,7 +333,7 @@ protected:
+ 	CPath	m_filePath;
+ 
+ 	static void CreateHashFromFile(class CFileAutoClose& file, uint64 offset, uint32 Length, CMD4Hash* Output, CAICHHashTree* pShaHashOut);
+-	static void CreateHashFromInput(const byte* input, uint32 Length, CMD4Hash* Output, CAICHHashTree* pShaHashOut);
++	static void CreateHashFromInput(const uint8_t* input, uint32 Length, CMD4Hash* Output, CAICHHashTree* pShaHashOut);
+ 
+ 	mutable bool	m_bCommentLoaded;
+ 	uint16	m_iPartCount;
+diff --git a/src/MemFile.cpp b/src/MemFile.cpp
+index 4632bf4..4a01388 100644
+--- a/src/MemFile.cpp
++++ b/src/MemFile.cpp
+@@ -38,7 +38,7 @@ CMemFile::CMemFile(unsigned int growthRate)
+ }
+ 
+ 
+-CMemFile::CMemFile(byte* buffer, size_t bufferSize)
++CMemFile::CMemFile(uint8_t* buffer, size_t bufferSize)
+ {
+ 	MULE_VALIDATE_PARAMS(buffer, wxT("CMemFile: Attempted to attach invalid buffer."));
+ 
+@@ -51,11 +51,11 @@ CMemFile::CMemFile(byte* buffer, size_t bufferSize)
+ 	m_readonly		= false;
+ }
+ 
+-CMemFile::CMemFile(const byte* buffer, size_t bufferSize)
++CMemFile::CMemFile(const uint8_t* buffer, size_t bufferSize)
+ {
+ 	MULE_VALIDATE_PARAMS(buffer, wxT("CMemFile: Attempted to attach invalid buffer."));
+ 
+-	m_buffer		= const_cast<byte*>(buffer);
++	m_buffer		= const_cast<uint8_t*>(buffer);
+ 	m_BufferSize	= bufferSize;
+ 	m_fileSize		= bufferSize;
+ 	m_growthRate	= 0;
+@@ -115,7 +115,7 @@ void CMemFile::enlargeBuffer(size_t size)
+ 		newsize = size;
+ 	}
+ 
+-	byte *tmp = (byte*)realloc(m_buffer, newsize);
++	uint8_t *tmp = (uint8_t*)realloc(m_buffer, newsize);
+ 	if (tmp) {
+ 		m_buffer = tmp;
+ 		m_BufferSize = newsize;
+diff --git a/src/MemFile.h b/src/MemFile.h
+index c4f5508..67d487a 100644
+--- a/src/MemFile.h
++++ b/src/MemFile.h
+@@ -86,10 +86,10 @@ public:
+ 	 *
+ 	 * The buffer is _not_ freed by CMemFile upon destruction.
+ 	 *
+-	 * If the buffer is a const byte*, the memfile is read-only.
++	 * If the buffer is a const uint8_t*, the memfile is read-only.
+ 	 */
+-	CMemFile(byte* buffer, size_t bufferSize);
+-	CMemFile(const byte* buffer, size_t bufferSize);
++	CMemFile(uint8_t* buffer, size_t bufferSize);
++	CMemFile(const uint8_t* buffer, size_t bufferSize);
+ 
+ 	/** Destructor. */
+ 	virtual ~CMemFile();
+@@ -132,7 +132,7 @@ public:
+ 	virtual void ResetData();
+ 
+ 	// Sometimes it's useful to get the buffer and do stuff with it.
+-	byte* GetRawBuffer() const { return m_buffer; }
++	uint8_t* GetRawBuffer() const { return m_buffer; }
+ 
+ protected:
+ 	/** @see CFileDataIO::doRead */
+@@ -167,7 +167,7 @@ private:
+ 	//! read-only mark.
+ 	bool	m_readonly;
+ 	//! The actual buffer.
+-	byte*	m_buffer;
++	uint8_t*	m_buffer;
+ };
+ 
+ #endif // MEMFILE_H
+diff --git a/src/MuleCollection.cpp b/src/MuleCollection.cpp
+index 6c36f0b..a131740 100644
+--- a/src/MuleCollection.cpp
++++ b/src/MuleCollection.cpp
+@@ -50,7 +50,7 @@ intType CMuleCollection::ReadInt(std::ifstream& infile)
+ {
+ 	intType integer = 0;
+ 	infile.read(reinterpret_cast<char *>(&integer),sizeof(intType));
+-	// TODO: byte-sex
++	// TODO: uint8_t-sex
+ 	return integer;
+ }
+ 
+diff --git a/src/MuleColour.h b/src/MuleColour.h
+index 1a983dd..ff54897 100644
+--- a/src/MuleColour.h
++++ b/src/MuleColour.h
+@@ -40,7 +40,7 @@ public:
+ 
+ 	CMuleColour() { Init(); Set(0,0,0); }
+ 	CMuleColour(const wxColour& colour) { Init(); Set(colour.Red(), colour.Green(), colour.Blue()); }
+-	CMuleColour(byte r, byte g, byte b) { Init(); Set(r,g,b); }
++	CMuleColour(uint8_t r, uint8_t g, uint8_t b) { Init(); Set(r,g,b); }
+ 	CMuleColour(unsigned long rgb)
+ 	{
+ 		Init();
+@@ -61,13 +61,13 @@ public:
+ 
+ 	~CMuleColour() { }
+ 
+-	void Set(byte red, byte green, byte blue) { m_red = red; m_green = green; m_blue = blue; }
++	void Set(uint8_t red, uint8_t green, uint8_t blue) { m_red = red; m_green = green; m_blue = blue; }
+ 
+-	inline byte Red() const { return m_red; }
+-	inline byte Green() const { return m_green; }
+-	inline byte Blue() const { return m_blue; }
++	inline uint8_t Red() const { return m_red; }
++	inline uint8_t Green() const { return m_green; }
++	inline uint8_t Blue() const { return m_blue; }
+ 
+-	const CMuleColour& Blend(byte percentage, ColourComponent flags = (ColourComponent)(COLOUR_R | COLOUR_G | COLOUR_B) )
++	const CMuleColour& Blend(uint8_t percentage, ColourComponent flags = (ColourComponent)(COLOUR_R | COLOUR_G | COLOUR_B) )
+ 	{
+ 		unsigned int red = (unsigned int)(Red() * ((flags & COLOUR_R) ? ((float)percentage/(float)100) : (float)1));
+ 		unsigned int green = (unsigned int)(Green() * ((flags & COLOUR_G) ? ((float)percentage/(float)100) : (float)1));
+@@ -99,9 +99,9 @@ public:
+ 	const wxBrush& GetBrush(int style = wxSOLID) const;
+ 
+ private:
+-	byte m_red;
+-	byte m_green;
+-	byte m_blue;
++	uint8_t m_red;
++	uint8_t m_green;
++	uint8_t m_blue;
+ 
+ 	mutable wxPen* m_cachedpen;
+ 	mutable wxBrush* m_cachedbrush;
+diff --git a/src/MuleUDPSocket.cpp b/src/MuleUDPSocket.cpp
+index a666c93..6f09a59 100644
+--- a/src/MuleUDPSocket.cpp
++++ b/src/MuleUDPSocket.cpp
+@@ -180,7 +180,7 @@ void CMuleUDPSocket::OnReceive(int errorCode)
+ 		AddDebugLogLineN(logMuleUDP, (m_name + wxT(": Packet received ("))
+ 			<< addr.IPAddress() << wxT(":") << port << wxT("): ")
+ 			<< length << wxT("b"));
+-		OnPacketReceived(ip, port, (byte*)buffer, length);
++		OnPacketReceived(ip, port, (uint8_t*)buffer, length);
+ 	}
+ }
+ 
+diff --git a/src/MuleUDPSocket.h b/src/MuleUDPSocket.h
+index c9cb023..1740c7a 100644
+--- a/src/MuleUDPSocket.h
++++ b/src/MuleUDPSocket.h
+@@ -131,7 +131,7 @@ protected:
+ 	 * @param buffer The data that has been received.
+ 	 * @param length The length of the data buffer.
+ 	 */
+-	virtual void OnPacketReceived(uint32 ip, uint16 port, byte* buffer, size_t length) = 0;
++	virtual void OnPacketReceived(uint32 ip, uint16 port, uint8_t* buffer, size_t length) = 0;
+ 
+ 
+ 	/** See ThrottledControlSocket::SendControlData */
+diff --git a/src/OtherFunctions.cpp b/src/OtherFunctions.cpp
+index 3c58aa2..8b84a90 100644
+--- a/src/OtherFunctions.cpp
++++ b/src/OtherFunctions.cpp
+@@ -61,7 +61,7 @@ wxString CastItoXBytes( uint64 count )
+ {
+ 
+ 	if (count < 1024)
+-		return CFormat(wxT("%u ")) % count + wxPLURAL("byte", "bytes", count) ;
++		return CFormat(wxT("%u ")) % count + wxPLURAL("uint8_t", "bytes", count) ;
+ 	else if (count < 1048576)
+ 		return CFormat(wxT("%u ")) % (count >> 10) + _("kB") ;
+ 	else if (count < 1073741824)
+@@ -92,7 +92,7 @@ wxString CastItoIShort(uint64 count)
+ wxString CastItoSpeed(uint32 bytes)
+ {
+ 	if (bytes < 1024)
+-		return CFormat(wxT("%u ")) % bytes + wxPLURAL("byte/sec", "bytes/sec", bytes);
++		return CFormat(wxT("%u ")) % bytes + wxPLURAL("uint8_t/sec", "bytes/sec", bytes);
+ 	else if (bytes < 1048576)
+ 		return CFormat(wxT("%.2f ")) % (bytes / 1024.0) + _("kB/s");
+ 	else
+@@ -284,14 +284,14 @@ static wxChar base16Lookup[BASE16_LOOKUP_MAX][2] = {
+ };
+ 
+ 
+-// Returns a BASE16 encoded byte array
++// Returns a BASE16 encoded uint8_t array
+ //
+ // [In]
+-//   buffer: Pointer to byte array
++//   buffer: Pointer to uint8_t array
+ //   bufLen: Lenght of buffer array
+ //
+ // [Return]
+-//   wxString object with BASE16 encoded byte array
++//   wxString object with BASE16 encoded uint8_t array
+ wxString EncodeBase16(const unsigned char* buffer, unsigned int bufLen)
+ {
+ 	wxString Base16Buff;
+@@ -305,15 +305,15 @@ wxString EncodeBase16(const unsigned char* buffer, unsigned int bufLen)
+ }
+ 
+ 
+-// Decodes a BASE16 string into a byte array
++// Decodes a BASE16 string into a uint8_t array
+ //
+ // [In]
+ //   base16Buffer: String containing BASE16
+ //   base16BufLen: Lenght BASE16 coded string's length
+ //
+ // [Out]
+-//   buffer: byte array containing decoded string
+-unsigned int DecodeBase16(const wxString &base16Buffer, unsigned int base16BufLen, byte *buffer)
++//   buffer: uint8_t array containing decoded string
++unsigned int DecodeBase16(const wxString &base16Buffer, unsigned int base16BufLen, uint8_t *buffer)
+ {
+ 	if (base16BufLen & 1) {
+ 		return 0;
+@@ -323,7 +323,7 @@ unsigned int DecodeBase16(const wxString &base16Buffer, unsigned int base16BufLe
+ 	for(unsigned int i = 0; i < base16BufLen; ++i) {
+ 		int lookup = toupper(base16Buffer[i]) - wxT('0');
+ 		// Check to make sure that the given word falls inside a valid range
+-		byte word = (lookup < 0 || lookup >= BASE16_LOOKUP_MAX) ?
++		uint8_t word = (lookup < 0 || lookup >= BASE16_LOOKUP_MAX) ?
+ 			0xFF : base16Lookup[lookup][1];
+ 		unsigned idx = i >> 1;
+ 		buffer[idx] = (i & 1) ? // odd or even?
+@@ -334,14 +334,14 @@ unsigned int DecodeBase16(const wxString &base16Buffer, unsigned int base16BufLe
+ }
+ 
+ 
+-// Returns a BASE32 encoded byte array
++// Returns a BASE32 encoded uint8_t array
+ //
+ // [In]
+-//   buffer: Pointer to byte array
++//   buffer: Pointer to uint8_t array
+ //   bufLen: Lenght of buffer array
+ //
+ // [Return]
+-//   wxString object with BASE32 encoded byte array
++//   wxString object with BASE32 encoded uint8_t array
+ wxString EncodeBase32(const unsigned char* buffer, unsigned int bufLen)
+ {
+ 	wxString Base32Buff;
+@@ -349,7 +349,7 @@ wxString EncodeBase32(const unsigned char* buffer, unsigned int bufLen)
+ 	unsigned char word;
+ 
+ 	for(i = 0, index = 0; i < bufLen;) {
+-		// Is the current word going to span a byte boundary?
++		// Is the current word going to span a uint8_t boundary?
+ 		if (index > 3) {
+ 			word = (buffer[i] & (0xFF >> index));
+ 			index = (index + 5) % 8;
+@@ -372,14 +372,14 @@ wxString EncodeBase32(const unsigned char* buffer, unsigned int bufLen)
+ }
+ 
+ 
+-// Decodes a BASE32 string into a byte array
++// Decodes a BASE32 string into a uint8_t array
+ //
+ // [In]
+ //   base32Buffer: String containing BASE32
+ //   base32BufLen: Lenght BASE32 coded string's length
+ //
+ // [Out]
+-//   buffer: byte array containing decoded string
++//   buffer: uint8_t array containing decoded string
+ // [Return]
+ //   nDecodeLen:
+ unsigned int DecodeBase32(const wxString &base32Buffer, unsigned int base32BufLen, unsigned char *buffer)
+@@ -414,7 +414,7 @@ unsigned int DecodeBase32(const wxString &base32Buffer, unsigned int base32BufLe
+ 		nCount += 5;
+ 		if (nCount >= 8)
+ 		{
+-			*buffer++ = (byte)( nBits >> (nCount - 8) );
++			*buffer++ = (uint8_t)( nBits >> (nCount - 8) );
+ 			nCount -= 8;
+ 		}
+ 		nBits <<= 5;
+diff --git a/src/Packet.cpp b/src/Packet.cpp
+index d0e93b4..3e0f774 100644
+--- a/src/Packet.cpp
++++ b/src/Packet.cpp
+@@ -47,12 +47,12 @@ CPacket::CPacket(CPacket &p)
+ 	memcpy(head, p.head, sizeof head);
+ 	tempbuffer	= NULL;
+ 	if (p.completebuffer) {
+-		completebuffer	= new byte[size + 10];;
++		completebuffer	= new uint8_t[size + 10];;
+ 		pBuffer	= completebuffer + sizeof(Header_Struct);
+ 	} else {
+ 		completebuffer	= NULL;
+ 		if (p.pBuffer) {
+-			pBuffer = new byte[size];
++			pBuffer = new uint8_t[size];
+ 		} else {
+ 			pBuffer = NULL;
+ 		}
+@@ -77,7 +77,7 @@ CPacket::CPacket(uint8 protocol)
+ }
+ 
+ // only used for receiving packets
+-CPacket::CPacket(byte* rawHeader, byte *buf)
++CPacket::CPacket(uint8_t* rawHeader, uint8_t *buf)
+ {
+ 	memset(head, 0, sizeof head);
+ 	Header_Struct* header = reinterpret_cast<Header_Struct*>(rawHeader);
+@@ -104,7 +104,7 @@ CPacket::CPacket(const CMemFile& datafile, uint8 protocol, uint8 ucOpcode)
+ 	m_bFromPF	= false;
+ 	memset(head, 0, sizeof head);
+ 	tempbuffer = NULL;
+-	completebuffer = new byte[size + sizeof(Header_Struct)/*Why this 4?*/];
++	completebuffer = new uint8_t[size + sizeof(Header_Struct)/*Why this 4?*/];
+ 	pBuffer = completebuffer + sizeof(Header_Struct);
+ 
+ 	// Write contents of MemFile to buffer (while keeping original position in file)
+@@ -126,7 +126,7 @@ CPacket::CPacket(int8 in_opcode, uint32 in_size, uint8 protocol, bool bFromPF)
+ 	memset(head, 0, sizeof head);
+ 	tempbuffer	= NULL;
+ 	if (in_size) {
+-		completebuffer = new byte[in_size + sizeof(Header_Struct) + 4 /*Why this 4?*/];
++		completebuffer = new uint8_t[in_size + sizeof(Header_Struct) + 4 /*Why this 4?*/];
+ 		pBuffer = completebuffer + sizeof(Header_Struct);
+ 		memset(completebuffer, 0, in_size + sizeof(Header_Struct) + 4 /*Why this 4?*/);
+ 	} else {
+@@ -136,7 +136,7 @@ CPacket::CPacket(int8 in_opcode, uint32 in_size, uint8 protocol, bool bFromPF)
+ }
+ 
+ // only used for splitted packets!
+-CPacket::CPacket(byte* pPacketPart, uint32 nSize, bool bLast, bool bFromPF)
++CPacket::CPacket(uint8_t* pPacketPart, uint32 nSize, bool bLast, bool bFromPF)
+ {
+ 	size		= nSize - sizeof(Header_Struct);
+ 	opcode		= 0;
+@@ -166,7 +166,7 @@ CPacket::~CPacket()
+ 	}
+ }
+ 
+-uint32 CPacket::GetPacketSizeFromHeader(const byte* rawHeader)
++uint32 CPacket::GetPacketSizeFromHeader(const uint8_t* rawHeader)
+ {
+ 	const Header_Struct* header = reinterpret_cast<const Header_Struct*>(rawHeader);
+ 	uint32 size = ENDIAN_SWAP_32(header->packetlength);
+@@ -175,13 +175,13 @@ uint32 CPacket::GetPacketSizeFromHeader(const byte* rawHeader)
+ 	return size - 1;
+ }
+ 
+-void CPacket::CopyToDataBuffer(unsigned int offset, const byte* data, unsigned int n)
++void CPacket::CopyToDataBuffer(unsigned int offset, const uint8_t* data, unsigned int n)
+ {
+ 	wxASSERT(offset + n <= size + 1);
+ 	memcpy(pBuffer + offset, data, n);
+ }
+ 
+-byte* CPacket::GetPacket() {
++uint8_t* CPacket::GetPacket() {
+ 	if (completebuffer) {
+ 		if (!m_bSplitted) {
+ 			memcpy(completebuffer, GetHeader(), sizeof(Header_Struct));
+@@ -192,19 +192,19 @@ byte* CPacket::GetPacket() {
+ 			delete [] tempbuffer;
+ 			tempbuffer = NULL;
+ 		}
+-		tempbuffer = new byte[size + sizeof(Header_Struct) + 4 /* why this 4?*/];
++		tempbuffer = new uint8_t[size + sizeof(Header_Struct) + 4 /* why this 4?*/];
+ 		memcpy(tempbuffer    , GetHeader(), sizeof(Header_Struct));
+ 		memcpy(tempbuffer + sizeof(Header_Struct), pBuffer    , size);
+ 		return tempbuffer;
+ 	}
+ }
+ 
+-byte* CPacket::DetachPacket() {
++uint8_t* CPacket::DetachPacket() {
+ 	if (completebuffer) {
+ 		if (!m_bSplitted) {
+ 			memcpy(completebuffer, GetHeader(), sizeof(Header_Struct));
+ 		}
+-		byte* result = completebuffer;
++		uint8_t* result = completebuffer;
+ 		completebuffer = pBuffer = NULL;
+ 		return result;
+ 	} else{
+@@ -212,16 +212,16 @@ byte* CPacket::DetachPacket() {
+ 			delete[] tempbuffer;
+ 			tempbuffer = NULL;
+ 		}
+-		tempbuffer = new byte[size+sizeof(Header_Struct)+4 /* Why this 4?*/];
++		tempbuffer = new uint8_t[size+sizeof(Header_Struct)+4 /* Why this 4?*/];
+ 		memcpy(tempbuffer,GetHeader(),sizeof(Header_Struct));
+ 		memcpy(tempbuffer+sizeof(Header_Struct),pBuffer,size);
+-		byte* result = tempbuffer;
++		uint8_t* result = tempbuffer;
+ 		tempbuffer = 0;
+ 		return result;
+ 	}
+ }
+ 
+-byte* CPacket::GetHeader() {
++uint8_t* CPacket::GetHeader() {
+ 	wxASSERT( !m_bSplitted );
+ 
+ 	Header_Struct* header = reinterpret_cast<Header_Struct*>(head);
+@@ -232,7 +232,7 @@ byte* CPacket::GetHeader() {
+ 	return head;
+ }
+ 
+-byte* CPacket::GetUDPHeader() {
++uint8_t* CPacket::GetUDPHeader() {
+ 	wxASSERT( !m_bSplitted );
+ 
+ 	memset(head, 0, 6);
+@@ -249,7 +249,7 @@ void CPacket::PackPacket()
+ 	wxASSERT(!m_bSplitted);
+ 
+ 	uLongf newsize = size + 300;
+-	byte* output = new byte[newsize];
++	uint8_t* output = new uint8_t[newsize];
+ 
+ 	uint16 result = compress2(output, &newsize, pBuffer, size, Z_BEST_COMPRESSION);
+ 
+@@ -287,7 +287,7 @@ bool CPacket::UnPackPacket(uint32 uMaxDecompressedSize) {
+ 		nNewSize = uMaxDecompressedSize;
+ 	}
+ 
+-	byte* unpack = new byte[nNewSize];
++	uint8_t* unpack = new uint8_t[nNewSize];
+ 	uLongf unpackedsize = nNewSize;
+ 	uint16 result = uncompress(unpack, &unpackedsize, pBuffer, size);
+ 
+diff --git a/src/Packet.h b/src/Packet.h
+index 3e0fe71..407d345 100644
+--- a/src/Packet.h
++++ b/src/Packet.h
+@@ -41,19 +41,19 @@ class CPacket {
+ public:
+ 	CPacket(CPacket &p);
+ 	CPacket(uint8 protocol);
+-	CPacket(byte* header, byte *buf); // only used for receiving packets
++	CPacket(uint8_t* header, uint8_t *buf); // only used for receiving packets
+ 	CPacket(const CMemFile& datafile, uint8 protocol, uint8 ucOpcode);
+ 	CPacket(int8 in_opcode, uint32 in_size, uint8 protocol, bool bFromPF = true);
+-	CPacket(byte* pPacketPart, uint32 nSize, bool bLast, bool bFromPF = true); // only used for splitted packets!
++	CPacket(uint8_t* pPacketPart, uint32 nSize, bool bLast, bool bFromPF = true); // only used for splitted packets!
+ 
+ 	~CPacket();
+ 
+-	byte*			GetHeader();
+-	byte*			GetUDPHeader();
+-	byte*			GetPacket();
+-	byte*			DetachPacket();
++	uint8_t*			GetHeader();
++	uint8_t*			GetUDPHeader();
++	uint8_t*			GetPacket();
++	uint8_t*			DetachPacket();
+ 	uint32			GetRealPacketSize() const	{ return size + 6; }
+-	static uint32		GetPacketSizeFromHeader(const byte* rawHeader);
++	static uint32		GetPacketSizeFromHeader(const uint8_t* rawHeader);
+ 	bool			IsSplitted()		{ return m_bSplitted; }
+ 	bool			IsLastSplitted()	{ return m_bLastSplitted; }
+ 	void			PackPacket();
+@@ -66,9 +66,9 @@ public:
+ 	uint32			GetPacketSize() const	{ return size; }
+ 	uint8			GetProtocol() const	{ return prot; }
+ 	void			SetProtocol(uint8 p)	{ prot = p; }
+-	const byte*	GetDataBuffer(void) const { return pBuffer; }
++	const uint8_t*	GetDataBuffer(void) const { return pBuffer; }
+ 	void			Copy16ToDataBuffer(const void* data);
+-	void			CopyToDataBuffer(unsigned int offset, const byte* data, unsigned int n);
++	void			CopyToDataBuffer(unsigned int offset, const uint8_t* data, unsigned int n);
+ 	void			CopyUInt32ToDataBuffer(uint32 data, unsigned int offset = 0);
+ 
+ private:
+@@ -82,10 +82,10 @@ private:
+ 	bool		m_bLastSplitted;
+ 	bool		m_bPacked;
+ 	bool		m_bFromPF;
+-	byte		head[6];
+-	byte*		tempbuffer;
+-	byte*		completebuffer;
+-	byte*		pBuffer;
++	uint8_t		head[6];
++	uint8_t*		tempbuffer;
++	uint8_t*		completebuffer;
++	uint8_t*		pBuffer;
+ };
+ 
+ #endif // PACKET_H
+diff --git a/src/Parser.cpp b/src/Parser.cpp
+index 4d78feb..74f3e89 100644
+--- a/src/Parser.cpp
++++ b/src/Parser.cpp
+@@ -929,7 +929,7 @@ yytnamerr (char *yyres, const char *yystr)
+ 
+ /* Copy into YYRESULT an error message about the unexpected token
+    YYCHAR while in state YYSTATE.  Return the number of bytes copied,
+-   including the terminating null byte.  If YYRESULT is null, do not
++   including the terminating null uint8_t.  If YYRESULT is null, do not
+    copy anything; just return the number of bytes that would be
+    copied.  As a special case, return 0 if an ordinary "syntax error"
+    message will do.  Return YYSIZE_MAXIMUM if overflow occurs during
+diff --git a/src/PartFile.cpp b/src/PartFile.cpp
+index ad2768f..1a4ef88 100644
+--- a/src/PartFile.cpp
++++ b/src/PartFile.cpp
+@@ -123,7 +123,7 @@ public:
+ 	uint64 end;						// This is the end offset of the data
+ 	Requested_Block_Struct *block;	// This is the requested block that this data relates to
+ 
+-	PartFileBufferedData(CFileAutoClose& file, byte * data, uint64 _start, uint64 _end, Requested_Block_Struct *_block)
++	PartFileBufferedData(CFileAutoClose& file, uint8_t * data, uint64 _start, uint64 _end, Requested_Block_Struct *_block)
+ 		: start(_start), end(_end), block(_block)
+ 	{
+ 		area.StartWriteAt(file, start, end-start+1);
+@@ -881,7 +881,7 @@ bool CPartFile::SavePartFile(bool Initial)
+ 		for (CGapList::const_iterator it = m_gaplist.begin(); it != m_gaplist.end(); ++it) {
+ 			wxString tagName = CFormat(wxT(" %u")) % i_pos;
+ 
+-			// gap start = first missing byte but gap ends = first non-missing byte
++			// gap start = first missing uint8_t but gap ends = first non-missing uint8_t
+ 			// in edonkey but I think its easier to user the real limits
+ 			tagName[0] = FT_GAPSTART;
+ 			CTagIntSized(tagName, it.start(),	IsLargeFile() ? 64 : 32).WriteTagToFile( &file );
+@@ -2863,7 +2863,7 @@ int CPartFile::GetCommonFilePenalty()
+ // Kry - transize is 32bits, no packet can be more than that (this is
+ // compressed size). Even 32bits is too much imho.As for the return size,
+ // look at the lenData below.
+-uint32 CPartFile::WriteToBuffer(uint32 transize, byte* data, uint64 start, uint64 end, Requested_Block_Struct *block, const CUpDownClient* client)
++uint32 CPartFile::WriteToBuffer(uint32 transize, uint8_t* data, uint64 start, uint64 end, Requested_Block_Struct *block, const CUpDownClient* client)
+ {
+ 	// Increment transferred bytes counter for this file
+ 	transferred += transize;
+diff --git a/src/PartFile.h b/src/PartFile.h
+index ed22213..5c8f3d5 100644
+--- a/src/PartFile.h
++++ b/src/PartFile.h
+@@ -162,7 +162,7 @@ public:
+ 	int	getPartfileStatusRang() const;
+ 
+ 	// Barry - Added as replacement for BlockReceived to buffer data before writing to disk
+-	uint32	WriteToBuffer(uint32 transize, byte *data, uint64 start, uint64 end, Requested_Block_Struct *block, const CUpDownClient* client);
++	uint32	WriteToBuffer(uint32 transize, uint8_t *data, uint64 start, uint64 end, Requested_Block_Struct *block, const CUpDownClient* client);
+ 	void	FlushBuffer(bool fromAICHRecoveryDataAvailable = false);
+ 
+ 	// Barry - Added to prevent list containing deleted blocks on shutdown
+diff --git a/src/PartFileConvert.cpp b/src/PartFileConvert.cpp
+index 8427f31..ce96e49 100644
+--- a/src/PartFileConvert.cpp
++++ b/src/PartFileConvert.cpp
+@@ -389,7 +389,7 @@ ConvStatus CPartFileConvert::performConvertToeMule(const CPath& fileName)
+ 
+ 		CPath::RemoveFile(newfilename.RemoveExt());
+ 		if (!oldfile.FileExists()) {
+-			// data file does not exist. well, then create a 0 byte big one
++			// data file does not exist. well, then create a 0 uint8_t big one
+ 			CFile datafile;
+ 			ret = datafile.Create(newfilename.RemoveExt());
+ 		} else if (s_pfconverting->removeSource) {
+diff --git a/src/PrefsUnifiedDlg.cpp b/src/PrefsUnifiedDlg.cpp
+index 66842fd..3cee7c2 100644
+--- a/src/PrefsUnifiedDlg.cpp
++++ b/src/PrefsUnifiedDlg.cpp
+@@ -1152,7 +1152,7 @@ void PrefsUnifiedDlg::OnScrollBarChange( wxScrollEvent& event )
+ 	case IDC_FILEBUFFERSIZE:
+ 		id = IDC_FILEBUFFERSIZE_STATIC;
+ 		// Yes, it seems odd to add the singular form here, but other languages might need to know the number to select the appropriate translation
+-		label = CFormat(wxPLURAL("File Buffer Size: %d byte", "File Buffer Size: %d bytes", event.GetPosition() * 15000)) % (event.GetPosition() * 15000);
++		label = CFormat(wxPLURAL("File Buffer Size: %d uint8_t", "File Buffer Size: %d bytes", event.GetPosition() * 15000)) % (event.GetPosition() * 15000);
+ 		break;
+ 
+ 	case IDC_QUEUESIZE:
+diff --git a/src/RLE.cpp b/src/RLE.cpp
+index ae5642f..1d95b35 100644
+--- a/src/RLE.cpp
++++ b/src/RLE.cpp
+@@ -123,7 +123,7 @@ const uint8 *RLE_Data::Decode(const uint8 *buff, int len)
+ 				j += seqLen;
+ 				i += 3;
+ 			} else {
+-				// This is a single byte.
++				// This is a single uint8_t.
+ 				if (j < m_len) {
+ 					decBuf[j] = buff[i];
+ 				}
+@@ -180,7 +180,7 @@ const uint8 * RLE_Data::Encode(const uint8 *data, int inlen, int &outlen, bool &
+ 	//
+ 	// now RLE
+ 	//
+-	// In worst case 2-byte sequence is encoded as 3. So, data can grow by 50%.
++	// In worst case 2-uint8_t sequence is encoded as 3. So, data can grow by 50%.
+ 	uint8 * enc_buff = new uint8[m_len * 3/2 + 1];
+ 	int i = 0, j = 0;
+ 	while ( i != m_len ) {
+diff --git a/src/SHA.cpp b/src/SHA.cpp
+index 2d831a8..eb44fbc 100644
+--- a/src/SHA.cpp
++++ b/src/SHA.cpp
+@@ -58,8 +58,8 @@
+  ---------------------------------------------------------------------------
+  Issue Date: 30/11/2002
+ 
+- This is a byte oriented version of SHA1 that operates on arrays of bytes
+- stored in memory. It runs at 22 cycles per byte on a Pentium P4 processor
++ This is a uint8_t oriented version of SHA1 that operates on arrays of bytes
++ stored in memory. It runs at 22 cycles per uint8_t on a Pentium P4 processor
+ */
+ 
+ #include "SHA.h"
+@@ -78,8 +78,8 @@ CSHA::CSHA()
+     It may well fail, in which case the definitions will need to be set by
+     editing at the points marked **** EDIT HERE IF NECESSARY **** below.
+ */
+-#define SHA_LITTLE_ENDIAN   1234 /* byte 0 is least significant (i386) */
+-#define SHA_BIG_ENDIAN      4321 /* byte 0 is most significant (mc68k) */
++#define SHA_LITTLE_ENDIAN   1234 /* uint8_t 0 is least significant (i386) */
++#define SHA_BIG_ENDIAN      4321 /* uint8_t 0 is most significant (mc68k) */
+ 
+ #define rotl32(x,n) (((x) << n) | ((x) >> (32 - n)))
+ 
+@@ -93,7 +93,7 @@ CSHA::CSHA()
+ 
+ #define SHA1_MASK   (SHA1_BLOCK_SIZE - 1)
+ 
+-/* reverse byte order in 32-bit words   */
++/* reverse uint8_t order in 32-bit words   */
+ 
+ #define ch(x,y,z)       (((x) & (y)) ^ (~(x) & (z)))
+ #define parity(x,y,z)   ((x) ^ (y) ^ (z))
+@@ -213,15 +213,15 @@ void CSHA::Finish(CAICHHash& Hash)
+ 	uint32    i = (uint32)(m_nCount[0] & SHA1_MASK);
+ 
+     /* mask out the rest of any partial 32-bit word and then set    */
+-    /* the next byte to 0x80. On big-endian machines any bytes in   */
++    /* the next uint8_t to 0x80. On big-endian machines any bytes in   */
+     /* the buffer will be at the top end of 32 bit words, on little */
+     /* endian machines they will be at the bottom. Hence the AND    */
+     /* and OR masks above are reversed for little endian systems    */
+-	/* Note that we can always add the first padding byte at this	*/
++	/* Note that we can always add the first padding uint8_t at this	*/
+ 	/* because the buffer always contains at least one empty slot	*/
+     m_nBuffer[i >> 2] = (m_nBuffer[i >> 2] & mask[i & 3]) | bits[i & 3];
+ 
+-    /* we need 9 or more empty positions, one for the padding byte  */
++    /* we need 9 or more empty positions, one for the padding uint8_t  */
+     /* (above) and eight for the length count.  If there is not     */
+     /* enough space pad and empty the buffer                        */
+     if(i > SHA1_BLOCK_SIZE - 9)
+@@ -236,7 +236,7 @@ void CSHA::Finish(CAICHHash& Hash)
+     while(i < 14) /* and zero pad all but last two positions      */
+         m_nBuffer[i++] = 0;
+ 
+-    /* assemble the eight byte counter in in big-endian format		*/
++    /* assemble the eight uint8_t counter in in big-endian format		*/
+     m_nBuffer[14] = swap_b32((m_nCount[1] << 3) | (m_nCount[0] >> 29));
+     m_nBuffer[15] = swap_b32(m_nCount[0] << 3);
+ 
+diff --git a/src/SHA.h b/src/SHA.h
+index 8854c44..7749e26 100644
+--- a/src/SHA.h
++++ b/src/SHA.h
+@@ -58,8 +58,8 @@
+  ---------------------------------------------------------------------------
+  Issue Date: 30/11/2002
+ 
+- This is a byte oriented version of SHA1 that operates on arrays of bytes
+- stored in memory. It runs at 22 cycles per byte on a Pentium P4 processor
++ This is a uint8_t oriented version of SHA1 that operates on arrays of bytes
++ stored in memory. It runs at 22 cycles per uint8_t on a Pentium P4 processor
+ */
+ 
+ #ifndef __SHA_H__
+diff --git a/src/SHAHashSet.h b/src/SHAHashSet.h
+index 6746417..e3d7ea1 100644
+--- a/src/SHAHashSet.h
++++ b/src/SHAHashSet.h
+@@ -104,12 +104,12 @@ class CUpDownClient;
+ class CAICHHash
+ {
+ private:
+-	byte m_abyBuffer[HASHSIZE];
++	uint8_t m_abyBuffer[HASHSIZE];
+ 
+ public:
+ 	CAICHHash()				{ memset(m_abyBuffer, 0, HASHSIZE); }
+ 	CAICHHash(CFileDataIO* file)		{ Read(file); }
+-	CAICHHash(byte* data)			{ Read(data); }
++	CAICHHash(uint8_t* data)			{ Read(data); }
+ 	CAICHHash(const CAICHHash& k1)		{ *this = k1; }
+ 	~CAICHHash() {}
+ 	CAICHHash& operator=(const CAICHHash& k1)
+@@ -124,9 +124,9 @@ public:
+ 	friend bool operator!=(const CAICHHash& k1,const CAICHHash& k2)	{ return !(k1 == k2); }
+ 	void Read(CFileDataIO* file);
+ 	void Write(CFileDataIO* file) const;
+-	void Read(byte* data)			{ memcpy(m_abyBuffer, data, HASHSIZE); }
++	void Read(uint8_t* data)			{ memcpy(m_abyBuffer, data, HASHSIZE); }
+ 	wxString GetString() const;
+-	byte* GetRawHash()			{ return m_abyBuffer; }
++	uint8_t* GetRawHash()			{ return m_abyBuffer; }
+ 	static uint32 GetHashSize()		{ return HASHSIZE;}
+ 	unsigned int DecodeBase32(const wxString &base32);
+ };
+diff --git a/src/SafeFile.cpp b/src/SafeFile.cpp
+index 5b0cfad..5a75b7a 100644
+--- a/src/SafeFile.cpp
++++ b/src/SafeFile.cpp
+@@ -396,7 +396,7 @@ CTag *CFileDataIO::ReadTag(bool bOptACP) const
+ {
+ 	CTag *retVal = NULL;
+ 	wxString name;
+-	byte type = 0;
++	uint8_t type = 0;
+ 	try {
+ 		type = ReadUInt8();
+ 		name = ReadString(false);
+diff --git a/src/Scanner.cpp b/src/Scanner.cpp
+index 35478ac..9117aa5 100644
+--- a/src/Scanner.cpp
++++ b/src/Scanner.cpp
+@@ -1761,7 +1761,7 @@ YY_BUFFER_STATE yy_scan_string (yyconst char * yystr )
+ 
+ /** Setup the input buffer state to scan the given bytes. The next call to yylex() will
+  * scan from a @e copy of @a bytes.
+- * @param bytes the byte buffer to scan
++ * @param bytes the uint8_t buffer to scan
+  * @param len the number of bytes in the buffer pointed to by @a bytes.
+  *
+  * @return the newly allocated buffer state object.
+diff --git a/src/SearchList.cpp b/src/SearchList.cpp
+index 32b28e9..647f296 100644
+--- a/src/SearchList.cpp
++++ b/src/SearchList.cpp
+@@ -470,7 +470,7 @@ void CSearchList::OnGlobalSearchTimer(CTimerEvent& WXUNUSED(evt))
+ }
+ 
+ 
+-void CSearchList::ProcessSharedFileList(const byte* in_packet, uint32 size,
++void CSearchList::ProcessSharedFileList(const uint8_t* in_packet, uint32 size,
+ 	CUpDownClient* sender, bool *moreResultsAvailable, const wxString& directory)
+ {
+ 	wxCHECK_RET(sender, wxT("No sender in search-results from client."));
+@@ -967,7 +967,7 @@ void CSearchList::KademliaSearchKeyword(uint32_t searchID, const Kademlia::CUInt
+ 	EUtf8Str eStrEncode = utf8strRaw;
+ 
+ 	CMemFile temp(250);
+-	byte fileid[16];
++	uint8_t fileid[16];
+ 	fileID->ToByteArray(fileid);
+ 	temp.WriteHash(CMD4Hash(fileid));
+ 
+diff --git a/src/SearchList.h b/src/SearchList.h
+index 35b0fc6..414411b 100644
+--- a/src/SearchList.h
++++ b/src/SearchList.h
+@@ -126,7 +126,7 @@ public:
+ 	 * @param moreResultsAvailable Set to a value specifying if more results are available.
+ 	 * @param directory The directory containing the shared files.
+ 	 */
+-	void	ProcessSharedFileList(const byte* packet, uint32 size, CUpDownClient* sender, bool* moreResultsAvailable, const wxString& directory);
++	void	ProcessSharedFileList(const uint8_t* packet, uint32 size, CUpDownClient* sender, bool* moreResultsAvailable, const wxString& directory);
+ 
+ 	/**
+ 	 * Processes a search-result sent via TCP from the local server. All results are added.
+diff --git a/src/ServerList.cpp b/src/ServerList.cpp
+index f2e14e0..8c52634 100644
+--- a/src/ServerList.cpp
++++ b/src/ServerList.cpp
+@@ -112,7 +112,7 @@ bool CServerList::LoadServerMet(const CPath& path)
+ 	try {
+ 		Notify_ServerFreeze();
+ 
+-		byte version = servermet.ReadUInt8();
++		uint8_t version = servermet.ReadUInt8();
+ 
+ 		if (version != 0xE0 && version != MET_HEADER) {
+ 			AddLogLineC(CFormat(_("Server.met file corrupt, found invalid versiontag: 0x%x, size %i")) % version % sizeof(version));
+@@ -290,7 +290,7 @@ void CServerList::ServerStats()
+ 			// if it doesn't get responsed, we don't count it as error but continue with a normal ping
+ 			ping_server->SetCryptPingReplyPending(true);
+ 			uint32 nPacketLen = 4 + (uint8)(rand() % 16); // max padding 16 bytes
+-			CScopedArray<byte> pRawPacket(nPacketLen);
++			CScopedArray<uint8_t> pRawPacket(nPacketLen);
+ 			uint32 dwChallenge = (rand() << 17) | (rand() << 2) | (rand() & 0x03);
+ 			if (dwChallenge == 0) {
+ 				dwChallenge++;
+diff --git a/src/ServerSocket.cpp b/src/ServerSocket.cpp
+index f0e32e6..5d7755f 100644
+--- a/src/ServerSocket.cpp
++++ b/src/ServerSocket.cpp
+@@ -226,7 +226,7 @@ void CServerSocket::OnReceive(int nErrorCode)
+ 	m_dwLastTransmission = GetTickCount();
+ }
+ 
+-bool CServerSocket::ProcessPacket(const byte* packet, uint32 size, int8 opcode)
++bool CServerSocket::ProcessPacket(const uint8_t* packet, uint32 size, int8 opcode)
+ {
+ 	try {
+ 		AddDebugLogLineN( logServer, wxT("Processing Server Packet: ") );
+diff --git a/src/ServerSocket.h b/src/ServerSocket.h
+index 155e824..57c6b01 100644
+--- a/src/ServerSocket.h
++++ b/src/ServerSocket.h
+@@ -65,7 +65,7 @@ public:
+ 	uint32 GetServerIP() const;
+ 
+ private:
+-	bool	ProcessPacket(const byte* packet, uint32 size, int8 opcode);
++	bool	ProcessPacket(const uint8_t* packet, uint32 size, int8 opcode);
+ 	void	SetConnectionState(sint8 newstate);
+ 	CServerConnect*	serverconnect;
+ 	sint8	connectionstate;
+diff --git a/src/ServerUDPSocket.cpp b/src/ServerUDPSocket.cpp
+index 4e840c0..2a8e0de 100644
+--- a/src/ServerUDPSocket.cpp
++++ b/src/ServerUDPSocket.cpp
+@@ -60,12 +60,12 @@ CServerUDPSocket::CServerUDPSocket(amuleIPV4Address &address, const CProxyData *
+ }
+ 
+ 
+-void CServerUDPSocket::OnPacketReceived(uint32 serverip, uint16 serverport, byte* buffer, size_t length)
++void CServerUDPSocket::OnPacketReceived(uint32 serverip, uint16 serverport, uint8_t* buffer, size_t length)
+ {
+ 	wxCHECK_RET(length >= 2, wxT("Invalid packet."));
+ 
+ 	size_t nPayLoadLen = length;
+-	byte* pBuffer = buffer;
++	uint8_t* pBuffer = buffer;
+ 	CServer* pServer = theApp->serverlist->GetServerByIPUDP(serverip, serverport, true);
+ 	if (pServer && thePrefs::IsServerCryptLayerUDPEnabled() &&
+ 		((pServer->GetServerKeyUDP() != 0 && pServer->SupportsObfuscationUDP()) || (pServer->GetCryptPingReplyPending() && pServer->GetChallenge() != 0)))
+@@ -238,7 +238,7 @@ void CServerUDPSocket::ProcessPacket(CMemFile& packet, uint8 opcode, uint32 ip,
+ 					// eserver 16.45+ supports a new OP_SERVER_DESC_RES answer, if the OP_SERVER_DESC_REQ contains a uint32
+ 					// challenge, the server returns additional info with OP_SERVER_DESC_RES. To properly distinguish the
+ 					// old and new OP_SERVER_DESC_RES answer, the challenge has to be selected carefully. The first 2 bytes
+-					// of the challenge (in network byte order) MUST NOT be a valid string-len-int16!
++					// of the challenge (in network uint8_t order) MUST NOT be a valid string-len-int16!
+ 					CPacket* sendpacket = new CPacket(OP_SERVER_DESC_REQ, 4, OP_EDONKEYPROT);
+ 					uint32 uDescReqChallenge = ((uint32)GetRandomUint16() << 16) + INV_SERV_DESC_LEN; // 0xF0FF = an 'invalid' string length.
+ 					update->SetDescReqChallenge(uDescReqChallenge);
+@@ -263,7 +263,7 @@ void CServerUDPSocket::ProcessPacket(CMemFile& packet, uint8 opcode, uint32 ip,
+ 				// new packet: <challenge 4><taglist>
+ 				//
+ 				// NOTE: To properly distinguish between the two packets which are both useing the same opcode...
+-				// the first two bytes of <challenge> (in network byte order) have to be an invalid <name_len> at least.
++				// the first two bytes of <challenge> (in network uint8_t order) have to be an invalid <name_len> at least.
+ 
+ 				uint16 Len = packet.ReadUInt16();
+ 
+@@ -365,7 +365,7 @@ void CServerUDPSocket::SendPacket(CPacket* packet, CServer* host, bool delPacket
+ 	// We might need to encrypt the packet for this server.
+ 	if (!rawpacket && thePrefs::IsServerCryptLayerUDPEnabled() && host->GetServerKeyUDP() != 0 && host->SupportsObfuscationUDP()) {
+ 		uint16 uRawPacketSize = packet->GetPacketSize() + 2;
+-		byte* pRawPacket = new byte[uRawPacketSize];
++		uint8_t* pRawPacket = new uint8_t[uRawPacketSize];
+ 		memcpy(pRawPacket, packet->GetUDPHeader(), 2);
+ 		memcpy(pRawPacket + 2, packet->GetDataBuffer(), packet->GetPacketSize());
+ 
+diff --git a/src/ServerUDPSocket.h b/src/ServerUDPSocket.h
+index 6caed5d..a7acfea 100644
+--- a/src/ServerUDPSocket.h
++++ b/src/ServerUDPSocket.h
+@@ -44,7 +44,7 @@ public:
+ 	virtual void OnReceiveError(int errorCode, uint32 ip, uint16 port);
+ 
+ private:
+-	void	OnPacketReceived(uint32 ip, uint16 port, byte* buffer, size_t length);
++	void	OnPacketReceived(uint32 ip, uint16 port, uint8_t* buffer, size_t length);
+ 	void	ProcessPacket(CMemFile& packet, uint8 opcode, uint32 ip, uint16 port);
+ 	void	SendQueue();
+ 
+diff --git a/src/Statistics.cpp b/src/Statistics.cpp
+index 23ce7a2..d8896a8 100644
+--- a/src/Statistics.cpp
++++ b/src/Statistics.cpp
+@@ -403,7 +403,7 @@ void CStatistics::RecordHistory()
+ 	// running average computations, use differences (delta bytes/ delta time), and
+ 	// for long uptimes the difference between two timestamps can lose too much
+ 	// accuracy because the large mantissa causes less significant bits to be dropped
+-	// (same for the difference between two cumulative byte counts).  [We don't store
++	// (same for the difference between two cumulative uint8_t counts).  [We don't store
+ 	// these values as integers because they will be used in floating point calculations,
+ 	// and we want to perform the conversion only once).  Therefore timestamps and
+ 	// Kbyte counts are stored in the history as doubles, while computed values use
+diff --git a/src/Tag.cpp b/src/Tag.cpp
+index 2e7e0c8..29475c4 100644
+--- a/src/Tag.cpp
++++ b/src/Tag.cpp
+@@ -286,7 +286,7 @@ uint32 CTag::GetBlobSize() const
+ }
+ 
+ 
+-const byte* CTag::GetBlob() const
++const uint8_t* CTag::GetBlob() const
+ {
+ 	CHECK_TAG_TYPE(IsBlob(), Blob);
+ 
+@@ -302,7 +302,7 @@ uint32 CTag::GetBsobSize() const
+ }
+ 
+ 
+-const byte* CTag::GetBsob() const
++const uint8_t* CTag::GetBsob() const
+ {
+ 	CHECK_TAG_TYPE(IsBsob(), Bsob);
+ 
+diff --git a/src/Tag.h b/src/Tag.h
+index eb5ae25..a57f00a 100644
+--- a/src/Tag.h
++++ b/src/Tag.h
+@@ -70,10 +70,10 @@ public:
+ 
+ 	const CMD4Hash& GetHash() const;
+ 
+-	const byte* GetBlob() const;
++	const uint8_t* GetBlob() const;
+ 	uint32 GetBlobSize() const;
+ 
+-	const byte* GetBsob() const;
++	const uint8_t* GetBsob() const;
+ 	uint32 GetBsobSize() const;
+ 
+ 	CTag* CloneTag()		{ return new CTag(*this); }
+@@ -268,11 +268,11 @@ public:
+ class CTagBsob : public CTag
+ {
+ public:
+-	CTagBsob(const wxString& name, const byte* value, uint8 nSize)
++	CTagBsob(const wxString& name, const uint8_t* value, uint8 nSize)
+ 		: CTag(name)
+ 	{
+ 		m_uType = TAGTYPE_BSOB;
+-		m_pData = new byte[nSize];
++		m_pData = new uint8_t[nSize];
+ 		memcpy(m_pData, value, nSize);
+ 		m_nSize = nSize;
+ 	}
+@@ -281,11 +281,11 @@ public:
+ class CTagBlob : public CTag
+ {
+ public:
+-	CTagBlob(const wxString& name, const byte* value, uint8 nSize)
++	CTagBlob(const wxString& name, const uint8_t* value, uint8 nSize)
+ 		: CTag(name)
+ 	{
+ 		m_uType = TAGTYPE_BLOB;
+-		m_pData = new byte[nSize];
++		m_pData = new uint8_t[nSize];
+ 		memcpy(m_pData, value, nSize);
+ 		m_nSize = nSize;
+ 	}
+diff --git a/src/ThreadTasks.cpp b/src/ThreadTasks.cpp
+index 327ab7e..2a43d00 100644
+--- a/src/ThreadTasks.cpp
++++ b/src/ThreadTasks.cpp
+@@ -42,7 +42,7 @@
+ #endif
+ 
+ //! This hash represents the value for an empty MD4 hashing
+-const byte g_emptyMD4Hash[16] = {
++const uint8_t g_emptyMD4Hash[16] = {
+ 	0x31, 0xD6, 0xCF, 0xE0, 0xD1, 0x6A, 0xE9, 0x31,
+ 	0xB7, 0x3C, 0x59, 0xD7, 0xE0, 0xC0, 0x89, 0xC0 };
+ 
+@@ -383,7 +383,7 @@ bool CAICHSyncTask::ConvertToKnown2ToKnown264()
+ 			CAICHHash aichHash(&oldfile);
+ 			uint32 nHashCount = oldfile.ReadUInt16();
+ 
+-			CScopedArray<byte> buffer(nHashCount * CAICHHash::GetHashSize());
++			CScopedArray<uint8_t> buffer(nHashCount * CAICHHash::GetHashSize());
+ 
+ 			oldfile.Read(buffer.get(), nHashCount * CAICHHash::GetHashSize());
+ 			newfile.Write(aichHash.GetRawHash(), CAICHHash::GetHashSize());
+diff --git a/src/UploadBandwidthThrottler.cpp b/src/UploadBandwidthThrottler.cpp
+index 67ebabf..17bcaba 100644
+--- a/src/UploadBandwidthThrottler.cpp
++++ b/src/UploadBandwidthThrottler.cpp
+@@ -294,7 +294,7 @@ void* UploadBandwidthThrottler::Entry()
+ 		uint32 sleepTime;
+ 		if (bytesToSpend < 1) {
+ 			// We have sent more than allowed in last cycle so we have to wait now
+-			// until we can send at least 1 byte.
++			// until we can send at least 1 uint8_t.
+ 			sleepTime = std::max((-bytesToSpend + 1) * 1000 / allowedDataRate + 2, // add 2 ms to allow for rounding inaccuracies
+ 									extraSleepTime);
+ 		} else {
+diff --git a/src/UploadClient.cpp b/src/UploadClient.cpp
+index a74ab92..5c7522a 100644
+--- a/src/UploadClient.cpp
++++ b/src/UploadClient.cpp
+@@ -206,7 +206,7 @@ void CUpDownClient::CreateNextBlockPackage()
+ 			// correctly treated as plain CKnownFile.
+ 			CPartFile* srcPartFile = srcfile->IsPartFile() ? static_cast<CPartFile*>(srcfile) : NULL;
+ 
+-			// THIS EndOffset points BEHIND the last byte requested
++			// THIS EndOffset points BEHIND the last uint8_t requested
+ 			// (other than the offsets used in the PartFile code)
+ 			if (currentblock->EndOffset > srcfile->GetFileSize()) {
+ 				throw wxString(CFormat(wxT("Asked for data up to %d beyond end of file (%d)"))
+@@ -282,7 +282,7 @@ void CUpDownClient::CreateNextBlockPackage()
+ }
+ 
+ 
+-void CUpDownClient::CreateStandardPackets(const byte* buffer, uint32 togo, Requested_Block_Struct* currentblock)
++void CUpDownClient::CreateStandardPackets(const uint8_t* buffer, uint32 togo, Requested_Block_Struct* currentblock)
+ {
+ 	uint32 nPacketSize;
+ 
+@@ -330,10 +330,10 @@ void CUpDownClient::CreateStandardPackets(const byte* buffer, uint32 togo, Reque
+ }
+ 
+ 
+-void CUpDownClient::CreatePackedPackets(const byte* buffer, uint32 togo, Requested_Block_Struct* currentblock)
++void CUpDownClient::CreatePackedPackets(const uint8_t* buffer, uint32 togo, Requested_Block_Struct* currentblock)
+ {
+ 	uLongf newsize = togo+300;
+-	CScopedArray<byte> output(newsize);
++	CScopedArray<uint8_t> output(newsize);
+ 	uint16 result = compress2(output.get(), &newsize, buffer, togo, 9);
+ 	if (result != Z_OK || togo <= newsize){
+ 		CreateStandardPackets(buffer, togo, currentblock);
+@@ -836,7 +836,7 @@ void CUpDownClient::SetUploadFileID(const CMD4Hash& new_id)
+ 	SetUploadFileID(uploadingfile); // This will update queue count on old and new file.
+ }
+ 
+-void CUpDownClient::ProcessRequestPartsPacket(const byte* pachPacket, uint32 nSize, bool largeblocks) {
++void CUpDownClient::ProcessRequestPartsPacket(const uint8_t* pachPacket, uint32 nSize, bool largeblocks) {
+ 
+ 	CMemFile data(pachPacket, nSize);
+ 
+diff --git a/src/kademlia/kademlia/Kademlia.cpp b/src/kademlia/kademlia/Kademlia.cpp
+index f0f657b..70ca262 100644
+--- a/src/kademlia/kademlia/Kademlia.cpp
++++ b/src/kademlia/kademlia/Kademlia.cpp
+@@ -499,7 +499,7 @@ bool CKademlia::IsRunningInLANMode()
+ #include "../../CryptoPP_Inc.h"
+ void KadGetKeywordHash(const wxString& rstrKeyword, Kademlia::CUInt128* pKadID)
+ {
+-	byte Output[16];
++	uint8_t Output[16];
+ 
+ 	#ifdef __WEAK_CRYPTO__
+ 		CryptoPP::Weak::MD4 md4_hasher;
+diff --git a/src/kademlia/kademlia/Search.cpp b/src/kademlia/kademlia/Search.cpp
+index e60a354..0177caa 100644
+--- a/src/kademlia/kademlia/Search.cpp
++++ b/src/kademlia/kademlia/Search.cpp
+@@ -509,7 +509,7 @@ void CSearch::StorePacket()
+ 			} else {
+ 				if (m_searchTermsDataSize == 0) {
+ 					searchTerms.WriteUInt8(0);
+-					// We send this extra byte to flag we handle large files.
++					// We send this extra uint8_t to flag we handle large files.
+ 					searchTerms.WriteUInt8(0);
+ 				} else {
+ 					// Set to 2 to flag we handle large files.
+diff --git a/src/kademlia/kademlia/SearchManager.cpp b/src/kademlia/kademlia/SearchManager.cpp
+index e7f25d4..34200d5 100644
+--- a/src/kademlia/kademlia/SearchManager.cpp
++++ b/src/kademlia/kademlia/SearchManager.cpp
+@@ -234,8 +234,8 @@ void CSearchManager::GetWords(const wxString& str, WordList *words, bool allowDu
+ 	while (tkz.HasMoreTokens()) {
+ 		current_word = tkz.GetNextToken();
+ 		// TODO: We'd need a safe way to determine if a sequence which contains only 3 chars is a real word.
+-		// Currently we do this by evaluating the UTF-8 byte count. This will work well for Western locales,
+-		// AS LONG AS the min. byte count is 3(!). If the byte count is once changed to 2, this will not
++		// Currently we do this by evaluating the UTF-8 uint8_t count. This will work well for Western locales,
++		// AS LONG AS the min. uint8_t count is 3(!). If the uint8_t count is once changed to 2, this will not
+ 		// work properly any longer because there are a lot of Western characters which need 2 bytes in UTF-8.
+ 		// Maybe we need to evaluate the Unicode character values itself whether the characters are located
+ 		// in code ranges where single characters are known to represent words.
+diff --git a/src/kademlia/net/KademliaUDPListener.cpp b/src/kademlia/net/KademliaUDPListener.cpp
+index e11dd5e..16e91c7 100644
+--- a/src/kademlia/net/KademliaUDPListener.cpp
++++ b/src/kademlia/net/KademliaUDPListener.cpp
+@@ -1668,7 +1668,7 @@ void CKademliaUDPListener::SendLegacyChallenge(uint32_t ip, uint16_t port, const
+ }
+ 
+ #if 0
+-void CKademliaUDPListener::DebugClientOutput(const wxString& place, uint32 kad_ip, uint32 port, const byte* data, int len)
++void CKademliaUDPListener::DebugClientOutput(const wxString& place, uint32 kad_ip, uint32 port, const uint8_t* data, int len)
+ {
+ 	uint32 ip = wxUINT32_SWAP_ALWAYS(kad_ip);
+ 	printf("Error on %s received from: %s\n",(const char*)unicode2char(place),(const char*)unicode2char(Uint32_16toStringIP_Port(ip,port)));
+diff --git a/src/libs/common/StringFunctions.cpp b/src/libs/common/StringFunctions.cpp
+index 3710760..ba1f755 100644
+--- a/src/libs/common/StringFunctions.cpp
++++ b/src/libs/common/StringFunctions.cpp
+@@ -48,7 +48,7 @@ Unicode2CharBuf unicode2char(const wxChar* s)
+ 	}
+ 	// Failed. Try to convert as much as possible.
+ 	size_t len = wxStrlen(s);
+-	size_t maxlen = len * 4;		// Allow for an encoding of up to 4 byte per char.
++	size_t maxlen = len * 4;		// Allow for an encoding of up to 4 uint8_t per char.
+ 	wxCharBuffer buf(maxlen + 1);	// This is wasteful, but the string is used temporary anyway.
+ 	char * data = buf.data();
+ 	for (size_t i = 0, pos = 0; i < len; i++) {
+@@ -64,7 +64,7 @@ Unicode2CharBuf unicode2char(const wxChar* s)
+ }
+ 
+ 
+-static byte base16Chars[17] = "0123456789ABCDEF";
++static uint8_t base16Chars[17] = "0123456789ABCDEF";
+ 
+ wxString URLEncode(const wxString& sIn)
+ {
+diff --git a/src/libs/ec/cpp/ECSocket.cpp b/src/libs/ec/cpp/ECSocket.cpp
+index a0283cc..22da25c 100644
+--- a/src/libs/ec/cpp/ECSocket.cpp
++++ b/src/libs/ec/cpp/ECSocket.cpp
+@@ -66,12 +66,12 @@ struct utf8_table {
+ 
+ static const struct utf8_table utf8_table[] =
+ {
+-    {0x80,  0x00,   0*6,    0x7F,           0,         /* 1 byte sequence */},
+-    {0xE0,  0xC0,   1*6,    0x7FF,          0x80,      /* 2 byte sequence */},
+-    {0xF0,  0xE0,   2*6,    0xFFFF,         0x800,     /* 3 byte sequence */},
+-    {0xF8,  0xF0,   3*6,    0x1FFFFF,       0x10000,   /* 4 byte sequence */},
+-    {0xFC,  0xF8,   4*6,    0x3FFFFFF,      0x200000,  /* 5 byte sequence */},
+-    {0xFE,  0xFC,   5*6,    0x7FFFFFFF,     0x4000000, /* 6 byte sequence */},
++    {0x80,  0x00,   0*6,    0x7F,           0,         /* 1 uint8_t sequence */},
++    {0xE0,  0xC0,   1*6,    0x7FF,          0x80,      /* 2 uint8_t sequence */},
++    {0xF0,  0xE0,   2*6,    0xFFFF,         0x800,     /* 3 uint8_t sequence */},
++    {0xF8,  0xF0,   3*6,    0x1FFFFF,       0x10000,   /* 4 uint8_t sequence */},
++    {0xFC,  0xF8,   4*6,    0x3FFFFFF,      0x200000,  /* 5 uint8_t sequence */},
++    {0xFE,  0xFC,   5*6,    0x7FFFFFFF,     0x4000000, /* 6 uint8_t sequence */},
+     {0,     0,      0,      0,              0,         /* end of table    */}
+ };
+ 
+diff --git a/src/libs/ec/cpp/ECTag.cpp b/src/libs/ec/cpp/ECTag.cpp
+index 7ba9e3a..255f3ac 100644
+--- a/src/libs/ec/cpp/ECTag.cpp
++++ b/src/libs/ec/cpp/ECTag.cpp
+@@ -118,7 +118,7 @@ CECTag::CECTag(ec_tagname_t name, const EC_IPv4_t& data) : m_tagName(name)
+ /**
+  * Creates a new CECTag instance, which contains a MD4 hash.
+  *
+- * This function takes care to store hash in network byte order.
++ * This function takes care to store hash in network uint8_t order.
+  *
+  * @param name TAG name
+  * @param data The CMD4Hash class containing the MD4 hash.
+@@ -1007,7 +1007,7 @@ void CECTag::DebugPrint(int level, bool print_empty) const
+ 					case EC_TAGTYPE_UINT128:
+ 						// Using any non-inline function from UInt128.h would break linkage
+ 						// of remote apps otherwise not using CUInt128. So just fall through
+-						// and display the value as a byte-stream. Since the value is sent
++						// and display the value as a uint8_t-stream. Since the value is sent
+ 						// big-endian on the network, the visual result is correct, except
+ 						// for the intervening spaces...
+ 						//s2 = GetInt128Data().ToHexString(); break;
+diff --git a/src/updownclient.h b/src/updownclient.h
+index 2930df4..7dac1e9 100644
+--- a/src/updownclient.h
++++ b/src/updownclient.h
+@@ -202,7 +202,7 @@ public:
+ 
+ 	void		ClearDownloadBlockRequests();
+ 	void		RequestSharedFileList();
+-	void		ProcessSharedFileList(const byte* pachPacket, uint32 nSize, wxString& pszDirectory);
++	void		ProcessSharedFileList(const uint8_t* pachPacket, uint32 nSize, wxString& pszDirectory);
+ 	void		SendSharedDirectories();
+ 	void		SendSharedFilesOfDirectory(const wxString& strReqDir);
+ 
+@@ -212,13 +212,13 @@ public:
+ 
+ 	uint8		GetClientSoft() const		{ return m_clientSoft; }
+ 	void		ReGetClientSoft();
+-	bool		ProcessHelloAnswer(const byte* pachPacket, uint32 nSize);
+-	bool		ProcessHelloPacket(const byte* pachPacket, uint32 nSize);
++	bool		ProcessHelloAnswer(const uint8_t* pachPacket, uint32 nSize);
++	bool		ProcessHelloPacket(const uint8_t* pachPacket, uint32 nSize);
+ 	void		SendHelloAnswer();
+ 	bool		SendHelloPacket();
+ 	void		SendMuleInfoPacket(bool bAnswer, bool OSInfo = false);
+-	bool		ProcessMuleInfoPacket(const byte* pachPacket, uint32 nSize);
+-	void		ProcessMuleCommentPacket(const byte* pachPacket, uint32 nSize);
++	bool		ProcessMuleInfoPacket(const uint8_t* pachPacket, uint32 nSize);
++	void		ProcessMuleCommentPacket(const uint8_t* pachPacket, uint32 nSize);
+ 	bool		Compare(const CUpDownClient* tocomp, bool bIgnoreUserhash = false) const;
+ 	void		SetLastSrcReqTime()		{ m_dwLastSourceRequest = ::GetTickCount(); }
+ 	void		SetLastSrcAnswerTime()		{ m_dwLastSourceAnswer = ::GetTickCount(); }
+@@ -234,17 +234,17 @@ public:
+ 
+ 	bool		SafeSendPacket(CPacket* packet);
+ 
+-	void		ProcessRequestPartsPacket(const byte* pachPacket, uint32 nSize, bool largeblocks);
++	void		ProcessRequestPartsPacket(const uint8_t* pachPacket, uint32 nSize, bool largeblocks);
+ 	void		ProcessRequestPartsPacketv2(const CMemFile& data);
+ 
+ 	void		SendPublicKeyPacket();
+ 	void		SendSignaturePacket();
+-	void		ProcessPublicKeyPacket(const byte* pachPacket, uint32 nSize);
+-	void		ProcessSignaturePacket(const byte* pachPacket, uint32 nSize);
++	void		ProcessPublicKeyPacket(const uint8_t* pachPacket, uint32 nSize);
++	void		ProcessSignaturePacket(const uint8_t* pachPacket, uint32 nSize);
+ 	uint8		GetSecureIdentState();
+ 
+ 	void		SendSecIdentStatePacket();
+-	void		ProcessSecIdentStatePacket(const byte* pachPacket, uint32 nSize);
++	void		ProcessSecIdentStatePacket(const uint8_t* pachPacket, uint32 nSize);
+ 
+ 	uint8		GetInfoPacketsReceived() const	{ return m_byInfopacketsReceived; }
+ 	void		InfoPacketsReceived();
+@@ -340,12 +340,12 @@ public:
+ 	bool		AskForDownload();
+ 	void		SendStartupLoadReq();
+ 	void		SendFileRequest();
+-	void		ProcessHashSet(const byte* packet, uint32 size);
++	void		ProcessHashSet(const uint8_t* packet, uint32 size);
+ 	bool		AddRequestForAnotherFile(CPartFile* file);
+ 	bool		DeleteFileRequest(CPartFile* file);
+ 	void		DeleteAllFileRequests();
+ 	void		SendBlockRequests();
+-	void		ProcessBlockPacket(const byte* packet, uint32 size, bool packed, bool largeblocks);
++	void		ProcessBlockPacket(const uint8_t* packet, uint32 size, bool packed, bool largeblocks);
+ 	uint16		GetAvailablePartCount() const;
+ 
+ 	bool		SwapToAnotherFile(bool bIgnoreNoNeeded, bool ignoreSuspensions, bool bRemoveCompletely, CPartFile* toFile = NULL);
+@@ -389,14 +389,14 @@ public:
+ 	bool		IsSupportingAICH() const	{return m_fSupportsAICH & 0x01;}
+ 	void		SendAICHRequest(CPartFile* pForFile, uint16 nPart);
+ 	bool		IsAICHReqPending() const	{return m_fAICHRequested; }
+-	void		ProcessAICHAnswer(const byte* packet, uint32 size);
+-	void		ProcessAICHRequest(const byte* packet, uint32 size);
++	void		ProcessAICHAnswer(const uint8_t* packet, uint32 size);
++	void		ProcessAICHRequest(const uint8_t* packet, uint32 size);
+ 	void		ProcessAICHFileHash(CMemFile* data, const CPartFile* file);
+ 
+ 	EUtf8Str	GetUnicodeSupport() const;
+ 
+ 	// Barry - Process zip file as it arrives, don't need to wait until end of block
+-	int		unzip(Pending_Block_Struct *block, byte *zipped, uint32 lenZipped, byte **unzipped, uint32 *lenUnzipped, int iRecursion = 0);
++	int		unzip(Pending_Block_Struct *block, uint8_t *zipped, uint32 lenZipped, uint8_t **unzipped, uint32 *lenUnzipped, int iRecursion = 0);
+ 	void		UpdateDisplayedInfo(bool force = false);
+ 	int		GetFileListRequested() const	{ return m_iFileListRequested; }
+ 	void		SetFileListRequested(int iFileListRequested) { m_iFileListRequested = iFileListRequested; }
+@@ -413,7 +413,7 @@ public:
+ 
+ 	const wxString& GetClientOSInfo() const		{ return m_sClientOSInfo; }
+ 
+-	void		ProcessPublicIPAnswer(const byte* pbyData, uint32 uSize);
++	void		ProcessPublicIPAnswer(const uint8_t* pbyData, uint32 uSize);
+ 	void		SendPublicIPRequest();
+ 
+ 	/**
+@@ -473,8 +473,8 @@ public:
+ 
+ 	/* Kad buddy support */
+ 	// ID
+-	const byte*	GetBuddyID() const		{ return m_achBuddyID; }
+-	void		SetBuddyID(const byte* m_achTempBuddyID);
++	const uint8_t*	GetBuddyID() const		{ return m_achBuddyID; }
++	void		SetBuddyID(const uint8_t* m_achTempBuddyID);
+ 	bool		HasValidBuddyID() const		{ return m_bBuddyIDValid; }
+ 	/* IP */
+ 	void		SetBuddyIP( uint32 val )	{ m_nBuddyIP = val; }
+@@ -789,7 +789,7 @@ private:
+ 	ESourceFrom	m_nSourceFrom;
+ 
+ 	/* Kad Stuff */
+-	byte		m_achBuddyID[16];
++	uint8_t		m_achBuddyID[16];
+ 	bool		m_bBuddyIDValid;
+ 	uint32		m_nBuddyIP;
+ 	uint16		m_nBuddyPort;
+diff --git a/src/utils/aLinkCreator/src/md4.cpp b/src/utils/aLinkCreator/src/md4.cpp
+index 52c7b7f..595fc19 100644
+--- a/src/utils/aLinkCreator/src/md4.cpp
++++ b/src/utils/aLinkCreator/src/md4.cpp
+@@ -43,7 +43,7 @@
+ #include "bithelp.h"
+ 
+ 
+-/// BIG ENDIAN byte reversing
++/// BIG ENDIAN uint8_t reversing
+ #if wxBYTE_ORDER == wxBIG_ENDIAN
+ // Note: this code is harmless on little-endian machines.
+ void MD4::byteReverse(unsigned char *buf, unsigned longs)
+@@ -106,7 +106,7 @@ void MD4::MD4Update(struct MD4Context *ctx, unsigned char const *buf,
+       len -= t;
+     }
+ 
+-  // Process data in 64-byte chunks
++  // Process data in 64-uint8_t chunks
+   while (len >= 64)
+     {
+       memcpy(ctx->in, buf, 64);
+@@ -121,7 +121,7 @@ void MD4::MD4Update(struct MD4Context *ctx, unsigned char const *buf,
+ }
+ 
+ 
+-///  Final wrapup - pad to 64-byte boundary with the bit pattern
++///  Final wrapup - pad to 64-uint8_t boundary with the bit pattern
+ ///  1 0* (64-bit count of bits processed, MSB-first)
+ void MD4::MD4Final(struct MD4Context *ctx, unsigned char* digest)
+ {
+@@ -132,7 +132,7 @@ void MD4::MD4Final(struct MD4Context *ctx, unsigned char* digest)
+   count = (ctx->bits[0] >> 3) & 0x3F;
+ 
+   // Set the first char of padding to 0x80.
+-  //This is safe since there is always at least one byte free
++  //This is safe since there is always at least one uint8_t free
+   p = ctx->in + count;
+   *p++ = 0x80;
+ 
+diff --git a/src/utils/aLinkCreator/src/md4.h b/src/utils/aLinkCreator/src/md4.h
+index c54167e..ebda1e2 100644
+--- a/src/utils/aLinkCreator/src/md4.h
++++ b/src/utils/aLinkCreator/src/md4.h
+@@ -77,7 +77,7 @@ class MD4
+ 
+     size_t calcBufSize(size_t filesize);
+ 
+-    // Needed to reverse byte order on BIG ENDIAN machines
++    // Needed to reverse uint8_t order on BIG ENDIAN machines
+ #if wxBYTE_ORDER == wxBIG_ENDIAN
+ 
+     void byteReverse(unsigned char *buf, unsigned longs);
+diff --git a/src/utils/fileview/KadFiles.cpp b/src/utils/fileview/KadFiles.cpp
+index a2ded24..c1e497e 100644
+--- a/src/utils/fileview/KadFiles.cpp
++++ b/src/utils/fileview/KadFiles.cpp
+@@ -52,7 +52,7 @@ void DecodeLoadIndexDat(const CFileDataIO& file)
+ #include "../../CryptoPP_Inc.h"
+ void KadGetKeywordHash(const wxString& rstrKeyword, Kademlia::CUInt128* pKadID)
+ {
+-	byte Output[16];
++	uint8_t Output[16];
+ #ifdef CRYPTOPP_ENABLE_NAMESPACE_WEAK
+ 	CryptoPP::Weak::MD4 md4_hasher;
+ #else
+@@ -62,7 +62,7 @@ void KadGetKeywordHash(const wxString& rstrKeyword, Kademlia::CUInt128* pKadID)
+ 	// This should be safe - we assume rstrKeyword is ANSI anyway.
+ 	Unicode2CharBuf ansi_buffer(unicode2UTF8(rstrKeyword));
+ 
+-	md4_hasher.CalculateDigest(Output, (const byte *) (const char *) ansi_buffer, strlen(ansi_buffer));
++	md4_hasher.CalculateDigest(Output, (const uint8_t *) (const char *) ansi_buffer, strlen(ansi_buffer));
+ 
+ 	pKadID->SetValueBE(Output);
+ }
+-- 
+2.17.1
+

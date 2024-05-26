@@ -1,0 +1,51 @@
+"Language: ru\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: Konstantine Shevlyakov <shevlakov@132lan.ru>\n"
+
+msgid "TelegramBot"
+msgstr "ТелеграмБот"
+
+msgid "Telegram bot for router with firmware Lede/Openwrt."
+msgstr "Телеграм бот для ротеров на прошивке Lede/Openwrt."
+
+msgid "Enable"
+msgstr "Включить"
+
+msgid "Enable Bot"
+msgstr "Включить бота"
+
+msgid "Bot Token"
+msgstr "Токен бота"
+
+msgid "Token ID your Telegram Bot"
+msgstr "Токен ID Вашего бота в Telegram"
+
+msgid "Chat ID"
+msgstr "ID чата"
+
+msgid "Chat ID your Telegram"
+msgstr "ID чата Вашего Telegram"
+
+msgid "Delay"
+msgstr "Задержка"
+
+msgid "Time Out respone Bot in sec."
+msgstr "Задержка ответа бота в сек."
+
+msgid "Polling Time"
+msgstr "Время опроса"
+
+msgid "Polling Time in sec."
+msgstr "Врема опроса в сек."
+
+msgid "Plugins"
+msgstr "Плагины"
+
+msgid "Path to plugins directory."
+msgstr "Путь к директории с плагинами."
+
+msgid "Log File"
+msgstr "Файл лога"
+
+

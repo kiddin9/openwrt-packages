@@ -1,0 +1,57 @@
+_DEVICE=/dev/ttyACM2
+
+getinfo() {
+	O=$(sms_tool -d $_DEVICE at "at+gmm")
+	_NAME="Fibocom $(echo "$O" | awk -F, '{print $2}')"
+	echo "$_NAME"
+}
+
+getsupportedbands() {
+	O=$(sms_tool -d $_DEVICE at "at+gmm")
+	if echo "$O" | grep -q "L850"; then
+		_DEFAULT_LTE_BANDS="1 2 3 4 5 7 8 11 12 13 17 18 19 20 21 26 28 29 30 38 39 40 41 66"
+	fi
+	if echo "$O" | grep -q "L860"; then
+		_DEFAULT_LTE_BANDS="1 2 3 4 5 7 8 12 13 14 17 18 19 20 25 26 28 29 30 32 38 39 40 41 42 46 66"
+	fi
+	if echo "$O" | grep -q "L860-GL-16"; then
+		_DEFAULT_LTE_BANDS="1 2 3 4 5 7 8 12 13 14 17 18 19 20 25 26 28 29 30 32 34 38 39 40 41 42 43 46 48 66 71"
+	fi
+	echo "$_DEFAULT_LTE_BANDS"
+}
+
+getbands() {
+# +XACT: 4,2,1,1,2,4,5,8,101,102,103,104,105,107,108,112,113,114,117,118,119,120,125,126,128,129,130,132,138,139,140,141,142,146,166
+
+	O=$(sms_tool -d $_DEVICE at "at+xact?")
+	BANDS=$(echo "$O" | awk -F: '/^\+XACT:/{gsub(","," ");print $2}')
+	for BAND in $BANDS; do
+		if [ $BAND -gt 100 ] && [ $BAND -lt 200 ]; then
+			echo -n "$((BAND - 100)) "
+		fi
+	done
+	echo ""
+}
+
+setbands() {
+	BANDS="$1"
+
+	T=""
+	if [ "$BANDS" = "default" ]; then
+		T="0"
+	else
+		for BAND in $BANDS; do
+			case $BAND in
+				''|*[!0-9]*) continue ;;
+			esac
+			[ -n "$T" ] && T="${T},"
+			T="${T}$((BAND + 100))"
+		done
+	fi
+
+	if [ -n "$T" ]; then
+		O=$(sms_tool -d $_DEVICE at "at+xact?")
+		MODE=$(echo "$O" | awk -F[:,] '{print $2}' | xargs)
+		sms_tool -d $_DEVICE at "at+xact=$MODE,,,$T"
+	fi
+}

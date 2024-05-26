@@ -1,0 +1,53 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "AT Commands"
+msgstr "AT命令"
+
+msgid "Configuration"
+msgstr "配置"
+
+msgid "Please specify the AT command to send"
+msgstr "请选择要发送的 AT命令"
+
+msgid "Please set the port for communication with the modem"
+msgstr "请选择与调制解调器通信的端口"
+
+msgid "User AT commands"
+msgstr "用户自定义 AT 命令"
+
+msgid "Command to send"
+msgstr "待发送命令"
+
+msgid "Clear form"
+msgstr "清除表单"
+
+msgid "Send command"
+msgstr "发送命令"
+
+msgid "Reply"
+msgstr "回复"
+
+msgid "User interface for handling AT commands using atinout utility."
+msgstr "使用 atinout工具处理 AT命令的用户界面"
+
+msgid "Configuration atinout"
+msgstr "atinout 的配置"
+
+msgid "Configuration panel for atinout."
+msgstr "atinout 的配置面板"
+
+msgid "Port for communication with the modem"
+msgstr "调制解调器通信端口"
+
+msgid "Select serial modem port."
+msgstr "选择串行调制解调器端口"
+
+msgid "Please select a port"
+msgstr "请选择一个端口"
+
+msgid "Each line must have the following format: 'At command description;AT command'. For user convenience, the file is saved to the location <code>/etc/atcommands.user</code>."
+msgstr "每行应遵循以下格式：'AT命令描述;AT命令'。为了方便用户，文件会被保存在<code>/etc/atcommands.user</code>位置。"
+
+msgid "Press [Enter] to send the command, press [Delete] to delete the command"
+msgstr "按[Enter]键发送命令，按[Delete]键删除命令"

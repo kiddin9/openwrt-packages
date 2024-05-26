@@ -1,0 +1,66 @@
+<%+header%>
+<div class="cbi-map" id="cbi-pgyvpn">
+	<%
+		local cbi = require ('luci.model.uci').cursor()
+		local config = require("luci.pgyvpn.config") 
+
+		local row = cbi:get("pgyvpn", "base")
+		local user = cbi:get("pgyvpn", "base","user")
+		local pwd = cbi:get("pgyvpn", "base","pwd")
+		local vpn_status = cbi:get("pgyvpn", "base","vpn_status")
+		local err_code = cbi:get("pgyvpn", "base","err_code")
+		local err_code_str = ""
+	%>
+
+	<% if vpn_status == "0" then %>
+	<% if err_code and err_code ~= "0" then %>
+
+	<div class="errorbox">
+	<% 
+		 for k ,v in pairs(config.VPN_ERROR) do
+			if v[1] == tonumber(err_code) then
+		 		err_code_str = v[2]
+		 		if v[3] then
+		 			err_code_str = err_code_str ..",请".. "<a href=" .. "\""..v[3][2].."\"" .. " target=\"_blank\">"..v[3][1].."</a>"
+		 		end
+		 		break
+		 	end
+		 end
+	%>
+	<%=err_code_str%>
+	</div>
+
+	<% cbi:set("pgyvpn", "base","err_code","0") %>
+	<% cbi:commit("pgyvpn") %>
+
+	<% end %>
+	<% end %>
+
+	<%+pgyvpn/content%>
+	<fieldset class="cbi-section">
+		<legend>登录</legend>
+		<form action="<%=luci.dispatcher.build_url("admin", "services", "login")%>" method="post">
+			<div class="cbi-section-node">
+				<div class="cbi-value">
+					<label class="cbi-value-title">SN码/贝锐帐号</label>
+					<div class="cbi-value-field">
+						<input class="cbi-input-user" placeholder="请输入SN码/贝锐帐号" type="text" name="user" value="<%=user%>" size="0">
+						<a style="margin-left: 10px;" href=<%=config.URL_LINK.SN_CODE[2]%> target="_blank" onclick="123"><%=config.URL_LINK.SN_CODE[1]%></a>
+					</div>
+				</div>
+				<div class="cbi-value cbi-value-last">
+					<label class="cbi-value-title">密码</label>
+					<div class="cbi-value-field">
+						<input class="cbi-input-password" type="password" name="pwd"  value="<%=pwd%>" size="0">
+						<a style="margin-left: 10px;" href=<%=config.URL_LINK.FORGET_PWD[2]%> target="_blank" onclick="123"><%=config.URL_LINK.FORGET_PWD[1]%></a>
+					</div>
+				</div>
+			</div>
+			<div class="cbi-page-actions">
+				<input class="cbi-button cbi-button-save" type="submit" value="保存" size="0" />
+				<input class="cbi-button cbi-button-save" type="button" value="<%=config.URL_LINK.REGIST[1]%>" onclick="window.open('<%=config.URL_LINK.REGIST[2]%>')" size="0" />
+			</div>
+		</form>
+	</fieldset>
+</div>
+<%+footer%>

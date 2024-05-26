@@ -1,0 +1,15 @@
+config base
+	option enable '0'
+	option keep_alive_server "www.baidu.com"
+	list tcp_stun_server 'stun.nextcloud.com'
+	list tcp_stun_server 'fwa.lifesizecloud.com'
+	list tcp_stun_server 'stun.isp.net.au'
+	list tcp_stun_server 'stun.freeswitch.org'
+	list tcp_stun_server 'stun.voip.blackberry.com'
+	list tcp_stun_server 'stun.stunprotocol.org'
+	list tcp_stun_server 'stun.sipnet.com'
+	list tcp_stun_server 'stun.radiojar.com'
+	list tcp_stun_server 'stun.sonetel.com'
+	list tcp_stun_server 'stun.voipgate.com'
+	list udp_stun_server 'stun.miwifi.com'
+	list udp_stun_server 'stun.qq.com'

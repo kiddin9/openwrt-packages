@@ -1,0 +1,34 @@
+_DEVICE=/dev/ttyUSB2
+
+getinfo() {
+	echo "Huawei E3372h-320"
+}
+
+getsupportedbands() {
+	echo "1 3 7 8 20 28"
+}
+
+getbands() {
+	O=$(sms_tool -d $_DEVICE at "at^syscfgex?")
+	HEX="0x"$(echo "$O" | awk -F[:,] '/^\^SYSCFGEX:/{print $6}' | xargs)
+	if [ "$HEX" = "0x7FFFFFFFFFFFFFFF" ]; then
+		getsupportedbands
+	else
+		[ "$HEX" = "0x" ] || hextobands "$HEX"
+	fi
+}
+
+setbands() {
+	BANDS="$1"
+
+	if [ "$BANDS" = "default" ]; then
+		HEX="7FFFFFFFFFFFFFFF"
+	else
+		HEX=$(bandstohex "$BANDS")
+	fi
+	if [ "$HEX" != "0" ]; then
+		O=$(sms_tool -d $_DEVICE at "at^syscfgex?")
+		MODE=$(echo "$O" | awk -F[:,] '{print $2}' | xargs)
+		sms_tool -d $_DEVICE at "at^syscfgex=\"${MODE:-030201}\",3FFFFFFF,2,4,$HEX,,"
+	fi
+}

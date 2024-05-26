@@ -1,0 +1,11 @@
+{
+	"luci-app-lanraragi": {
+		"description": "Grant UCI access for luci-app-lanraragi",
+		"read": {
+			"uci": [ "lanraragi" ]
+		},
+		"write": {
+			"uci": [ "lanraragi" ]
+		}
+	}
+}

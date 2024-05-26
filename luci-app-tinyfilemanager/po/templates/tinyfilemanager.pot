@@ -1,0 +1,197 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:150
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:151
+msgid "Check update"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/root/usr/share/luci/menu.d/luci-app-tinyfilemanager.json:30
+msgid "Config"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:80
+msgid "D-M-YYYY"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:79
+msgid "D.M.YYYY"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:81
+msgid "D/M/YYYY"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:77
+msgid "DD-MM-YYYY"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:76
+msgid "DD.MM.YYYY"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:78
+msgid "DD/MM/YYYY"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:75
+msgid "Date format"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:118
+msgid "Disable"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:44
+msgid "Enable Authentication"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:130
+msgid "Enable proxy for updater"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:111
+msgid "Exclude Files/Folders"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:105
+msgid "Favicon path"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:65
+msgid "Global Readonly"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:119
+msgid "Google Docs"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/root/usr/share/rpcd/acl.d/luci-app-tinyfilemanager.json:3
+msgid "Grant access to tinyfilemanager procedures"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:93
+msgid "H:mm:ss"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:92
+msgid "HH:mm:ss"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:69
+msgid "Home path"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:47
+msgid "Login user name and passwd hash"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:124
+msgid "Max upload size (MBytes)"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:120
+msgid "Microsoft Web Apps"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/root/usr/share/luci/menu.d/luci-app-tinyfilemanager.json:3
+msgid "NAS"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:116
+msgid "Online Docs viewer"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:133
+msgid "Proxy Protocol"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:143
+msgid "Proxy Server"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:57
+msgid "Readonly users"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:163
+msgid "Releases list"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:34
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:35
+msgid "Reload"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:117
+msgid "Requires running on open network"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:101
+msgid "Show seconds in time"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:95
+msgid "TT h:mm:ss"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:94
+msgid "TT hh:mm:ss"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:91
+msgid "Time format"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:170
+#: applications/luci-app-tinyfilemanager/root/usr/share/luci/menu.d/luci-app-tinyfilemanager.json:11
+#: applications/luci-app-tinyfilemanager/root/usr/share/luci/menu.d/luci-app-tinyfilemanager.json:22
+msgid "Tiny File Manager"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:42
+msgid "To enable SSL support, you may need to install <b>%s</b><br/>"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:170
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:171
+msgid "Uprgade"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:86
+msgid "YYYY-M-D"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:83
+msgid "YYYY-MM-DD"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:85
+msgid "YYYY.M.D"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:82
+msgid "YYYY.MM.DD"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:87
+msgid "YYYY/M/D"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:84
+msgid "YYYY/MM/DD"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:48
+msgid ""
+"You can generate new passwd in <b>File Manager -> Admin -> Help -> Generate "
+"new</b> or <a href=\"%s\" target=\"_blank\"><b>Here</b></a>."
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:97
+msgid "h:mm:ss TT"
+msgstr ""
+
+#: applications/luci-app-tinyfilemanager/htdocs/luci-static/resources/view/tinyfilemanager/config.js:96
+msgid "hh:mm:ss TT"
+msgstr ""

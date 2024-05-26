@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Language: ru\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: Konstantine Shevlakov <shevlakov@132lan.ru>\n"
+
+msgid "Bands"
+msgstr "Диапазоны"
+
+msgid "Manipulate modem bands via mmcli utility"
+msgstr "Управление диапазонами модема через утилиту mmcli"
+
+msgid "Network Mode"
+msgstr "Режим сети"
+
+msgid "Network Bands"
+msgstr "Диапазоны сети"
+
+msgid "Current"
+msgstr "Текущий"
+
+msgid "List supported bands.<br />If deselect all bands, then used default band modem config."
+msgstr "Список поддерживаемых диапазонов.<br />Если не выбрано ни одного диапазона, используется конфигурация модема по умолчанию."
+

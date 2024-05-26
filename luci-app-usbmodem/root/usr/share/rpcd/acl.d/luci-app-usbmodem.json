@@ -1,0 +1,11 @@
+{
+	"luci-app-usbmodem": {
+		"description": "Grant UCI access for luci-app-usbmodem",
+		"read": {
+			"uci": [ "usbmodem" ]
+		},
+		"write": {
+			"uci": [ "usbmodem" ]
+		}
+	}
+}

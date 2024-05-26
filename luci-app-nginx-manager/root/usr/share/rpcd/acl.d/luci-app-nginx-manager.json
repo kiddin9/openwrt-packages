@@ -1,0 +1,11 @@
+{
+	"luci-app-nginx-manager": {
+		"description": "Grant UCI access for luci-app-nginx-manager",
+		"read": {
+			"uci": [ "nginx-manager" ]
+		},
+		"write": {
+			"uci": [ "nginx-manager" ]
+		}
+	}
+}

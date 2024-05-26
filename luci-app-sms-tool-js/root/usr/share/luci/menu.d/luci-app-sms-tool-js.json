@@ -1,0 +1,69 @@
+{
+	"admin/modem": {
+		"title": "Modem",
+		"order": 30,
+		"action": {
+			"type": "firstchild",
+			"recurse": true
+		}
+	},
+	
+	"admin/modem/luci-app-sms-tool-js": {
+		"title": "SMS Messages",
+		"order": 10,
+		"action": {
+			"type": "alias",
+			"path": "admin/modem/luci-app-sms-tool-js/readsms"
+		},
+		"depends": {
+			"acl": [ "luci-app-sms-tool-js" ],
+			"uci": { "sms_tool_js": true }
+		}
+	},
+	
+	"admin/modem/luci-app-sms-tool-js/readsms": {
+		"title": "Received Messages",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "modem/readsms"
+		}
+	},
+	
+	"admin/modem/luci-app-sms-tool-js/sendsms": {
+		"title": "Send Messages",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "modem/sendsms"
+		}
+	},
+	
+	"admin/modem/luci-app-sms-tool-js/sendussd": {
+		"title": "USSD Codes",
+		"order": 30,
+		"action": {
+			"type": "view",
+			"path": "modem/sendussd"
+		}
+	},
+	
+	"admin/modem/luci-app-sms-tool-js/sendat": {
+		"title": "AT Commands",
+		"order": 40,
+		"action": {
+			"type": "view",
+			"path": "modem/sendat"
+		}
+	},
+
+	"admin/modem/luci-app-sms-tool-js/smsconfig": {
+		"title": "Configuration",
+		"order": 50,
+		"action": {
+			"type": "view",
+			"path": "modem/smsconfig"
+		}
+	},
+
+}

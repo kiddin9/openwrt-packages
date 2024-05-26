@@ -1,0 +1,175 @@
+# (c) 2010-2016 Cezary Jackiewicz <cezary@eko.one.pl>
+# (c) 2020-2022 modified by Konstantine Shevlyakov  <shevlakov@132lan.ru>
+# (c) 2021 modified by Vladislav Kadulin  <spanky@yandex.ru>
+
+
+RES="/usr/share/modeminfo"
+#GSCRIPT="$RES/scripts/${FAMILY}.txt"
+
+function get_device_info() {
+	DEVPORT=$(uci -q get modeminfo.@modeminfo[${s}].device)
+	case $DEVPORT in
+		!*tty*) get_port ;;
+	esac
+	modem_family
+	GSCRIPT="$RES/scripts/${FAMILY}.at"
+	O=$(atinout $GSCRIPT $DEVPORT - |grep -v '^$')
+}
+
+function get_port() {
+	devices="$(ls /dev/ttyUSB* /dev/ttyACM* /dev/ttyHS* 2>/dev/null | sort -r)"
+		for d in $devices; do
+			DEVPORT=$d gcom -s $RES/scripts/probeport.gcom > /dev/null 2>&1
+			if [ $? = 0 ]; then
+				uci set modeminfo.@modeminfo[${s}].device="$d"
+				uci commit modeminfo
+				break
+			fi
+		done
+	DEVPORT=$(uci -q get modeminfo.@modeminfo[${s}].device)
+	O=$(atinout $GSCRIPT $DEVPORT - |grep -v '^$')
+}
+
+function modem_family() {
+	if [ ! -f /tmp/modem${s}device ]; then
+		F=$(atinout $RES/scripts/family.at $DEVPORT - | grep -vi "ready")
+		if (echo "${F}" | grep -i que >/dev/null); then
+			FAMILY=QUECTEL
+		elif (echo "${F}" | grep -i sie >/dev/null); then
+			FAMILY=SIERRA
+		elif (echo "${F}" | grep -i dell >/dev/null); then
+			FAMILY=DELL
+		elif (echo "${F}" | grep -i sty >/dev/null); then
+			FAMILY=STYX
+		elif (echo "${F}" | grep -i meig >/dev/null); then
+			FAMILY=MEIGLINK
+		elif (echo "${F}" | grep -i mik >/dev/null); then
+			FAMILY=MIKROTIK
+		elif (echo "${F}" | grep -Ei 'fm350|mt68' >/dev/null); then
+			FAMILY=FM350
+		elif (echo "${F}" | grep -i xmm >/dev/null); then
+			FAMILY=INTEL
+		elif (echo "${F}" | grep -i sim >/dev/null); then
+			FAMILY=SIMCOM
+		elif (echo "${F}" | grep -i fib >/dev/null); then
+			FAMILY=FIBOCOM
+		elif (echo "${F}" | grep -i qua >/dev/null); then
+			FAMILY=QUALCOMM
+		elif (echo "${F}" | grep -i hua >/dev/null); then
+			FAMILY=HUAWEI
+		elif (echo "${F}" | grep -i gos >/dev/null); then
+			FAMILY=GOSUN
+		elif (echo "${F}" | grep -i tw >/dev/null); then
+			FAMILY=THINKWILL
+		elif (echo "${F}" | grep -i yug >/dev/null); then
+			FAMILY=YUGE
+		elif (echo "${F}" | grep -i zte >/dev/null); then
+			FAMILY=ZTE
+		elif (echo "${F}" | grep -i '^incorp' >/dev/null); then
+			FAMILY=A7XXX
+		else
+			FAMILY=GENERIC
+		fi
+		echo $FAMILY > /tmp/modem${s}device
+		uci -q set modeminfo.@modeminfo[${s}].family=$FAMILY
+		uci commit
+	else
+		FAMILY=$(cat /tmp/modem${s}device)
+	fi
+}
+
+# get CSQ
+function get_csq(){
+	CSQ=$(echo "$O" | awk -F[,\ ] '/^\+CSQ/ {print $2}')
+	[ "x$CSQ" = "x" ] && CSQ=-1
+	if [ $CSQ -ge 0 -a $CSQ -le 31 ]; then
+		CSQ_PER=$(($CSQ * 100/31))
+		CSQ_COL="red"
+		[ $CSQ -ge 10 ] && CSQ_COL="red"
+		[ $CSQ -ge 15 ] && CSQ_COL="orange"
+		[ $CSQ -ge 20 ] && CSQ_COL="green"
+		CSQ_RSSI=$((2 * CSQ - 113))
+	else 
+		CSQ_PER="0"
+		CSQ_COL="black"
+	fi
+}
+
+# Get MCC or MNC 
+function get_cops() {
+	# COPS
+	COPS_NUM=$(echo "$O" | awk -F[\"] '/^\+COPS:\s?.,2/ {print $2}')
+	# Fibocom FM350 only?
+	if ! [ $COPS_NUM ]; then
+		COPS_NUM=$(echo "$O" | awk -F[\"] '/^\+COPS:/ {print $2}')
+	fi
+	if [ "x$COPS_NUM" != "x" ]; then
+		COPS_MCC=${COPS_NUM:0:3}
+		COPS_MNC=${COPS_NUM:3:3}
+		COPS=$(awk -F[\;] '/'$COPS_NUM'/ {print $2}' $RES/mccmnc.dat)
+		if [ "x$COPS" = "x" ]; then
+			COPS="$COPS_MCC $COPS_MNC"
+		fi
+	fi
+}
+
+# Get Registration data
+function get_reg_data(){
+	for CREG in "+CREG" "+CGREG" "+CEREG"; do
+		REGST=$(echo "$O" | awk -F[,] '/\'$CREG'/ {print $2}')
+		if [ "$REGST" ]; then
+			break
+		fi
+	done
+}
+
+function generic_data(){
+	TECH=$(echo "$O" | awk -F[,] '/^\+COPS/ {print $4}')
+	case "$TECH" in
+		2*) MODE="UMTS";;
+		0*|3*) MODE="EDGE";;
+		4*) MODE="HSDPA";;
+		5*) MODE="HSUPA";;
+		6*) MODE="HSPA";;
+		7*) MODE="LTE";;
+		 *) MODE="--";;
+	esac
+}
+
+# name device via mmcli utility
+mmcli_name(){
+	MMCLI=$(uci -q get modeminfo.@modeminfo[${s}].mmcli_name)
+	if [ "$MMCLI" = "1" ]; then
+		if [ -x /usr/bin/mmcli ]; then
+			MODEM=$(mmcli -L | awk '{print $1}' | awk -F [/] '{print $NF}')
+			for mm in $MODEM; do
+				MMCLIMEI=$(mmcli -m $mm -J | jsonfilter -e '@["modem"].*["imei"]')
+				IMEI=$(echo $IMEI | tr -d ' ')
+				if [ "$IMEI" = "$MMCLIMEI" ]; then
+					MANUF=$(mmcli -m $mm -J | jsonfilter -e '@["modem"].*["manufacturer"]' | awk '{gsub("\r", ""); print $0}')
+					MODEL=$(mmcli -m $mm -J | jsonfilter -e '@["modem"].*["model"]' | awk '{gsub("\r", ""); print $0}')
+					if [ -n "$(echo "$MODEL" | grep "${MANUF}")" ]; then
+						DEVICE="$MODEL"
+					else
+						DEVICE="$MANUF $MODEL"
+					fi
+				fi
+			done
+		fi
+	fi
+}
+
+
+function get_data_in(){
+	modem_family
+	get_reg_data
+	get_cops
+	get_csq
+	if [ -f "$RES/scripts/${FAMILY}" ]; then
+		. $RES/scripts/$FAMILY
+		modem_data
+	else
+		generic_data
+	fi
+	mmcli_name
+}

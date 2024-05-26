@@ -1,0 +1,98 @@
+msgid ""
+msgstr ""
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+
+msgid "Broadband"
+msgstr "宽带小助手"
+
+msgid "The network speed-up service is provided by the speed test network, with uplink and downlink speed-up functions, and the plug-in has the function of network uninterrupted acceleration."
+msgstr "网络提速服务由测速网提供,具有上行与下行提速功能，该插件具有网络无间断提速功能。"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Shop"
+msgstr "商店"
+
+msgid "Log"
+msgstr "日志"
+
+msgid "Speed Status"
+msgstr "提速状态"
+
+msgid "broadband assistant Running Status"
+msgstr "助手运行状态"
+
+msgid "DownLink Upgrade Status"
+msgstr "下行提速状态"
+
+msgid "UpLink Upgrade Status"
+msgstr "上行提速状态"
+
+msgid "RUNNING"
+msgstr "运行中"
+
+msgid "NOT RUNNING"
+msgstr "未运行"
+
+msgid "————"
+msgstr "————"
+
+msgid "General Settings"
+msgstr "基本设置"
+
+msgid "Enabled"
+msgstr "启用"
+
+msgid "Enable Logging"
+msgstr "启用日志"
+
+msgid "Enable verbose logging"
+msgstr "启用详细日志"
+
+msgid "It is not recommended to increase the speed of non-dial-up interfaces, and the acceleration may be interrupted"
+msgstr "不推荐非拨号接口提速，可能发生加速间断"
+
+msgid "Upgrade interface"
+msgstr "指定接口"
+
+msgid "Log Data"
+msgstr "日志数据"
+
+msgid "More Options"
+msgstr "更多选项"
+
+msgid "Options for advanced users"
+msgstr "高级用户选项"
+
+msgid "Loading..."
+msgstr "正在加载..."
+
+msgid "Auto Refresh"
+msgstr "自动刷新"
+
+msgid "importantlog:"
+msgstr "重要提示："
+
+msgid "log file:"
+msgstr "运行日志："
+
+msgid "No log data."
+msgstr "无日志数据。"
+
+msgid "During the valid acceleration period, the local dial-up can be used to speed up the network without interruption. If you use any other form to connect to the network, there may be a maximum speed increase failure of 10 minutes when the dial-up ip of the main router changes."
+msgstr "使用本机拨号且在加速有效期间内，使用此插件可以无间断提速网络，若使用其他形式连接网络，将可能在主路由拨号ip出现变化时，发生最大10分钟的提速失效。"
+
+msgid "Example: The operator may automatically close the pppoe channel every week, and the router’s re-dial will cause the ip to change. Using local dial-up can speed up without interruption, and using other forms of networking will cause a maximum speed-up failure of 10 minutes within a week."
+msgstr "例：运营商每一周可能自动关闭pppoe通道，路由器重新拨号会导致ip变化，使用本机拨号可以无间断加速，使用其他形式联网则一周内发生最大10分钟提速失效。"
+
+msgid "Thank you, BUG feedback: GitHub"
+msgstr "感谢使用，BUG反馈: GitHub"
+
+msgid "Error get log data."
+msgstr "获取日志数据失败。"

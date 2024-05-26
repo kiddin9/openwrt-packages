@@ -1,0 +1,110 @@
+#!/bin/sh
+
+SECTIONS=$(echo $(uci show modeminfo | awk -F [\]\[\@=] '/=modeminfo/{print $3}'))
+
+get_vars(){
+	for v in device device_qmi qmi_proxy decimail qmi_mode;  do
+		eval $v=$(uci -q get modeminfo.@modeminfo[${s}].${v} 2>/dev/nul)
+	done
+}
+
+
+function json_status() {
+	cat << EOF
+	{
+		"device": "$DEVICE",
+		"cops": "$COPS",
+		"mode": "$MODE",
+		"csq_per": "$CSQ_PER",
+		"lac": "$LAC",
+		"cid": "$CID",
+		"rssi": "$CSQ_RSSI",
+		"sinr": "$SINR",
+		"rsrp": "$RSRP",
+		"rsrq": "$RSRQ",
+		"imei": "$IMEI",
+		"reg": "$REGST",
+		"csq_col": "$CSQ_COL",
+		"arfcn": "$EARFCN",
+		"chiptemp": "$CHIPTEMP",
+		"firmware": "$FW",
+		"bwdl": "$BWDL",
+		"lteca": "$LTE_CA",
+		"enbid": "$ENBID",
+		"distance": "$DISTANCE",
+		"cell": "$CELL",
+		"scc": "$SCC",
+		"bwca": "$BWCA",
+		"iccid": "$ICCID",
+		"imsi": "$IMSI",
+		"pci": "$PCI"
+EOF
+}
+
+
+
+function if_null() {
+        for var in DEVICE COPS MODE CSQ_PER LAC CSQ_RSSI SINR RSRP \
+                        RSRQ IMEI REGST EARFCN CHIPTEMP FW BWDL ICCID IMSI; do
+                if [ "x$(eval echo \${$var})" = "x" ]; then
+                        eval $var='--'
+                fi
+        done
+}
+
+
+qmi_device(){
+	if [ $qmi_mode ]; then
+		SCRIPT=/usr/share/modeminfo/scripts/modeminfo-qmi
+	else
+		SCRIPT=/usr/share/modeminfo/scripts/modeminfo
+	fi
+
+	if [ -r $SCRIPT ]; then
+		. $SCRIPT
+	else
+		exit 0
+	fi
+}
+
+
+args(){
+    echo "$#"
+}
+
+ARGSLEN=$(args $SECTIONS)
+
+echo "{ \"modem\" : ["
+
+for s in $SECTIONS; do
+	m=$((${s} + 1))
+	if [ "$s" ]; then
+		get_vars
+		qmi_device
+	else
+		exit 0
+	fi
+	get_device_info
+	get_data_in >/dev/null 2>&1
+	if_null
+	json_status
+	if [ "$ARGSLEN" = "${m}" ]; then
+		echo "	}"
+	else
+		echo "	},"
+	fi
+	# flush modem variables
+	unset BWCA SCC SC BWDx BWPx BWCx BWDL LTE_CA \
+                DEVICE COPS MODE CSQ_PER LAC CSQ_RSSI \
+                SINR RSRP IMEI REGST EARFCN CHIPTEMP FW \
+                ICCID IMSI RSRQ
+done
+
+echo "]}"
+
+DELAY=$(uci get modeminfo.@general[0].delay >/dev/null 2>&1)
+
+kill -9 $(pgrep atinout) >/dev/null 2>&1
+[ $DELAY ] || DELAY=0 && sleep $DELAY
+
+exit 0

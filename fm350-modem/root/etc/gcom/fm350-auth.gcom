@@ -1,0 +1,16 @@
+opengt
+ set com 115200n81
+ set comecho off
+ set senddelay 0.02
+ waitquiet 0.2 0.2
+
+ send "AT+CGAUTH="
+ send $env("CID")
+ send ","
+ send $env("AUTH")
+ send ",\""
+ send $env("USER")
+ send "\",\""
+ send $env("PASS")
+ send "\"^m"
+

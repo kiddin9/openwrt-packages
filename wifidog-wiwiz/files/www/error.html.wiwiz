@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Language" content="zh">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="viewport" content="width=device-width; initial-scale=1.0">
+<script>
+function runscript(url) {
+	var script = document.createElement('script');  
+	script.setAttribute('src', url);
+	document.getElementsByTagName('head')[0].appendChild(script);  
+}
+
+function _wiwiz_getlanip(ip) {
+	var url = window.location.href;
+	if(url.indexOf("https://") != -1 && url.indexOf("https://"+ ip) == -1) {
+		location.href = "http://"+ ip +":2060";
+	} else {
+		document.getElementById("dvShow").innerHTML = "Page Not Found";
+	}
+}
+
+function myOnLoad() {
+	runscript("/cgi-bin/myip");
+}
+</script>
+</head>
+<body style="background-color: white" onload="myOnLoad()">
+<div id="dvShow">Loading...</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<%#
+Copyright 2019-2020 Michael BD7MQB <bd7mqb@qq.com>
+This is free software, licensed under the GNU GENERAL PUBLIC LICENSE, Version 2.0
+-%>
+<%+header%>
+<link rel="stylesheet" href="<%=resource%>/mmdvm.css">
+<script type="text/javascript">
+//<![CDATA[
+	var pos = {pos:1};
+	
+	function log_update() {
+		XHR.poll(3, '<%=luci.dispatcher.build_url("mmdvm", "logread", log)%>', pos,
+		function(x) {
+			this.p = pos;
+			if (!x) {
+				return;
+			}
+			var view = document.getElementById("livelog");
+			var lines = x.responseText.split(/\r?\n|\r/).length;
+			var n = this.p.pos;
+
+			if(lines >1) {
+				if(n == 1) {
+					view.value = x.responseText + "\n";
+				} else {
+					view.value += x.responseText + "\n";
+				}
+				n += lines;
+				view.scrollTop = view.scrollHeight;
+			}
+			this.p.pos = n;
+		}, true);
+	}
+	window.onload = log_update();
+//]]>
+</script>
+<h2 name="content"><%:Live Log%> - <%=title%></h2>
+<div class="cbi-map">
+	<div class="cbi-section">
+		<textarea id="livelog" readonly="readonly" wrap="off" value="">Loading...</textarea>
+	</div>
+</div>
+
+<% luci.template.render("mmdvm/footer")%>

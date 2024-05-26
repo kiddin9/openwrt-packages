@@ -1,0 +1,25 @@
+From dcc605e06e106b05bc5e756eeeeb17abbc1a6e5c Mon Sep 17 00:00:00 2001
+From: W_Y_CPP <383152993@qq.com>
+Date: Wed, 1 Dec 2021 23:13:08 -0800
+Subject: [PATCH] fix set_terminate
+
+---
+ src/libs/common/MuleDebug.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/libs/common/MuleDebug.cpp b/src/libs/common/MuleDebug.cpp
+index 5d8d758..14206f9 100644
+--- a/src/libs/common/MuleDebug.cpp
++++ b/src/libs/common/MuleDebug.cpp
+@@ -24,7 +24,7 @@
+ //
+ 
+ #include <cstdlib>			// Needed for std::abort()
+-
++#include <exception>
+ #ifdef HAVE_CONFIG_H
+ #	include "config.h"		// Needed for HAVE_CXXABI and HAVE_EXECINFO
+ #endif
+-- 
+2.17.1
+

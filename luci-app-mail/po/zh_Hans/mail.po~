@@ -1,0 +1,44 @@
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2020-12-04 16:02+0000\n"
+"Last-Translator: antrouter <xinyangla@188.com>\n"
+"Language-Team: Chinese (Simplified) <http://weblate.openmptcprouter.com/"
+"projects/omr/luciapplicationsmail/zh_Hans/>\n"
+"Language: zh_Hans\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.0.4\n"
+
+msgid "From"
+msgstr "来自"
+
+msgid "Mail settings"
+msgstr "邮件设置"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "SMTP"
+msgstr "SMTP设置"
+
+msgid "STARTTLS"
+msgstr "STARTTLS设置"
+
+msgid "Server"
+msgstr "服务器"
+
+msgid "Set mail settings for services that need to send mails."
+msgstr "为需要发送邮件的服务设置邮件设置."
+
+msgid "TLS"
+msgstr "证书"
+
+msgid "To"
+msgstr "发送到"
+
+msgid "Username"
+msgstr "账号"

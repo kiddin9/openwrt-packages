@@ -1,0 +1,11 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@lingti[-1]
+	add ucitrack lingti
+	set ucitrack.@lingti[-1].init=lingti_luci
+	commit ucitrack
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0

@@ -1,0 +1,27 @@
+
+<%+cbi/valueheader%>
+<script type="text/javascript">//<![CDATA[
+	// event handler on changed
+	function onhtmlup_date(value) {
+		var obj = document.getElementById("cbid.autorepeater.global.html_page.help");
+		if ( !obj ) { return; }	// security check
+
+		if ( value == "" || value.length == 0 ) { value = "autorepeater.html"; }
+		obj.innerHTML = "<%:Current setting%>: <strong><a href='/" + value + "'><%:Review%></a></strong>";
+	}
+//]]></script>
+
+<input type="text" class="cbi-input-text" onchange="cbi_d_update(this.id)" onkeyup="onhtmlup_date(this.value)"
+	<%=
+	attr("name", cbid) .. attr("id", cbid) .. attr("value", self:cfgvalue(section) or self.default) ..
+	ifattr(self.size, "size") .. ifattr(self.placeholder, "placeholder")
+	%>
+/>
+<br />
+<div class="cbi-value-description">
+	<span class="cbi-value-helpicon"><img src="<%=resource%>/cbi/help.gif" alt="<%:help%>" /><%=self.description%></span>
+	<br />
+	<span id="<%=cbid%>.help" class="cbi-value-helpicon"><%=self.link_string%></span>
+</div>	<!-- div class="cbi-value-description" -->
+</div>	<!-- div class="cbi-value-field" -->
+</div>	<!-- div class="cbi-value cbi-value-last" -->

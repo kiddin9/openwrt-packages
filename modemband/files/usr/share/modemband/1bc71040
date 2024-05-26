@@ -1,0 +1,31 @@
+_DEVICE=/dev/ttyUSB2
+_DEFAULT_LTE_BANDS="1 2 3 4 5 7 8 12 13 17 20 25 26 28 29 30 38 40 41"
+
+getinfo() {
+	echo "Telit LM940"
+}
+
+getsupportedbands() {
+	echo "$_DEFAULT_LTE_BANDS"
+}
+
+getbands() {
+# #BND: 0,11,1A03B0918DF
+
+	O=$(sms_tool -d $_DEVICE at "at#bnd?")
+	HEX="0x"$(echo "$O" | awk -F[:,] '{print $4}' | xargs)
+	hextobands "$HEX"
+}
+
+setbands() {
+	BANDS="$1"
+	[ "$BANDS" = "default" ] && BANDS="$_DEFAULT_LTE_BANDS"
+
+	HEX=$(bandstohex "$BANDS")
+	if [ "$HEX" != "0" ]; then
+		O=$(sms_tool -d $_DEVICE at "at#bnd?")
+		GSM=$(echo "$O" | awk -F[:,] '{print $2}' | xargs)
+		UMTS=$(echo "$O" | awk -F[:,] '{print $3}' | xargs)
+		sms_tool -d $_DEVICE at "at#bnd=${GSM},${UMTS},${HEX}"
+	fi
+}

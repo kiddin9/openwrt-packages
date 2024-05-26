@@ -1,0 +1,22 @@
+--- a/src/base/version.h.in
++++ b/src/base/version.h.in
+@@ -31,7 +31,7 @@
+ #define QBT_VERSION_MAJOR 4
+ #define QBT_VERSION_MINOR 6
+ #define QBT_VERSION_BUGFIX 3
+-#define QBT_VERSION_BUILD 10
++#define QBT_VERSION_BUILD 0
+ #define QBT_VERSION_STATUS ""  // Should be empty for stable releases!
+ 
+ #define QBT__STRINGIFY(x) #x
+--- a/src/base/bittorrent/sessionimpl.cpp
++++ b/src/base/bittorrent/sessionimpl.cpp
+@@ -141,7 +141,7 @@ namespace libtorrent
+ namespace
+ {
+     const char PEER_ID[] = "qB";
+-    const auto USER_AGENT = QStringLiteral("qBittorrent Enhanced/" QBT_VERSION_2);
++    const auto USER_AGENT = QStringLiteral("qBittorrent/" QBT_VERSION_2);
+ 
+     void torrentQueuePositionUp(const lt::torrent_handle &handle)
+     {

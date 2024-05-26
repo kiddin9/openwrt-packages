@@ -1,0 +1,132 @@
+<%+header%>
+
+<script type="text/javascript" src="<%=resource%>/cbi.js?v=git-18.274.67584-38176e6" data-strings="{&#34;path&#34;:{&#34;resource&#34;:&#34;\/luci-static\/resources&#34;,&#34;browser&#34;:&#34;\/cgi-bin\/luci\/admin\/filebrowser&#34;}}"></script>
+
+<%
+	local uci = require("luci.model.uci").cursor()
+	local hosts = uci:get_list("dhcp", uci:get_first("dhcp","dnsmasq"), "ipset")
+	local ips = uci:get_list("omr-bypass", "ips", "ip")
+	local dpi = uci:get_list("omr-bypass", "dpi", "proto")
+	local tmpfile = os.tmpname()
+	local dpi_available_proto = luci.util.execi("cat /proc/net/xt_ndpi/proto | awk '{print $3}' | sort -u | head -n -1")
+	local sys = require "luci.sys"
+	local ifaces = sys.net:devices()
+	local bypassif = uci:get("omr-bypass","defaults","ifname") or ""
+%>
+<% if stderr and #stderr > 0 then %><pre class="error"><%=pcdata(stderr)%></pre><% end %>
+<form class="inline" method="post" action="<%=url('admin/services/omr-bypass/add')%>">
+    <div class="cbi-map">
+	<h2 name="content"><%:SNMPd%></h2>
+	    <fieldset class="cbi-section">
+	    <legend><%:General%></legend>
+	    <div class="cbi-section-descr"></div>
+	    <div class="cbi-value">
+		<label class="cbi-value-title"><%:Enabled%></label>
+		<div class="cbi-value-field">
+		    <input type="checkbox" name="enabled" class="cbi-input-checkbox" value="1" <% if luci.model.uci.cursor():get("snmpd","general","enabled") == "1" then %>checked<% end %>>
+		</div>
+	    </div>
+	    <div class="cbi-value">
+		network
+	    </div>
+	    <div class="cbi-value" data-index="1" data-depends="[]"><label class="cbi-value-title" for="cbid.snmpd.cfg10e48a.sysLocation">Location</label>
+		<div class="cbi-value-field">
+		    <input data-update="change" id="cbid.snmpd.cfg10e48a.sysLocation" name="cbid.snmpd.cfg10e48a.sysLocation" type="text" class="cbi-input-text" value="office" />
+		</div>
+	    </div>
+	    <div class="cbi-value" id="cbi-snmpd-cfg10e48a-sysContact" data-index="2" data-depends="[]"><label class="cbi-value-title" for="cbid.snmpd.cfg10e48a.sysContact">Contact</label>
+		<div class="cbi-value-field">
+		    <input data-update="change" id="cbid.snmpd.cfg10e48a.sysContact" name="cbid.snmpd.cfg10e48a.sysContact" type="text" class="cbi-input-text" value="bofh@example.com" />
+		</div>
+	    </div>
+	    <div class="cbi-value" id="cbi-snmpd-cfg10e48a-sysName" data-index="3" data-depends="[]"><label class="cbi-value-title" for="cbid.snmpd.cfg10e48a.sysName">Nom</label>
+		<div class="cbi-value-field">
+		    <input data-update="change" id="cbid.snmpd.cfg10e48a.sysName" name="cbid.snmpd.cfg10e48a.sysName" type="text" class="cbi-input-text" value="OpenMPTCProuter" />
+		</div>
+	    </div>
+	    
+	    <h3><%:General%></h3>
+	    
+	<div class="cbi-section cbi-tblsection">
+	    <div class="cbi-section-descr"></div>
+	    <div class="table cbi-section-table">
+		<div class="tr cbi-section-table-titles-anonymous">
+		    <div class="th cbi-section-table-cell" data-type="value"><%:Domain, IP or network%></div>
+		    <div class="th cbi-section-table-cell" data-type="value"><%:Output interface%></div>
+		    <div class="th cbi-section-table-cell cbi-section-actions"></div>
+		</div>
+		<div class="tr cbi-section-table-row" id="cbi-omr-bypass-cfg">
+		    <div class="td cbi-value-field" data-name="name" data-type="value" data-title="Domain">
+			<div id="cbi-omr-bypass-cfg-domain" data-index="" data-depends="[]">
+			    <input data-update="change" id="cbid.omr.bypass.cfg.domain"" name="cbid.omr.bypass.cfg.domain" type="text" class="cbi-input-text" value="" data-optional="true" />
+			</div>
+		    </div>
+		    <div class="td cbi-value-field" data-name="interface" data-type="value" data-title="<%:Interface%>">
+			<select class="cbi-input-select" data-update="change" id="cbid.omr.bypass.cfg.interface" name="cbid.omr.bypass.cfg.interface" size="1">
+			    <option id="cbid.omr.bypass.cfg.interface-all" value="all" data-index="1" data-depends="[]"><%:All%></option>
+			    <%
+				for _, iface in ipairs(ifaces) do
+				    if not (iface == "lo" or iface:match("^ifb.*")) then
+			    %>
+			    <option value="<%=iface%>"><%=iface%></option>
+			    <%
+				    end
+				end
+			    %>
+			</select>
+		    </div>
+		</div>
+	    </div>
+	    <div class="cbi-section-create cbi-tblsection-create">
+		<input class="cbi-button cbi-button-add" type="submit" value="Add" name="cbi.cts.omr.bypass.domains" title="<%:Add%>" />
+	    </div>
+	</div>
+	<div class="cbi-section cbi-tblsection" id="cbi-omr-bypass-proto">
+	    <h3><%:Protocols%></h3>
+	    <div class="cbi-section-descr"></div>
+	    <div class="table cbi-section-table">
+		<div class="tr cbi-section-table-titles-anonymous">
+		    <div class="th cbi-section-table-cell" data-type="value"><%:Protocols%></div>
+		    <div class="th cbi-section-table-cell" data-type="value"><%:Output interface%></div>
+		    <div class="th cbi-section-table-cell cbi-section-actions"></div>
+		</div>
+		<div class="tr cbi-section-table-row" id="cbi-omr-bypass-cfg">
+		    <div class="td cbi-value-field" data-name="name" data-type="value" data-title="Domain">
+<%
+			local allprt="&#34;&#34;"
+			local protos = {}
+			for l in io.lines("/proc/net/xt_ndpi/proto") do
+			    local a,b,c,d = l:match('(%w+) (%w+)')
+			    if b ~= "2" and not string.match(b,"custom") then
+				table.insert(protos,b)
+			    end
+			end
+			table.sort(protos)
+			for _,b in ipairs(protos) do
+			    allprt=allprt .. ",&#34;" .. b .. "&#34;"
+			end
+%>
+			<div data-prefix="cbid.omr.bypass.cfg.proto" data-browser-path="" data-dynlist="[[<%=allprt%>],[<%=allprt%>],null,false]">
+			<div id="cbi-omr-bypass-cfg-proto" data-index="" data-depends="[]">
+			    <input data-update="change" id="cbid.omr.bypass.cfg.proto" name="cbid.omr.bypass.cfg.proto" type="text" class="cbi-input-text" value="" data-optional="true" />
+			</div>
+		    </div>
+		    <div class="td cbi-value-field" data-name="interface" data-type="value" data-title="<%:Interface%>">
+			<select class="cbi-input-select" data-update="change" id="cbid.omr.bypass.cfg.interface" name="cbid.omr.bypass.cfg.interface" size="1">
+			    <option id="cbid.omr.bypass.cfg.interface-all" value="all" data-index="1" data-depends="[]"><%:All%></option>
+			</select>
+		    </div>
+		</div>
+	    </div>
+	    <div class="cbi-section-create cbi-tblsection-create">
+		<input class="cbi-button cbi-button-add" type="submit" value="Add" name="cbi.cts.omr.bypass.domains" title="<%:Add%>" />
+	    </div>
+	</div>
+    </div>
+    <div class="cbi-page-actions">
+	<input type="hidden" name="token" value="<%=token%>" />
+	<button class="btn" type="submit">Submit</button>
+    </div>
+</form>
+<script type="text/javascript">cbi_init();</script>
+<%+footer%>

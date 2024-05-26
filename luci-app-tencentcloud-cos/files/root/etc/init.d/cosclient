@@ -1,0 +1,51 @@
+#!/bin/sh /etc/rc.common
+START=100
+
+run_cos()
+{
+	local enable
+	config_get_bool enable $1 enable
+	
+	if [ $enable ]; then
+		local bucket
+		local region
+		local folder
+		local secretid
+		local secretkey
+		local requestAddrPre="http://cos."
+		local requestAddrEnd=".myqcloud.com"
+         
+		config_get bucket $1 bucket
+		config_get region $1 region
+		config_get folder $1 folder
+		config_get secretid $1 secretid
+		config_get secretkey $1 secretkey
+		local flodername="/home/ftp/"$folder
+		if [ ! -d "$flodername" ];then
+			mkdir $flodername
+		fi
+		echo $bucket":"$secretid":"$secretkey > /etc/passwd-cosfs
+		uci set vsftpd.@anonymous[-1].enable=1
+		uci set vsftpd.@anonymous[-1].enable=1
+		uci set vsftpd.@anonymous[-1].enable=1
+		uci set vsftpd.@anonymous[-1].enable=1
+		uci commit vsftpd
+        /etc/init.d/vsftpd restart
+        cosfs $bucket $flodername -ourl=$requestAddrPre$region$requestAddrEnd -odbglevel=info -onoxattr -oallow_other
+		echo "COSFS Client has started."
+	fi
+}
+
+start()
+{
+	count=`mount -v | grep fuse.cosfs | awk '{print $3}' | wc -l`
+	if [ "$count" -ge 1 ]; then
+		mount -v | grep fuse.cosfs | awk '{print $3}' | xargs umount
+	fi
+	config_load cosclient
+	config_foreach run_cos cosclient
+}
+stop(){
+  echo "STOP"
+}
+

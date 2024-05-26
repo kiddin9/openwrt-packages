@@ -1,0 +1,17 @@
+#!/bin/sh /etc/rc.common
+
+# init script 3proxy for openwrt
+# written by Konstantin Shevlakov <shevlakov@132lan.ru>
+
+START=99
+
+start(){
+        CONFIG_PROXY=$(uci -q get 3proxy.@3proxy[0].config)
+		if [ -n $CONFIG_PROXY ]; then
+			/usr/bin/3proxy $CONFIG_PROXY
+		fi
+}
+
+stop(){
+        killall 3proxy
+}

@@ -1,0 +1,44 @@
+msgid "Home Redirect"
+msgstr "端口转发"
+
+msgid "HomeRedirect is a customized port forwarding utility for HomeLede. It supports TCP / UDP protocol, IPv4 and IPv6."
+msgstr "HomeRedirect是一款为HomeLede定制的端口转发工具，可以将路由上端口访问转发至任意位置，支持TCP/UDP协议，IPv4和IPv6。"
+
+msgid "Home Redirect - Port forwarding utility"
+msgstr "Home Redirect 端口转发"
+
+msgid "Redirect Configuration"
+msgstr "转发设置"
+
+msgid "Transport Protocol"
+msgstr "传输协议"
+
+msgid "Source Port"
+msgstr "路由器端口"
+
+msgid "Destination Address"
+msgstr "转发目标地址"
+
+msgid "Destination Port"
+msgstr "转发目标端口"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "Source IP"
+msgstr "路由器IP"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Master switch"
+msgstr "总开关"
+
+msgid "Disabled"
+msgstr "未启用"
+
+msgid "Not running"
+msgstr "未运行"
+
+msgid "Running"
+msgstr "运行中"

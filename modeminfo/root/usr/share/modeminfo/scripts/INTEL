@@ -1,0 +1,105 @@
+function modem_data(){
+	generic_data
+	. /usr/share/modeminfo/scripts/ch_to_band
+	FW=$(echo "$O" | awk '/\+GTPKGVER/{gsub("\"",""); print $2}')
+	ICCID=$(echo "$O" | awk '/CCID:/{print $2}')
+	IMSI=$(echo "$O" | grep -A1 CCID | tail -1)
+	IMEI=$(echo "$O" | grep -A2 CCID | tail -1)
+	DEVx="$(echo "$O" | awk -F [:,] '/CGMI:|GMM:/{gsub("\"|\r","",$0); print substr($2,2);}')"
+	DEVICE=$(echo $DEVx)
+	if [ $MODE = LTE ]; then
+		EARFCN=$(echo "$O" | awk -F [:,] '/\+RSRP:/{print $3}')
+		DISTANCE=$(echo "$O" | awk -F [:,] '/\+XMCI: 4/{gsub(/"/,""); printf "%.2f\n", ($14*78)/1000}')
+		PCI=$(echo "$O" | awk -F [:,] '/\+XMCI: 4/{gsub(/"/,""); printf "%d\n", $7}')
+		RSRP=$(echo "$O" | awk -F [:,] '/\+RSRP:/{printf "%.0f\n", $4}')
+		RSRQ=$(echo "$O" | awk -F [:,] '/\+RSRQ:/{printf "%.0f\n", $4}')
+		REGST=$(echo "$O" | awk -F[,] '/\+CEREG/ {print $2}')
+        	LAC=$(echo "$O" | awk -F [,] '/\+CEREG/{gsub("\"","");print $3}')
+	        CID=$(echo "$O" | awk -F [,] '/\+CEREG/{gsub("\"","");print $4}')
+		# ! SINR formula needs to be checked !
+		SINR=$(echo "$O" | awk -F [:,] '/\+XMCI: 4/{gsub(/"/,""); printf "%.0f\n", $13/4+5}')
+		LTE_Cx=$(echo "$O" | awk -F [:,] '/\+XLEC:/{print $3}')
+		LTE_CA=$(($LTE_Cx -1))
+		BWDL=$(echo "$O" | awk -F [:,] '/\+XLEC:/{gsub("\r","",$4); print $4}')
+		ENBx=$(echo $CID | sed -e 's/..$//')
+                CELL=$(printf %d 0x${CID: -2})
+                ENBID=$(printf %d 0x$ENBx)
+		case $BWDL in
+			1) NP=15 ;;
+			2) NP=25 ;;
+			3) NP=50 ;;
+			4) NP=75 ;;
+			5) NP=100 ;;
+			*) NP=0 ;;
+		esac
+		CSQ=$(echo $RSRP $NP | awk '{printf "%.0f\n", (($1+10*log(12*$2)/log(10))+113)/2}')            
+                [ "x$CSQ" = "x" ] && CSQ=-1                                                                    
+                if [ $CSQ -ge 0 -a $CSQ -le 31 ]; then                                                         
+                        CSQ_PER=$(($CSQ * 100/31))                                                   
+                        CSQ_COL="red"                                                                
+                        [ $CSQ -ge 10 ] && CSQ_COL="red"                                             
+                        [ $CSQ -ge 15 ] && CSQ_COL="orange"                                          
+                        [ $CSQ -ge 20 ] && CSQ_COL="green"                                           
+                        CSQ_RSSI=$((2 * CSQ - 113))                                                
+                        # Fibocom RSSI up -51dBm. Thanks to TSA74 at 4pda.to                       
+                elif [ $CSQ -ge 32 -a $CSQ -le 50 ]; then                                          
+                        CSQ_PER="100"                                                              
+                        CSQ_COL="green"                                     
+                        CSQ_RSSI=$((2 * CSQ - 113))                         
+                else                                                        
+                        CSQ_PER="0"                                         
+                        CSQ_COL="black"                                     
+                fi        
+		case $LTE_CA in
+			1) 
+				SCx=$(echo "$O" | awk -F [:,] '/\+RSRP:/{print $6}')
+				BWCx=$(echo "$O" | awk -F [:,] '/\+XLEC/{gsub("\r",""); print $4" "$5}')
+			;;
+			2)
+				SCx=$(echo "$O" | awk -F [:,] '/\+RSRP:/{print $6" "$9}')
+				BWCx=$(echo "$O" | awk -F [:,] '/\+XLEC/{gsub("\r",""); print $4" "$5" "$6}')
+			;;
+			3)
+				SCx=$(echo "$O" | awk -F [:,] '/\+RSRP:/{print $6" "$9" "$12}')
+				BWCx=$(echo "$O" | awk -F [:,] '/\+XLEC/{gsub("\r",""); print $4" "$5" "$6" "$7}')
+			;;
+			4)
+				SCx=$(echo "$O" | awk -F [:,] '/\+RSRP:/{print $6" "$9" "$12" "$15}')
+				BWCx=$(echo "$O" | awk -F [:,] '/\+XLEC/{gsub("\r",""); print $4" "$5" "$6" "$7" "$8}')
+			;;
+		esac
+		for ca in $BWCx; do
+                        case $ca in
+                                1) N=3 ;;
+                                2) N=5 ;;
+                                3) N=10 ;;
+                                4) N=15 ;;
+                                5) N=20 ;;
+                                *) N=0 ;;
+                        esac
+                        BWCA=$(($BWCA+$N))
+                done
+		for sca in $SCx; do
+			ch_to_band $sca
+			SCC=$SCC+$SC
+		done
+	else
+		REGST=$(echo "$O" | awk -F[,] '/\+CREG/ {print $2}')
+        	LAC=$(echo "$O" | awk -F [,] '/\+CREG/{gsub("\"","");print $3}')
+	        CID=$(echo "$O" | awk -F [,] '/\+CREG/{gsub("\"","");print $4}')
+		EARFCN=$(echo "$O" | awk -F [:,] '/\+RSCP:/{print $3}')
+		SINx=$(echo "$O" | awk -F [:,] '/\+XCESQ:/{print $6}')
+		if [ $SINx -eq 99 ]; then
+			SINR=""
+		else
+			SINR=$(echo "$O" | awk -F [:,] '/\+XCESQ:/{printf "%.0f\n", ($6-50)/2}')
+		fi
+	fi
+	LAC_NUM=$(printf %d 0x$LAC)
+        CID_NUM=$(printf %d 0x$CID)
+	if [ $(uci -q get modeminfo.@general[0].decimail) = "1" ]; then
+		LAC=$LAC_NUM
+		CID=$CID_NUM
+	fi
+	CHIPTEMP=$(echo "$O" | awk -F[:,] '/\+MTSM:/{print $2}')
+}

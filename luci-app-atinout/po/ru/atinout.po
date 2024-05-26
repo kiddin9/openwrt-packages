@@ -1,0 +1,53 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "AT Commands"
+msgstr "Команды AT"
+
+msgid "Configuration"
+msgstr "Настройки"
+
+msgid "Please specify the AT command to send"
+msgstr "Выберите команду AT для отправки"
+
+msgid "Please set the port for communication with the modem"
+msgstr "Выберите порт модема."
+
+msgid "User AT commands"
+msgstr "Пользовательские команды AT"
+
+msgid "Command to send"
+msgstr "Команда к отправке"
+
+msgid "Clear form"
+msgstr "Очистить"
+
+msgid "Send command"
+msgstr "Отправить"
+
+msgid "Reply"
+msgstr "Ответ" 
+
+msgid "User interface for handling AT commands using atinout utility."
+msgstr "Интерфейс для отсылки команд AT с использованием atinout."
+
+msgid "Configuration atinout"
+msgstr "Настройки atinout"
+
+msgid "Configuration panel for atinout."
+msgstr "Панель конфигурации atinout"
+
+msgid "Port for communication with the modem"
+msgstr "AT порт модема"
+
+msgid "Select serial modem port."
+msgstr "Выберите последовательный порт."
+
+msgid "Please select a port"
+msgstr "Выберите порт"
+
+msgid "Each line must have the following format: 'At command description;AT command'. For user convenience, the file is saved to the location <code>/etc/atcommands.user</code>."
+msgstr "Формат записи команд: 'Описание команды;Команда AT'. Содержатся в файле <code>/etc.atcommands.user</code>."
+
+msgid "Press [Enter] to send the command, press [Delete] to delete the command"
+msgstr "Нажмите [Enter] для отправки или [Delete] для удаления"

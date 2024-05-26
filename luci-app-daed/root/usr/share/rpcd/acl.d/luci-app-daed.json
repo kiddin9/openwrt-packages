@@ -1,0 +1,17 @@
+{
+	"luci-app-daed": {
+		"description": "Grant access to daed configuration",
+		"read": {
+			"file": {
+				"/var/log/daed/daed.log": [ "read" ]
+			},
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": [ "daed" ]
+		},
+		"write": {
+			"uci": [ "daed" ]
+		}
+	}
+}

@@ -1,0 +1,120 @@
+msgid "Natter"
+msgstr "Natter"
+
+msgid "Open Port under FullCone NAT (NAT 1)"
+msgstr "帮助 Full cone NAT (NAT 1) 用户打开公网端口"
+
+msgid "Log Path"
+msgstr "日志路径"
+
+msgid "Log Level"
+msgstr "日志等级"
+
+msgid "Base Settings"
+msgstr "基础设置"
+
+msgid "Log"
+msgstr "日志"
+
+msgid "IP Address"
+msgstr "IP 地址"
+
+msgid "Start delay (Seconds)"
+msgstr "启动延迟 (秒)"
+
+msgid "Start delay"
+msgstr "启动延迟"
+
+msgid "Port Settings"
+msgstr "端口设置"
+
+msgid "TCP STUN Server"
+msgstr "TCP STUN 服务器"
+
+msgid "UDP STUN Server"
+msgstr "UDP STUN 服务器"
+
+msgid "Keep Alive Server"
+msgstr "Keep Alive 服务器"
+
+msgid "Directory to save natter logs"
+msgstr "Natter 运行日志保存路径"
+
+msgid "ID"
+msgstr "标识"
+
+msgid "Just keep default, or ensure uniqueness"
+msgstr "保持默认即可, 修改时请确保标识的唯一性"
+
+msgid "Remarks"
+msgstr "备注"
+
+msgid "Internal Port"
+msgstr "内部端口"
+
+msgid "Internal Host IP address"
+msgstr "内部主机 IP 地址"
+
+msgid "Internal Host Port"
+msgstr "内部主机端口"
+
+msgid "External Port"
+msgstr "外部端口"
+
+msgid "External TCP Port"
+msgstr "外部 TCP 端口"
+
+msgid "External UDP Port"
+msgstr "外部 UDP 端口"
+
+msgid "Specify the port opened by Natter"
+msgstr "指定 Natter 打开的端口"
+
+msgid "Enable Port Forward"
+msgstr "启用端口转发"
+
+msgid "Forward opened port to internal host"
+msgstr "将打开的端口转发至内部主机"
+
+msgid "Port Type"
+msgstr "端口类型"
+
+msgid "FullCone NAT"
+msgstr "完全圆锥型 NAT"
+
+msgid "Please DO NOT handle the IP address/domain name/port of the TCP/UDP STUN server (3478) while running proxy"
+msgstr "请不要使用任何代理软件代理 STUN 服务器地址"
+
+msgid "Local IP Address"
+msgstr "本地 IP 地址"
+
+msgid "Natter Listening Address"
+msgstr "Natter 监听地址"
+
+msgid "Please ensure that the address can be connected by Natter"
+msgstr "请确保 Keep Alive 服务器地址能被 Natter 连接"
+
+msgid "Internal IP Address"
+msgstr "内部 IP 地址"
+
+msgid "Forward Mode"
+msgstr "转发策略"
+
+msgid "1 - Natter"
+msgstr "Natter 内置"
+
+msgid "2 - Firewall"
+msgstr "防火墙"
+
+msgid "Delete Logs"
+msgstr "清除日志"
+
+msgid "<%:Delete Logs%>"
+msgstr "清除日志"
+
+msgid "Check NAT Status"
+msgstr "NAT 类型检测"
+
+msgid "Exec"
+msgstr "执行"
+

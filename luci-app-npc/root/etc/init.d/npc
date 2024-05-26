@@ -1,0 +1,67 @@
+#!/bin/sh /etc/rc.common
+
+START=95
+USE_PROCD=1
+LOGGER="logger -t [NPC]"
+
+npc_Path="$(command -v npc)"
+conf_Path="/tmp/etc/npc.conf"
+
+start_service() {
+	local basic_list="enable server_addr server_port protocol vkey max_conn rate_limit flow_limit compress crypt"
+	for i in $(echo $basic_list);do
+		local eval $i="$(uci_get_by_type npc 0 $i)"
+	done;unset i
+
+	[ -s "$conf_Path" ] && rm -f $conf_Path
+	echo "[common]" > $conf_Path || {
+		${LOGGER} "Failed to create config,exit ..."
+		exit 1
+	}
+	echo "server_addr=${server_addr}:${server_port}" >> $conf_Path
+	echo "conn_type=${protocol}" >> $conf_Path
+	echo "vkey=${vkey}" >> $conf_Path
+	echo "auto_reconnection=true" >> $conf_Path
+	[ -n "$max_conn" ] && echo "max_conn=${max_conn}" >> $conf_Path
+	[ -n "$rate_limit" ] && echo "rate_limit=${rate_limit}" >> $conf_Path
+	[ -n "$flow_limit" ] && echo "flow_limit=${flow_limit}" >> $conf_Path
+	conf_write_bool compress $compress
+	conf_write_bool crypt $crypt
+
+	if [ "$enable" = 1 ]
+	then
+		${LOGGER} "Starting NPS Client(NPC) ..."
+		procd_open_instance
+		procd_set_param command $npc_Path -config=$conf_Path
+		procd_set_param respawn
+		procd_set_param stdout 1
+		procd_set_param stderr 1
+		procd_close_instance
+	else
+		${LOGGER} "NPS Client(NPC) Service is now disabled ..."
+	fi
+}
+
+stop_service() {
+	$LOGGER "Stopping NPS Client(NPC) ..."
+	rm -f $conf_Path
+}
+
+service_triggers() {
+	procd_add_reload_trigger "npc"
+}
+
+conf_write_bool() {
+	if [ "$2" == 0 ]
+	then
+		echo "$1=false" >> $conf_Path
+	else
+		echo "$1=true" >> $conf_Path
+	fi
+	return
+}
+
+uci_get_by_type() {
+	local ret=$(uci get npc.@$1[$2].$3 2>/dev/null)
+	echo ${ret:=$4}
+}

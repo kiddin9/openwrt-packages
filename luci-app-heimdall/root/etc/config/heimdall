@@ -1,0 +1,4 @@
+config heimdall
+	option 'http_port' '8088'
+	option 'https_port' '8089'
+	option 'config_path' '/root/heimdall/config'

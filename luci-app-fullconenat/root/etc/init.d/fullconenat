@@ -1,0 +1,70 @@
+#!/bin/sh /etc/rc.common
+#-- Copyright (C) 2018 dz <dingzhong110@gmail.com>
+
+START=99
+
+re=0
+
+start(){
+	local fw3_buildin mode fullconenat_ip fullcone masq
+	strings `which fw3` | grep -q "fullcone"
+	fw3_buildin=$?
+	mode=$(uci get fullconenat.config.mode 2>/dev/null)
+	if modprobe -q "xt_FULLCONENAT"; then
+		[ $fw3_buildin -eq 0 ] && echo -n "fw3 build-in, change settings in /etc/config/firewall either. "
+		echo "$mode."
+	else
+		echo "not supported."
+		return 1
+	fi
+	fullcone=0
+	fullconenat_ip=$(uci get fullconenat.config.fullconenat_ip 2>/dev/null)
+	if [ "$mode" == "ips" ]; then
+			sed -i '/FULLCONENAT/d' /etc/firewall.user
+			echo "iptables -t nat -A zone_wan_prerouting -j FULLCONENAT" >> /etc/firewall.user
+			echo "iptables -t nat -A zone_wan_postrouting -s $fullconenat_ip -j FULLCONENAT" >> /etc/firewall.user
+			echo "iptables -t nat -A zone_wan_postrouting -j MASQUERADE" >> /etc/firewall.user
+	elif [ "$mode" == "all" ]; then
+		if [ $fw3_buildin -ne 0 ]; then
+			iptables -t nat -D zone_wan_postrouting -s $fullconenat_ip -j FULLCONENAT
+			iptables -t nat -D zone_wan_postrouting -j MASQUERADE
+			sed -i '/zone_wan_postrouting -j MASQUERADE/d' /etc/firewall.user
+			sed -i '/FULLCONENAT/d' /etc/firewall.user
+			echo "iptables -t nat -A zone_wan_prerouting -j FULLCONENAT" >> /etc/firewall.user
+			echo "iptables -t nat -A zone_wan_postrouting -j FULLCONENAT" >> /etc/firewall.user
+		else
+			fullcone=1
+		fi
+	fi
+	[ $fw3_buildin -eq 0 ] && {
+		uci set firewall.@defaults[0].fullcone=$fullcone
+		uci set firewall.@zone[1].fullcone=$fullcone
+	}
+	uci commit firewall
+	/etc/init.d/firewall restart
+}
+
+stop(){
+	fullconenat_ip=$(uci get fullconenat.config.fullconenat_ip 2>/dev/null)
+	mode=$(uci get fullconenat.config.mode 2>/dev/null)	
+	echo "$mode, $fullconenat_ip"
+	iptables -t nat -D zone_wan_prerouting -j FULLCONENAT
+	iptables -t nat -D zone_wan_postrouting -s $fullconenat_ip -j FULLCONENAT
+	iptables -t nat -D zone_wan_postrouting -j MASQUERADE
+	iptables -t nat -D zone_wan_postrouting -j FULLCONENAT
+	sed -i '/zone_wan_postrouting -j MASQUERADE/d' /etc/firewall.user
+	sed -i '/FULLCONENAT/d' /etc/firewall.user
+	[ $re -eq 0 ] && {
+		uci set firewall.@defaults[0].fullcone=0
+		uci set firewall.@zone[1].fullcone=0
+		uci commit firewall
+		/etc/init.d/firewall restart
+	}
+}
+
+
+restart(){
+	re=1
+	stop
+	start
+}

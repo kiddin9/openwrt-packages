@@ -1,0 +1,24 @@
+_DEVICE=/dev/ttyUSB2
+_DEFAULT_LTE_BANDS="1 2 3 5 7 8 12 17 20 38 40"
+
+getinfo() {
+	echo "BroadMobi BM806U"
+}
+
+getsupportedbands() {
+	echo "$_DEFAULT_LTE_BANDS"
+}
+
+getbands() {
+	O=$(sms_tool -d $_DEVICE at "at+bmbandpref?")
+	HEX=$(echo "$O" | awk -F[:,] '{print $3}' | xargs)
+	hextobands "$HEX"
+}
+
+setbands() {
+	BANDS="$1"
+	[ "$BANDS" = "default" ] && BANDS="$_DEFAULT_LTE_BANDS"
+
+	HEX=$(bandstohex "$BANDS")
+	[ "$HEX" != "0" ] && sms_tool -d $_DEVICE at "at+bmbandpref=,$HEX,"
+}

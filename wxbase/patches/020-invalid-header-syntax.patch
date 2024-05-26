@@ -1,0 +1,12 @@
+--- a/include/wx/matrix.h
++++ b/include/wx/matrix.h
+@@ -37,8 +37,8 @@
+ //  at a certain coordinate and angle within another parent picture.
+ //  At all times m_isIdentity is set if the matrix itself is an Identity matrix.
+ //  It is used where possible to optimize calculations.
+-class
+ wxDEPRECATED_EXPORT_CORE("use wxAffineMatrix2D instead")
++class
+ wxTransformMatrix: public wxObject
+ {
+ public:

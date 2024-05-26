@@ -1,0 +1,5 @@
+#!/bin/sh
+
+[ "$INTERFACE" == "wan" -a "$ACTION" == "ifup" ] && {
+	/etc/init.d/pgyvpn restart
+}

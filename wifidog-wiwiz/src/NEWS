@@ -1,0 +1,116 @@
+# $Id$
+WiFiDog 1.1.5:
+	* First supported version on OpenWRT kamikaze
+
+WiFiDog 1.1.4:
+	* Fix incorrect firewal rule deletion introduced in 1.1.3rc1.  Caused the incoming byte count reported to be incorrect for users that logged in a second time on a gateway that wasn't restarted in between.
+
+WiFiDog 1.1.3:
+	* Fix incomplete change to make te gateway retry external interface forever.
+	* Remove hardcoded authserver paths.  Can now be defined in the config file (auth server section).
+	* Add manual logout URL, based in part on work by David Bird
+
+WiFiDog 1.1.3rc1:
+	* Close #321:  Make the Gateway retry forever if it cannot find it's interface.  You never know when someone may finally replug the network cable or something...
+	* Close #332:  Apply patch from Laurent Marchal. biguphpc<AT>gmail<DOT>com
+	* fw_iptables.c:  Fix error in iptables_fw_access().  Rules were created as ACCEPT instead of DROP
+	* firewall.c:  Fix bug in fw_sync_with_authserver().  The traffic for the validation period of a user who validated his account while connected wouldn't get counted.
+	* doc/wifidog_firewall_map.dia:  At long last, full documentation of the firewall.  We would have avoided a lot of stupid mistakes if we produced that sooner.
+	* Release 1.1.3_rc1
+	* Fix #324
+	* wifidog.conf:  Improve comments and add examples of blocking access to the upstream LAN.
+	* conf.h:  The DEFAULT_CHECKINTERVAL was 5 instead of 60 (as stated in the config file) which caused huge needless load on the auth servers, and needless ping traffic towards the clients if it wasn't manually set.
+	* contrib/ Add contrib dir to collect the scripts and other code distributed with, but not really part of wifidog.
+	* Modify the build system to finally be able to build wifidog directly from the wifidog directory using the same files 
+		used to make the official .ipk, without having to copy ANYTHNG to the openwrt SDK.
+		There is now a new target:  make ipk make ipk OPENWRTSDK=path_to_openwrt_sdk
+			
+WiFiDog 1.1.3beta6:
+	-Fix bug #238 (config file location was hardcoded)
+	-Fix problem with autodectection of the External interface if the interface isn't fully up yet.  wifidog wil now retry for up to two minutes.
+
+WiFiDog 1.1.3beta4:
+	-Changed ordering in the filter.FORWARD chain
+	-Added TCPMSS rule
+	-Fixed rules bieng left over on shutdown
+	-Fixed wdctl reset problem
+
+WiFiDog 1.1.3beta2:
+	-Fix bug #65 (Whitelisted servers would still splash on port 80
+	-Fix incorrect default value for Path in the AuthServer configuration
+	-Add more info to wdctl status
+
+WiFiDog 1.1.3beta1:
+	-Added patch by wireless London to use the GW interface's mac address as the node_id
+	  if no node_id is specified. It allows the use of generic configuration files without
+	  the need to hardcoding the node_id in.
+	-Added TrustedMACList configuration variable which allows specifying
+	  MAC addresses which are allowed to go through without authentication.
+	-New wdctl command "restart" which will get wifidog to restart itself
+	  while preserving the existing clientlist.  Perfect for 0-downtime
+	  upgrading!
+	-libhttpd: Fixed two bugs parsing the GET query string making wifidog segfault
+	  
+	
+WiFiDog 1.1.2:
+    - Added some informations so it compiles on newer OpenWRT's (whiterussian-rc2)
+    - Fixed minor issue with wdctl
+    - Changed the iptables rules priority to allow existing NAT rules to work
+    - read()s from central server in auth_server_request() are
+        now timed-out (via select).  This is hopefully a bugfix to the
+        thread-freezing problem.
+    - Bugfix non-RFC compliant HTTP requests using \n instead of \r\n as line
+        terminations as per email from ludocornut@users.sourceforge.net
+    - Firewall: make the default ruleset for validating users = allow all
+        (except sending SMTP)
+
+Fixed issue with FAQ
+
+WiFiDog 1.1.1:
+    - An auth server on port 80 will now work
+    - Added an FAQ
+
+WiFiDog 1.1.0:
+	- Changes:
+		- Visual tweaks in the web interface
+		- Internal code & documentation touch-ups
+		- More debugging output
+	- Bugfixes:
+		- Wrong reported uptime
+		- Invalid http header sent during redirection
+		- Mixed long/long long type for counter
+		- Respect SSL setting in auth server definition
+		- Explicitly allow traffic coming into the router
+		- SIGPIPE handling
+		- Firewall destruction not occuring on wifidog termination
+
+WiFiDog 1.1.0_beta3:
+	- Completely re-did the iptables rules.  Most of the rules are now in the filter table instead of the nat table.  Also DROPs are now replaced with REJECTs to help tell the user connection refused instead of endless pauses
+	- wdctl status will return more informations
+	- Some error messages are now displayed by the auth server (used to be done in a non-pretty way by wifidog)
+	- We now 'ping' authserver and detect when authservers are changing IPs
+	- Fixed memory leaks
+	- Incoming and outgoing counters were reversed
+	- More verbose debugging
+	- ICMP Ping the users everytime we check their counters to keep them alive
+	- Optional ExternalInterface
+	- Optional GatewayAddress
+	- /about URL now shows wifidog version
+	- Keep track of last times we successfully & unsuccessfully spoke to the auth server/used DNS. Then, if we know we're not online, show a little apology to the user instead of re-directing them to the auth server.
+	- When pinging auth server now also sends sys_uptime, sys_memfree and sys_load
+	- Bugfix: Traffic from client to router was counted twice in the "outgoing" bytecount since it increased both counters in mangle.* and filter.* - Got rid of TABLE_WIFIDOG_WIFI_TO_GW completely since it's unneeded
+	- Do not update the last_updated field on incoming traffic - update it on outgoing traffic only.  This should be a much more reliable indication of client no longer being there
+	- WiFiDog status is now viewable with a web browser at http://ip:port/wifidog/status
+
+WiFiDog 1.0.2:
+	- Fix reversed incoming and outgoing connections in statistics reported to the auth server
+	- Will now gracefully handle auth servers changing IP adress.
+	- Fixes two bugs in byte counting. (Possible missed data, and incoming and outgoing were reversed.
+	- Fixed file descriptor leaks
+	- wdctl_status now returns all connected users.
+	- worked around sed -i not being available on all platform
+	- ipkg no longuer overwrites config file
+	- Several code changes in thread handling and libhttpd to fix occasional hangs.
+
+WiFiDog 1.0.0:
+	- Initial release

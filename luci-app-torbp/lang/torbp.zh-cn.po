@@ -1,0 +1,56 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Tor bridges proxy"
+msgstr "Tor 桥接代理"
+
+msgid "Tor with SOCKS 5 proxy with a UI for the ability to add bridges"
+msgstr "Tor Socks5 代理，具有一个gui界面来添加网桥"
+
+msgid "Tor configuration"
+msgstr "Tor 设置"
+
+msgid "Stop & Disable start on boot"
+msgstr "停止 & 禁止自动启动"
+
+msgid "Start & Enable start on boot"
+msgstr "启动 & 启用自动启动"
+
+msgid "NOT ENABLED on boot"
+msgstr "自动启动已禁用"
+
+msgid "ENABLED on boot"
+msgstr "自动启动已启用"
+
+msgid "Tor is Running"
+msgstr "Tor 正在运行"
+
+msgid "Tor is not Installed"
+msgstr "Tor 未安装"
+
+msgid "Tor is not Running"
+msgstr "Tor 未在运行"
+
+msgid "Make me Tor config"
+msgstr "生成Tor配置"
+
+msgid "Create a sample Tor config"
+msgstr "创建配置示例"
+
+msgid "Edit torrc file"
+msgstr "编辑 torrc 文件"
+
+msgid "Apply & Restart Tor"
+msgstr "应用 & 重启 Tor"
+
+msgid "Log"
+msgstr "日志"
+
+msgid "Tor log"
+msgstr "Tor 日志"
+
+msgid "and"
+msgstr "和"
+
+msgid "with PID"
+msgstr "带有 PID"

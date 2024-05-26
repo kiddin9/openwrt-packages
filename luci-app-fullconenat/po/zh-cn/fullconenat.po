@@ -1,0 +1,45 @@
+msgid "fullconenat"
+msgstr "全端口映射"
+
+msgid "FULLCONENAT"
+msgstr "Fullcone NAT"
+
+msgid "<strong><font color=\"green\">Running</font></strong>"
+msgstr "<strong><font color=\"green\">正在运行</font></strong>"
+
+msgid "<strong><font color=\"red\">Not Running</font></strong>"
+msgstr "<strong><font color=\"red\">未运行</font></strong>"
+
+msgid "<strong><font color=\"red\">Not supported, Kernel module needed: xt_FULLCONENAT</font></strong>"
+msgstr "<strong><font color=\"red\">不支持，缺少 xt_FULLCONENAT 内核组件</font></strong>"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Build-in mode, set the `fullcone` option to firewall configure either."
+msgstr "防火墙内置模式，同时配置防火墙(firewall)中对应的选项。"
+
+msgid "Manual mode, write to the firewall custom rules settings only."
+msgstr "手动模式，仅将配置写入到防火墙(firewall)自定义规则中。"
+
+msgid "Register modes"
+msgstr "运行模式"
+
+msgid "Disable"
+msgstr "停用"
+
+msgid "IP Address Only"
+msgstr "限指定IP"
+
+msgid "ALL Enabled"
+msgstr "全网开启"
+
+msgid "<strong><font color=\"red\">Warning!!! There is security risk if enabled.</font></strong>"
+msgstr "<strong><font color=\"red\">警告!!!开启后存在安全风险。</font></strong>"
+
+msgid "FullConeNat IP"
+msgstr "映射IP"
+
+msgid "Enable FullConeNat for specified IP Address."
+msgstr "多IP映射用英文逗号分隔。"
+

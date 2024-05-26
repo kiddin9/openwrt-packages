@@ -1,0 +1,104 @@
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2020-09-21 12:51+0000\n"
+"Last-Translator: Weblate Admin <contact@openmptcprouter.com>\n"
+"Language-Team: Italian <http://weblate.openmptcprouter.com/projects/omr/"
+"luciapplicationsiperf/it/>\n"
+"Language: it\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.0.4\n"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:128
+msgid "0 for unlimited. Need to be limited for UDP test"
+msgstr "0 per illimitato. Deve essere limitato per il test UDP"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:48
+#: luci-app-iperf/luasrc/view/iperf/test.htm:88
+msgid "Bad address specified!"
+msgstr "È stato specificato un indirizzo errato!"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:66
+#: luci-app-iperf/luasrc/view/iperf/test.htm:78
+#: luci-app-iperf/luasrc/view/iperf/test.htm:83
+#: luci-app-iperf/luasrc/view/iperf/test.htm:88
+msgid "Download"
+msgstr "Scarica"
+
+#: luci-app-iperf/root/usr/share/rpcd/acl.d/luci-app-iperf.json:3
+msgid "Grant UCI access for luci-app-iperf"
+msgstr ""
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:114
+msgid "Internet protocol"
+msgstr "Internet Protocol (Protocollo Internet)"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:26
+#: luci-app-iperf/luasrc/view/iperf/test.htm:66
+msgid "Loading"
+msgstr "Caricamento in corso"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:105
+msgid "Mode of operation"
+msgstr "Modalità di funzionamento"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:133
+msgid "Number of parallel client streams to run"
+msgstr "Numero di flussi client paralleli da eseguire"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:139
+msgid "Omit the first n seconds"
+msgstr "Ometti i primi n secondi"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:151
+msgid "Server"
+msgstr "Server"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:165
+msgid "Server VPS IP is bypassed, so this will test only default route speed."
+msgstr ""
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:102
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:123
+msgid "Target bitrate (Mbits/s)"
+msgstr "Bitrate desiderato (Mbits/s)"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:169
+msgid "Test"
+msgstr "Test"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:100
+msgid "This iPerf interface is in bêta. No support for this."
+msgstr "Questa interfaccia iPerf è in bêta."
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:145
+msgid "Time to transmit for (s)"
+msgstr "È ora di trasmettere per (s)"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:26
+#: luci-app-iperf/luasrc/view/iperf/test.htm:38
+#: luci-app-iperf/luasrc/view/iperf/test.htm:43
+#: luci-app-iperf/luasrc/view/iperf/test.htm:48
+msgid "Upload"
+msgstr "Carica"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:27
+#: luci-app-iperf/luasrc/view/iperf/test.htm:67
+msgid "Waiting for command to complete..."
+msgstr "In attesa del completamento del comando ..."
+
+#: luci-app-iperf/luasrc/controller/iperf.lua:8
+#: luci-app-iperf/root/usr/share/luci/menu.d/luci-app-iperf.json:3
+msgid "iPerf"
+msgstr "iPerf"
+
+#: luci-app-iperf/luasrc/view/iperf/test.htm:99
+msgid "iPerf speed tests"
+msgstr "Prove di velocità iPerf"
+
+#~ msgid "iperf"
+#~ msgstr "iPerf"

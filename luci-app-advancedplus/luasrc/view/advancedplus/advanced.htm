@@ -1,0 +1,89 @@
+<%#
+Copyright (C)  2022-2024  sirpdboy  <herboy2008@gmail.com> 
+-%>
+<%+cbi/valueheader%>
+<%local fs=require"nixio.fs"%>
+<input type="button" class="btn cbi-button cbi-button-apply" id="apply_run_button" value="<%:Click to execute%>" onclick=" return apply_run(this) "/>
+<div id="logview" style="display:none">
+<textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:block;" data-update="change" rows="30" cols="60" readonly="readonly" > </textarea>
+</div>
+<script type="text/javascript">//<![CDATA[
+
+var checkbtn = document.getElementById('apply_run_button');
+
+function apply_run(btn){
+	var sid='cfg018967'
+	var opt={
+		base:"cbid.advancedplus."+sid,
+		get:function(opt){
+			var id=this.base+'.'+opt;
+			var obj=document.getElementsByName(id)[0] || document.getElementsByClassName(id)[0] || document.getElementById(id)
+			if (obj){
+				return obj;
+			}else{
+				return null;
+			}
+		},
+		getlist:function(opt){
+			var id=this.base+'.'+opt;
+			var objs=document.getElementsByName(id) || document.getElementsByClassName(id);
+			var ret=[];
+			if (objs){
+				for (var i=0;i < objs.length;i++){
+					ret[i]=objs[i].value;
+				}
+			}else{
+				alert("<%:Fatal on get option,please help in debug%>:"+opt);
+			}
+			return ret;
+		},
+		query:function(param,src,tval="1",fval="0"){
+			var ret="&"+param+"=";
+			var obj=this.get(src);
+			if (obj){
+				if (obj.type=="checkbox"){
+					return ret+(obj.checked==true ? tval:fval);
+				}else{
+					return ret+encodeURIComponent(obj.value);
+				}
+			}
+			return ''
+		}
+	}
+	btn.value='<%:Waiting,(executing)...%>';
+	btn.disabled=true;
+    var select_ipk=opt.get("select_ipk").value;
+	console.log(select_ipk);
+	XHR.get('<%=url([[admin]], [[system]], [[advancedplus]], [[advancedrun]])%>',{
+            select_ipk: select_ipk
+			},function(x){});
+	poll_check();
+	return
+}
+
+function poll_check(){
+var tag = document.getElementById('logview');
+tag.style.display="block"
+XHR.poll(3, '<%=url([[admin]], [[system]], [[advancedplus]], [[check]])%>', null,
+	function(x, data) {
+		var lv = document.getElementById('cbid.logview.1.conf');
+		if (x.responseText && lv) {
+			if (x.responseText=="\u0000"){
+				for(j = 0,len=this.XHR._q.length; j < len; j++) {
+					if (this.XHR._q[j].url == '<%=url([[admin]], [[system]], [[advancedplus]], [[check]])%>'){
+						this.XHR._q.splice(j,1);
+						checkbtn.disabled = false;
+						checkbtn.value    = '<%:Click to execute%>';
+						break;
+					}
+				}
+				return	
+			}
+			lv.innerHTML += x.responseText;
+		}
+	}
+);}
+
+//]]>
+</script>
+<%+cbi/valuefooter%>

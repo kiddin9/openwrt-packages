@@ -1,0 +1,132 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Modem"
+msgstr "移动网络"
+
+msgid "Modeminfo"
+msgstr "调制解调器信息"
+
+msgid "Network"
+msgstr "网络"
+
+msgid "China Mobile"
+msgstr "中国移动"
+
+msgid "China Unicom"
+msgstr "中国联通"
+
+msgid "China Telecom"
+msgstr "中国电信"
+
+msgid "Hardware"
+msgstr "硬件"
+
+msgid "Setup"
+msgstr "设置"
+
+msgid "Modeminfo: Network"
+msgstr "调制解调器信息: 网络"
+
+msgid "No Registration"
+msgstr "未注册"
+
+msgid "Registered"
+msgstr "已注册"
+
+msgid "Searching"
+msgstr "搜索中"
+
+msgid "Denied"
+msgstr "禁止注册"
+
+msgid "Unknown"
+msgstr "未知"
+
+msgid "Roaming"
+msgstr "漫游"
+
+msgid "No Data"
+msgstr "无数据"
+
+msgid "Network/Band/Bandwidth"
+msgstr "网络/频段/带宽"
+
+msgid "Network/Band"
+msgstr "网络/频段"
+
+msgid "Cellular network"
+msgstr "蜂窝网络"
+
+msgid "Operator"
+msgstr "运营商"
+
+msgid "Status"
+msgstr "状态"
+
+
+msgid "Modeminfo: Hardware"
+msgstr "调制解调器信息: 硬件"
+
+msgid "Hardware and sim card info."
+msgstr "硬件和sim卡信息。"
+
+msgid "Device"
+msgstr "设备"
+
+msgid "Firmware"
+msgstr "固件"
+
+msgid "Chiptemp"
+msgstr "芯片温度"
+
+msgid "In automatic mode detect first answered DATA port."
+msgstr "在自动模式下，检测第一个应答的DATA端口。"
+
+msgid "Please select a port"
+msgstr "请选择端口"
+
+msgid "Modeminfo: Configuration"
+msgstr "调制解调器信息：配置"
+
+msgid "Configuration panel of Modeminfo."
+msgstr "调制解调器信息配置面板。"
+
+msgid "Use QMI"
+msgstr "使用 QMI"
+
+msgid "Get modem data via qmicli (experimental). Require install qmi-utils."
+msgstr "通过qmicli获取调制解调器数据（实验）。需要安装qmi utils。"
+
+msgid "Data port"
+msgstr "数据端口"
+
+msgid "Select serial port."
+msgstr "选择串口。"
+
+msgid "Select qmi port."
+msgstr "选择qmi端口。"
+
+msgid "Show decimal"
+msgstr "十进制显示"
+
+msgid "Show LAC and CID in decimal."
+msgstr "以十进制显示LAC和CID。"
+
+msgid "Get device hardware name via mmcli utility if aviable."
+msgstr "如果可用，请通过mmcli 获取设备硬件名称。"
+
+msgid "Name via mmcli"
+msgstr "通过mmcli命名"
+
+msgid "QMI proxy"
+msgstr "QMI 代理"
+
+msgid "Enable qmi-proxy mode."
+msgstr "启用qmi代理模式。"
+
+msgid "Index page"
+msgstr "主页显示"
+
+msgid "Short info on Overview page"
+msgstr "在概览页面显示简单的信息。"

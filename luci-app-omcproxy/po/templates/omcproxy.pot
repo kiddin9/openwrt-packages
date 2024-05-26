@@ -1,0 +1,50 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Add instance"
+msgstr ""
+
+msgid "Downlink interface"
+msgstr ""
+
+msgid "Embedded IGMPv3 and MLDv2 proxy"
+msgstr ""
+
+msgid "Minimum multicast scope to proxy (only affects IPv6 multicast)"
+msgstr ""
+
+msgid "Proxy Instance"
+msgstr ""
+
+msgid "Scope"
+msgstr ""
+
+msgid "Uplink interface"
+msgstr ""
+
+msgid "Where does the multicast come from?"
+msgstr ""
+
+msgid "Where does the multicast go to?"
+msgstr ""
+
+msgid "admin-local"
+msgstr ""
+
+msgid "default"
+msgstr ""
+
+msgid "global"
+msgstr ""
+
+msgid "omcproxy"
+msgstr ""
+
+msgid "organization-local"
+msgstr ""
+
+msgid "realm"
+msgstr ""
+
+msgid "site-local"
+msgstr ""

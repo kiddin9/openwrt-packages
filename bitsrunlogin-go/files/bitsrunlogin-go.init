@@ -1,0 +1,115 @@
+#!/bin/sh /etc/rc.common
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Copyright (C) 2022-2023 Tianling Shen <cnsztl@immortalwrt.org>
+
+USE_PROCD=1
+
+START=99
+STOP=10
+
+CONF="bitsrunlogin-go"
+PROG="/usr/bin/bitsrunlogin-go"
+RUN_DIR="/var/run/$CONF"
+
+uci_json_add_boolean() {
+	local enabled
+	config_get_bool enabled "${4:-config}" "$2" "${3:-0}"
+	json_add_boolean "$1" "$enabled"
+}
+
+uci_json_add_int() {
+	local value
+	config_get value "${4:-config}" "$2" "${3:-0}"
+	json_add_int "$1" "$value"
+}
+
+uci_json_add_string() {
+	local value
+	config_get value "${4:-config}" "$2" $3
+	[ -z "$value" ] || json_add_string "$1" "$value"
+}
+
+json_add_headers() {
+	[ -n "$1" ] || return 1
+
+	local prefix="${1%%:*}"
+	local value="$(echo "${1#*:}" | xargs)"
+	json_add_string "$prefix" "$value"
+}
+
+start_service() {
+	config_load "$CONF"
+
+	local enabled
+	config_get_bool enabled "config" "enabled" "0"
+	[ "$enabled" -eq "1" ] || return 1
+
+	mkdir -p "$RUN_DIR"
+	json_init
+	json_add_object "form"
+		uci_json_add_string "domain" "domain"
+		uci_json_add_string "user_type" "usertype"
+		uci_json_add_string "username" "username"
+		uci_json_add_string "password" "password"
+	json_close_object
+	json_add_object "meta"
+		json_add_string "n" "200"
+		json_add_string "type" "1"
+		uci_json_add_string "acid" "acid" "5"
+		uci_json_add_string "enc" "enc" "srun_bx1"
+		uci_json_add_string "os" "os" "Windows 10"
+		uci_json_add_string "name" "os_name" "windows"
+		uci_json_add_string "info_prefix" "info_prefix" "SRBX1"
+		uci_json_add_boolean "double_stack" "dual_stack"
+	json_close_object
+	json_add_object "settings"
+		json_add_object "basic"
+			uci_json_add_boolean "https" "enable_https"
+			uci_json_add_boolean "skip_cert_verify" "skip_cert_verify"
+			uci_json_add_int "timeout" "timeout" "5"
+			uci_json_add_string "interfaces" "interfaces"
+		json_close_object
+		json_add_object "guardian"
+			json_add_boolean "enable" "1"
+			uci_json_add_int "duration" "duration" "3600"
+		json_close_object
+		json_add_object "log"
+			uci_json_add_boolean "debug_level" "debug"
+			json_add_boolean "write_file" "1"
+			json_add_string "log_path" "$RUN_DIR"
+			json_add_string "log_name" "$CONF.log"
+		json_close_object
+		json_add_object "custom_header"
+			config_list_foreach "config" "custom_header" json_add_headers
+		json_close_object
+	json_close_object
+	json_dump > "$RUN_DIR/$CONF.json"
+	json_cleanup
+
+	procd_open_instance
+	procd_set_param command "$PROG"
+	procd_append_param command -config "$RUN_DIR/$CONF.json"
+
+	local auto_acid auto_enc
+	config_get_bool auto_acid "config" "auto_acid" "1"
+	config_get_bool auto_enc "config" "auto_enc" "1"
+	[ "$auto_acid" -eq "0" ] || procd_append_param command -auto-acid
+	[ "$auto_enc" -eq "0" ] || procd_append_param command -auto-enc
+
+	procd_set_param respawn
+	procd_close_instance
+}
+
+stop_service() {
+	rm -rf "$RUN_DIR"
+}
+
+reload_service() {
+	stop
+	start
+}
+
+service_triggers() {
+	procd_add_reload_trigger "$CONF"
+}

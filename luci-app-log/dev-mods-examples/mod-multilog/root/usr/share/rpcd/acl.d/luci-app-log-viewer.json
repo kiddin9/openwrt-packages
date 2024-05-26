@@ -1,0 +1,22 @@
+{
+	"luci-app-log-viewer": {
+		"description": "Grant access to log-viewer procedures",
+		"read": {
+			"cgi-io": [ "exec" ],
+			"file": {
+				"/sbin/logread*": [ "exec" ],
+				"/usr/sbin/logread*": [ "exec" ],
+				"/bin/dmesg -r": [ "exec" ],
+				"/var/log/messages": [ "read" ],
+				"/var/log/secure": [ "read" ],
+				"/var/log/maillog": [ "read" ],
+				"/var/log/cron": [ "read" ],
+				"/var/log/boot.log": [ "read" ]
+			},
+			"ubus": {
+				"system": [ "info" ],
+				"luci.log-viewer": [ "getSyslogSize", "getSyslogHash", "getDmesgSize", "getDmesgHash", "getLogfileSize" ]
+			}
+		}
+	}
+}

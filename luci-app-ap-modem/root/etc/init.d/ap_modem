@@ -1,0 +1,208 @@
+#!/bin/sh /etc/rc.common
+
+START=20
+USE_PROCD=1
+
+boot() {
+    # procd will call service_triggers
+    rc_procd true
+}
+
+service_triggers() {
+    procd_add_reload_trigger "network" "ap_modem"
+}
+
+find_uci_section_i() {
+    local key="$2"
+    local value="$3"
+    local testv
+    config_get testv "$1" "$key"
+    [[ "$value" = "$testv" ]] && echo "$1"
+}
+
+find_uci_section() {
+    local config="$1"
+    local type="$2"
+    local key="$3"
+    local value="$4"
+    (
+        config_load "$config"
+        config_foreach find_uci_section_i "$type" "$key" "$value"
+    )
+}
+
+generate_config() {
+    [[ "`uci -q get network.lan.device`" = "br-lan" ]] || {
+        echo "network.lan.device != br-lan in uci" >&2
+        return 1
+    }
+    local wan_dev="`uci -q get network.wan.device`"
+    [[ -z "$wan_dev" ]] && {
+        echo "get network.wan.device in uci failed" >&2
+        return 1
+    }
+    local lan_dev=`find_uci_section network device name 'br-lan' | head -1`
+    [[ -z "$lan_dev" ]] && {
+        echo "network.device.name=br-lan not found in uci" >&2
+        return 1
+    }
+
+    local wan_zone=`find_uci_section firewall zone name 'wan' | head -1`
+    [[ -z "$wan_zone" ]] && {
+        echo "firewall.zone.name=wan not found in uci" >&2
+        return 1
+    }
+
+    # virutal lan device
+    uci -q get network.veth_lan >/dev/null || uci -q batch <<-EOF >/dev/null
+        set network.veth_lan=device
+        set network.veth_lan.type=veth
+        set network.veth_lan.name=vap-lan
+        set network.veth_lan.sendredirects=0
+        set network.veth_lan.ipv6=0
+        set network.veth_lan.multicast=0
+        set network.veth_lan.peer_name=vap-lan-peer
+EOF
+    uci -q get network.veth_lan_peer >/dev/null || uci -q batch <<-EOF >/dev/null
+        set network.veth_lan_peer=device
+        set network.veth_lan_peer.name=vap-lan-peer
+        set network.veth_lan_peer.sendredirects=0
+        set network.veth_lan_peer.ipv6=0
+        set network.veth_lan_peer.multicast=0
+EOF
+    uci -q get "network.$lan_dev.ports" | grep -Fwq 'vap-lan' || uci add_list "network.$lan_dev.ports=vap-lan"
+
+    # interface
+    if uci -q get network.vap_lan >/dev/null; then
+        uci -q delete network.vap_lan.auto
+    else
+        uci -q batch <<-EOF >/dev/null
+            set network.vap_lan=interface
+            set network.vap_lan.proto=static
+            set network.vap_lan.device=vap-lan-peer
+            set network.vap_lan.defaultroute=0
+            set network.vap_lan.delegate=0
+EOF
+    fi
+    if uci -q get network.vap_wan >/dev/null; then
+        uci -q delete network.vap_wan.auto
+    else
+        uci -q batch <<-EOF >/dev/null
+            set network.vap_wan=interface
+            set network.vap_wan.proto=static
+            set network.vap_wan.device=$wan_dev
+            set network.vap_wan.defaultroute=0
+            set network.vap_wan.delegate=0
+EOF
+    fi
+    # firewall
+    local fw_wan_net="`uci -q get firewall.$wan_zone.network`"
+    echo "$fw_wan_net" | grep -Fwq 'vap_lan' || uci -q batch <<-EOF >/dev/null
+        add_list firewall.$wan_zone.network=vap_lan
+EOF
+    echo "$fw_wan_net" | grep -Fwq 'vap_wan' || uci -q batch <<-EOF >/dev/null
+        add_list firewall.$wan_zone.network=vap_wan
+EOF
+    uci commit firewall
+
+    # ip
+    local bip
+    local black_ip="127.0.0.1/8"
+    [[ "`uci -q get network.lan.proto`" = "static" ]] && {
+        local lan_ip="`uci -q get network.lan.ipaddr`"
+        if [[ -n "$lan_ip" ]]; then
+            if echo "$lan_ip" | grep -Fq '/'; then
+                for bip in $lan_ip; do
+                    eval "$(ipcalc.sh ${bip/\// } )";black_ip="$black_ip $IP/$PREFIX"
+                done
+            else
+                local netmask="`uci -q get network.lan.netmask`"
+                eval "$(ipcalc.sh "$lan_ip" "$netmask" )";black_ip="$black_ip $IP/$PREFIX"
+            fi
+        fi
+    }
+
+    logger -t 'ap_modem' -p INFO "black: $black_ip"
+
+    local ipaddr
+    local vip
+    local vip_p
+    local vnet
+    local bnet
+    local ok
+    local vif
+    for vif in lan wan; do
+        config_get ipaddr $vif ipaddr
+        [[ -z "$ipaddr" ]] || {
+            for vip in $ipaddr; do
+                ok=1
+                eval "$(ipcalc.sh ${vip/\// } )";vip="$IP";vip_p="$PREFIX"
+                [[ "$vip_p" = 32 ]] && {
+                    logger -t 'ap_modem' -p DEBUG "vap_$vif skip $vip/$vip_p"
+                    break
+                }
+                [[ "$vip_p" = 0 ]] && vip_p=24
+                for bip in $black_ip; do
+                    eval "$(ipcalc.sh "$bip" )";bip="$IP";
+                    [[ "$PREFIX" -le "$vip_p" ]] || PREFIX=$vip_p
+                    eval "$(ipcalc.sh "$vip" "$PREFIX" )";vnet="$NETWORK";
+                    eval "$(ipcalc.sh "$bip" "$PREFIX" )";bnet="$NETWORK";
+                    if [[ "$vnet" = "$bnet" ]]; then
+                        logger -t 'ap_modem' -p DEBUG "vap_$vif skip $vip/$vip_p"
+                        ok=0
+                        break
+                    fi
+                done
+                [[ "$ok" = 1 ]] && {
+                    uci add_list "network.vap_$vif.ipaddr=$vip/$vip_p"
+                    black_ip="$black_ip $vip/$vip_p"
+                }
+            done
+        }
+    done
+
+    uci commit network
+}
+
+clean_config() {
+    local wan_zone=`find_uci_section firewall zone name 'wan' | head -1`
+    [[ -z "$wan_zone" ]] || uci -q batch <<-EOF >/dev/null
+        del_list firewall.$wan_zone.network=vap_lan
+        del_list firewall.$wan_zone.network=vap_wan
+        commit firewall
+EOF
+    local lan_dev=`find_uci_section network device name 'br-lan' | head -1`
+    [[ -z "$lan_dev" ]] || {
+        uci del_list "network.$lan_dev.ports=vap-lan"
+    }
+
+    uci -q batch <<-EOF >/dev/null
+        set network.vap_lan.auto=0
+        set network.vap_wan.auto=0
+        delete network.veth_lan_peer
+        delete network.veth_lan
+        commit network
+EOF
+}
+
+start_service() {
+    config_load ap_modem
+    config_get_bool enabled "config" enabled 0
+    uci -q batch <<-EOF >/dev/null
+        delete network.vap_lan.ipaddr
+        delete network.vap_wan.ipaddr
+        commit network
+EOF
+    if [[ "$enabled" = "1" ]]; then
+        generate_config
+    else
+        clean_config
+    fi
+    /etc/init.d/network reload
+    return 0
+}
+
+stop_service() {
+    clean_config
+    /etc/init.d/network reload
+}

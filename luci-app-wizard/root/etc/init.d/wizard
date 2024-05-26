@@ -1,0 +1,179 @@
+#!/bin/sh /etc/rc.common
+
+START=19
+
+extra_command "reconfig" ""
+
+boot() {
+	XBOOT=1 start
+}
+
+add_wizard() {
+	[ "x$XBOOT" = "x1" ] && return 0
+	local cfg="$1"
+	local wan_proto wan_pppoe_user wan_pppoe_pass
+	local lan_ipaddr lan_netmask lan_dns lan_gateway dhcp
+	local device ipv6 old_ipv6 wifi_ssid wifi_key old_wifi_ssid old_wifi_key
+
+	config_get wan_proto "$cfg" wan_proto
+
+	device=$(uci get network.wan.device 2>/dev/null)
+	case "${wan_proto}" in
+		dhcp)
+			uci delete network.wan
+			uci set network.wan=interface
+			uci set network.wan.device="$device"
+			uci set network.wan.proto='dhcp'
+		;;
+		pppoe)
+			config_get wan_pppoe_user "$cfg" wan_pppoe_user
+			config_get wan_pppoe_pass "$cfg" wan_pppoe_pass
+			[[ "${wan_pppoe_user} != $(uci -q get network.wan.username)" || "${wan_pppoe_pass} != $(uci -q get network.wan.password)" ]] && {
+				uci delete network.wan
+				uci set network.wan=interface
+				uci set network.wan.proto='pppoe'
+				uci set network.wan.device="$device"
+				uci set network.wan.username="${wan_pppoe_user}"
+				uci set network.wan.password="${wan_pppoe_pass}"
+				[ -n "${ipv6}" ] && {
+					uci -q set network.wan.ipv6='0'
+					uci -q set network.wan.delegate='0'
+				}
+			}
+		;;
+	esac
+
+	config_get lan_ipaddr "$cfg" lan_ipaddr
+	config_get lan_netmask "$cfg" lan_netmask
+	test -n "${lan_ipaddr}" && test -n "${lan_netmask}" && {
+		uci set network.lan.ipaddr="${lan_ipaddr}"
+		uci set network.lan.netmask="${lan_netmask}"
+	}
+
+	config_get siderouter "$cfg" siderouter
+	config_get old_siderouter "$cfg" old_siderouter
+	config_get lan_gateway "$cfg" lan_gateway
+	config_get dhcp "$cfg" dhcp
+	config_get lan_dns "$cfg" lan_dns
+	config_get ipv6 "$cfg" ipv6
+	config_get old_ipv6 "$cfg" old_ipv6
+	config_get autoupgrade_pkg "$cfg" autoupgrade_pkg
+	
+	[ "$dhcp" == "0" ] && dhcp="1"
+	if [[ "${lan_gateway}" != "$(uci -q get network.lan.gateway)" ||  "${dhcp}" != "$(uci -q get dhcp.lan.ignore)" ]]; then
+	if [ "${siderouter}" == "1" ]; then
+		uci -q set network.lan.gateway="${lan_gateway}"
+		[ -n "$lan_dns" ] || lan_dns='223.5.5.5'
+		[ -n "$dhcp" ] && uci -q set dhcp.lan.ignore="1" || uci -q del dhcp.lan.ignore
+		uci -q set firewall.@zone[0].masq='1'
+		uci -q set network.wan.proto='none'
+	elif [ "${siderouter}" == "0" ]; then
+		uci -q del network.lan.gateway
+		uci -q del dhcp.lan.ignore
+		uci -q del network.lan.dns
+		uci -q del firewall.@zone[0].masq
+		uci -q set network.wan.proto='dhcp'
+		
+	fi
+	fi
+	
+	[ -n "$lan_dns" ] && {
+		[ "$(uci -q get dhcp.@dnsmasq[0].noresolv)" == 1 ] && {
+		uci -q del dhcp.@dnsmasq[0].noresolv
+		}
+		uci -q set network.wan.peerdns='0'
+		uci -q set network.lan.dns="${lan_dns}"
+		} || {
+		uci -q del network.wan.peerdns
+		uci -q del network.lan.dns
+		}
+	
+	if [ "${ipv6}" != "${old_ipv6}" ]; then
+	if [ -n "${ipv6}" ]; then
+		uci -q delete dhcp.lan.ra
+		uci -q delete dhcp.lan.dhcpv6
+		uci -q set network.lan.delegate='0'
+		uci -q set network.wan.ipv6='0'
+		uci -q set network.wan.delegate='0'
+		uci -q delete network.globals.ula_prefix
+	else
+		uci -q set dhcp.lan.ra='hybrid'
+		uci -q set dhcp.lan.dhcpv6='hybrid'
+		uci -q del network.lan.delegate
+		uci -q set network.wan.ipv6='auto'
+		uci -q del network.wan.delegate
+	fi
+	uci -q set wizard.default.old_ipv6="${ipv6}"
+	fi
+	
+	wifi_setup_radio(){
+	local radio=$1
+	uci -q get wireless.${radio} >/dev/null 2>&1 && {
+		if [ "$(uci -q get wireless.${radio}.band)" = "5g" ]; then
+			uci -q set wireless.default_${radio}.ssid="${wifi_ssid}_5G"
+		else
+			uci -q set wireless.default_${radio}.ssid="${wifi_ssid}_2.4G"
+		fi
+			uci -q set wireless.default_${radio}.device="${radio}"
+			if [ "${wifi_key}" ]; then
+				uci -q set wireless.default_${radio}.encryption='psk2'
+				uci -q set wireless.default_${radio}.key="${wifi_key}"
+			else
+				uci -q set wireless.default_${radio}.encryption='none'
+			fi
+		}
+	}
+	
+	config_get wifi_ssid "$cfg" wifi_ssid
+	config_get wifi_key "$cfg" wifi_key
+	config_get old_wifi_ssid "$cfg" old_wifi_ssid
+	config_get old_wifi_key "$cfg" old_wifi_key
+
+	if [[ "${wifi_ssid}" != "${old_wifi_ssid}" || "${wifi_key}" != "${old_wifi_key}" ]]; then
+	test -n "${wifi_ssid}" && {
+		for radio in radio0 radio1 radio2 radio3; do
+			wifi_setup_radio ${radio}
+		done
+		uci commit wireless
+	}
+	fi
+	
+	uci commit wizard
+	uci commit dhcp
+	uci commit firewall
+	uci commit network
+	(
+	 /etc/init.d/network restart
+	 /etc/init.d/dnsmasq reload)&
+	
+	if [ "${autoupgrade_pkg}" != "1" ]; then
+		sed -i '/opkg-upgrade/d' /etc/crontabs/root
+	else
+		grep -q "opkg-upgrade" /etc/crontabs/root || {
+			hour="$(grep -m1 -ao '[4-6]' /dev/urandom | head -n1)"
+			min="$(grep -m1 -ao '[0-5][0-9]' /dev/urandom | head -n1)"
+			echo "$min $hour * * * . /etc/hotplug.d/online/51-opkg-upgrade >/dev/null 2>&1" >> /etc/crontabs/root
+		}
+	fi
+}
+
+reconfig() {
+uci -q set wizard.default.wan_proto="$(uci -q get network.wan.proto)"
+uci -q set wizard.default.wan_pppoe_user="$(uci -q get network.wan.username)"
+uci -q set wizard.default.wan_pppoe_pass="$(uci -q get network.wan.password)"
+uci -q set wizard.default.lan_ipaddr="$(uci -q get network.lan.ipaddr)"
+uci -q set wizard.default.lan_netmask="$(uci -q get network.lan.netmask)"
+uci -q set wizard.default.lan_gateway="$(uci -q get network.lan.gateway)"
+uci -q set wizard.default.lan_dns="$(uci -q get network.lan.dns)"
+[ "$(uci -q get dhcp.lan.ignore)" ] && uci -q set wizard.default.dhcp="0" || uci -q del wizard.default.dhcp
+uci commit wizard
+}
+
+start() {
+	config_load wizard
+	config_foreach add_wizard wizard
+}
+
+restart() {
+	XRELOAD=1 start
+}

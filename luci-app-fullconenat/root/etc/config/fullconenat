@@ -1,0 +1,3 @@
+config fullconenat 'config'
+	option mode 'disable'
+	option fullconenat_ip '192.168.1.100'

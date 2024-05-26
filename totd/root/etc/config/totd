@@ -1,0 +1,6 @@
+config totd
+	option port '10053'
+	list forwarder '8.8.8.8#53'
+	list prefix '3ffe:abcd:1234:9876::'
+	
+	

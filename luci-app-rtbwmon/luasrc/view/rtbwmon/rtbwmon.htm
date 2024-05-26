@@ -1,0 +1,49 @@
+<%+header%>
+    <div id="view">
+        <h2><%:Realtime Bandwidth%></h2>
+        <div class="cbi-map-descr"><%:Display the network speed of the client, and only count the external traffic%></div>
+        <div class="right">
+            <label for="pause_checkbox"><%:Pause refresh%></label>
+            <input id="pause_checkbox" type="checkbox">
+            <select id="iface_select" title="<%:Only display clients of specific network interface%>">
+                <option value="" selected><%:Interface...%></option>
+            </select>
+            <label for="perHostTotals"><%:Merge by MAC address%></label>
+            <input id="perHostTotals" type="checkbox">
+            <input id="filter_input" placeholder="<%:Filter...%>" class="cbi-input-text" type="text"
+                title="<%:Filter the data according to the hostname, IP, MAC%>">
+        </div>
+        <div class="cbi-section-node">
+            <table class="table">
+                <thead>
+                    <tr class="tr table-titles" id="theader">
+                    </tr>
+                </thead>
+                <tbody id="clients">
+                </tbody>
+            </table>
+            <style>
+                #theader th {
+                    user-select: none;
+                    cursor: pointer;
+                }
+                #clients td.more_info {
+                    text-decoration: underline;
+                    cursor: help;
+                }
+            </style>
+        </div>
+    </div>
+
+    <script src="/luci-static/rtbwmon/rtbwmon.js<%# ?v=PKG_VERSION %>"></script>
+    <script type="text/javascript">
+        rtbwmon_init([
+            {id:"thIp", title:"<%:Client IP%>"},
+            {id:"thMac", title:"<%:Client MAC%>"},
+            {id:"thDlb", title:"<%:Download speed%>"},
+            {id:"thDlp", title:"<%:Download packets%>"},
+            {id:"thUpb", title:"<%:Upload speed%>"},
+            {id:"thUpp", title:"<%:Upload packets%>"},
+        ]);
+    </script>
+<%+footer%>

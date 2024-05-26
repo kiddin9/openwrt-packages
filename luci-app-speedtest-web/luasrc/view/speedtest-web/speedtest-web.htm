@@ -1,0 +1,13 @@
+<%+header%>
+<div class="cbi-map">
+        <h2 name="content"><%=translate("Speedtest Web")%></h2>
+        <iframe id="speedtest-web" style="width: 100%; min-height: 500px; border: none; border-radius: 3px;"></iframe>
+</div>
+<script type="text/javascript">
+        document.getElementById("speedtest-web").src = window.location.protocol + "//" + window.location.hostname + ":8989";
+        document.getElementById("speedtest-web").height = document.documentElement.clientHeight;
+        window.onresize = function(){
+            document.getElementById("speedtest-web").height = document.documentElement.clientHeight;
+        }
+</script>
+<%+footer%>

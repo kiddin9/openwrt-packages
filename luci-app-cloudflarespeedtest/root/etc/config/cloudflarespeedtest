@@ -1,0 +1,21 @@
+
+config global 'global'
+	option hour '5'
+	option minute '0'
+	option enabled '0'
+	option ipv6_enabled '0'
+	option advanced '0'
+	option tl '200'
+	option tll '40'
+	option custome_url 'https://speed.cloudflare.com/__down?bytes=300000000'
+	option threads '200'
+	option speed '100'
+
+config servers 'servers'
+	option ssr_enabled '0'
+	option passwall_enabled '0'
+	option passwall2_enabled '0'
+	option bypass_enabled '0'
+	option vssr_enabled '0'
+	option DNS_enabled '0'
+

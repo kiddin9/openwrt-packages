@@ -1,0 +1,61 @@
+#!/bin/sh
+#file: /usr/bin/rrm_nr
+#based on: https://forum.openwrt.org/t/how-does-rrm-work/32635/73
+
+NAME=rrm_nr
+
+# We wrap everything into this function to allow GC by ash, esp. for low-mem devices
+function _do_updates() {
+	local rrm_nr_lists
+
+	OIFS=$IFS
+	IFS=$'\n'
+	# Discover neighbors and self
+	ubus call umdns update
+	sleep 5
+	for wifi_iface in $(ubus list hostapd.wlan* | awk -F. '{ print $2; }'); do
+		net_ssid=$(iwinfo ${wifi_iface} info | head -n1 | cut -d\" -f2)
+		[ -z "${net_ssid}" ] && logger -t "rrm_nr" -p daemon.error "${wifi_iface}: does not have ssid according to iwinfo." && continue
+		
+		# Discover other nodes
+		rrm_nr_lists=""
+
+		for other_iface in $(ubus list hostapd.wlan* | awk -F. '{ print $2; }'); do
+			[ ${wifi_iface} = ${other_iface} ] && continue
+
+			[ ${net_ssid} = $(iwinfo ${other_iface} info | head -n1 | cut -d\" -f2) ] && rrm_nr_lists="${rrm_nr_lists}"$'\n'"$(/bin/ubus call hostapd.${other_iface} rrm_nr_get_own | /usr/bin/jsonfilter -e '$.value')"
+		done
+
+
+		# Sort at the end stabilizes the result, so we can compare it across runs
+		for discovered_node in $(ubus call umdns browse | jsonfilter -e '@["_rrm_nr._udp"][*].txt' | tr '|' '\n' | grep "\"${net_ssid}\""); do #TODO replace tr with sed "s= ]|[ = ]\n[ ="
+			rrm_nr_lists="${rrm_nr_lists}"$'\n'"${discovered_node}"
+		done
+
+		nr_len=$(echo "${rrm_nr_lists:1}" | wc -l)
+		rrm_nr_lists=$(echo -n "${rrm_nr_lists:1}" | sort -u | tr '\n' ',' )
+		rrm_nr_lists="[${rrm_nr_lists::-1}]"
+
+		#[[ "${rrm_nr_lists}" == "," ]] && logger -t "rrm_nr" -p daemon.error "${wifi_iface}: no neighbors detected, nothing to do" && continue TODO is logging necessary?
+		#[[ "${rrm_nr_lists}" == "," ]] && continue
+
+		#ubus call hostapd.${wifi_iface} bss_mgmt_enable '{"neighbor_report": true}' neighbor_report shoud be enabled in uci TODO skip interface if not set
+		prev_rrm_list="[$(ubus call hostapd.${wifi_iface} rrm_nr_list | jsonfilter -e '@.list[@]' | sort -u | sed ':a;N;$!ba;s/\n/,/g')]"
+		if [ "$(echo -n ${prev_rrm_list} | sed 's: ::g')" = "$(echo -n ${rrm_nr_lists} | sed 's: ::g')" ]; then
+			# Setting a new list will cause the wifi to quickly cycle, which we do not want every 60s
+			continue
+		fi
+		logger -t "rrm_nr" -p daemon.info "${wifi_iface}: Updating neighbor list (number of neighbors: ${nr_len}): ${rrm_nr_lists}"
+		ubus call hostapd.${wifi_iface} rrm_nr_set "{ \"list\": ${rrm_nr_lists} }"
+	done
+
+	IFS=$OIFS
+}
+
+while true; do
+	_do_updates
+
+	sleep 60
+done
+
+exit 0

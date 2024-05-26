@@ -1,0 +1,11 @@
+{
+	"luci-app-wifidog": {
+		"description": "Grant UCI access for luci-app-wifidog",
+		"read": {
+			"uci": [ "wifidog" ]
+		},
+		"write": {
+			"uci": [ "wifidog" ]
+		}
+	}
+}

@@ -1,0 +1,4 @@
+
+config lingti 'lingti'
+	option enabled '0'
+

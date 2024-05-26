@@ -1,0 +1,10 @@
+config main
+	option 'http_port' '8085'
+	option 'image_name' 'lscr.io/linuxserver/code-server:latest'
+	option 'config_path' ''
+	option 'env_password' ''
+	option 'env_hashed_password' ''
+	option 'env_sudo_password' ''
+	option 'env_sudo_password_hash' ''
+	option 'env_proxy_domain' ''
+

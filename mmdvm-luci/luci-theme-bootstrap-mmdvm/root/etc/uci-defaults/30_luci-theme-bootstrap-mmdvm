@@ -1,0 +1,7 @@
+#!/bin/sh
+uci batch <<-EOF
+	set luci.themes.Bootstrap_MMDVM=/luci-static/bootstrap-mmdvm
+	set luci.main.mediaurlbase=/luci-static/bootstrap-mmdvm
+	commit luci
+EOF
+exit 0

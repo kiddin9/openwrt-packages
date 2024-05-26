@@ -1,0 +1,11 @@
+--- a/quickjs/CMakeLists.txt
++++ b/quickjs/CMakeLists.txt
+@@ -22,6 +22,6 @@ endif()
+ include(GNUInstallDirs)
+ install(TARGETS quickjs
+         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/quickjs
+-        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}/quickjs
+-        LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}/quickjs
++        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
++        LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         )

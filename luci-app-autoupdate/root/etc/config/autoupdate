@@ -1,0 +1,2 @@
+config autoupdate
+	option enable '0'

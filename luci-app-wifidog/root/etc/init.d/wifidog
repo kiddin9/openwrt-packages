@@ -1,0 +1,157 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+#modify by walkingsky
+
+START=65
+USE_PROCD=1
+EXTRA_COMMANDS="status"
+EXTRA_HELP="        status Print the status of the service"
+
+local mac_args="TrustedMACList "
+local allowrule=""
+
+add_mac(){
+	config_load wifidog	
+	local cfg="$1"
+	config_get mac "$cfg" mac 
+	if [ "$mac_args" = "TrustedMACList " ]; then
+		mac_args="$mac_args $mac"
+	else
+		mac_args="$mac_args,$mac"
+	fi
+}
+
+
+add_allowrule(){
+	config_load wifidog	
+	local cfg="$1"
+	config_get protocol "$cfg" protocol 
+	config_get ip "$cfg" ip
+	config_get port "$cfg" port
+	
+	allowrule="$allowrule
+	FirewallRule allow $protocol port $port to $ip "
+}
+
+
+#wifidog ??
+create_config(){
+	
+	config_load wifidog	
+	
+	
+	gateway_id=`ifconfig | grep HWaddr | awk -F" " '{print $5}' | awk '$1~//{print;exit}' | sed 's/://g'`
+	config_get gateway_id "wifidog" "gateway_id" $gateway_id	
+	config_get externalinterface "wifidog" "externalinterface" "eth0.2"	
+	config_get gateway_interface "wifidog" "gateway_interface" "br-lan"	
+	config_get server_hostname "wifidog" "server_hostname" "www.test.com"
+	config_get server_httpport "wifidog" "server_httpport" "80"
+	config_get server_path "wifidog" "server_path" "/wifidog/"
+
+	config_get server_sslAvailable "wifidog" "server_sslAvailable" "0"
+	config_get server_sslport "wifidog" "server_sslport" "443"
+	config_get server_LoginScriptPathFragment "wifidog" "server_LoginScriptPathFragment" "login/?"
+	config_get server_PortalScriptPathFragment "wifidog" "server_PortalScriptPathFragment" "portal/?"
+	config_get server_PingScriptPathFragment "wifidog" "server_PingScriptPathFragment" "ping/?"
+	config_get server_AuthScriptPathFragment "wifidog" "server_AuthScriptPathFragment" "auth/?"
+	config_get server_MsgScriptPathFragment "wifidog" "server_MsgScriptPathFragment" "gw_message.php?"
+	config_get gateway_port "wifidog" "gateway_port" "2060"
+	config_get check_interval "wifidog" "check_interval" "60"
+	config_get client_timeout "wifidog" "client_timeout" "5"
+
+	
+	if [ $server_sslAvailable -eq 0  ]; then
+		server_sslAvailable="no"
+	else
+		server_sslAvailable="yes"
+	fi
+	
+	config_foreach add_mac trustedmaclist
+	config_foreach add_allowrule allowrule
+	
+	if [ "$mac_args" = "TrustedMACList " ]; then
+		$mac_args=""
+	fi
+	
+	echo "
+GatewayID $gateway_id
+GatewayInterface $gateway_interface
+externalinterface $externalinterface
+
+GatewayPort $gateway_port
+
+AuthServer {
+		Hostname $server_hostname
+		SSLAvailable $server_sslAvailable
+		SSLPort	$server_sslport
+		HTTPPort $server_httpport
+		Path $server_path
+		LoginScriptPathFragment  	$server_LoginScriptPathFragment
+		PortalScriptPathFragment 	$server_PortalScriptPathFragment
+		MsgScriptPathFragment    	$server_MsgScriptPathFragment
+		PingScriptPathFragment  	$server_PingScriptPathFragment  
+		AuthScriptPathFragment 		$server_AuthScriptPathFragment
+}
+
+CheckInterval $check_interval
+ClientTimeout $client_timeout
+
+$mac_args
+
+FirewallRuleSet validating-users {
+    FirewallRule allow to 0.0.0.0/0
+}
+
+FirewallRuleSet known-users {
+    FirewallRule allow to 0.0.0.0/0
+}
+
+FirewallRuleSet global {
+	$allowrule
+}
+
+FirewallRuleSet unknown-users {
+    FirewallRule allow udp port 53
+    FirewallRule allow tcp port 53
+    FirewallRule allow udp port 67
+    FirewallRule allow tcp port 67
+}
+
+FirewallRuleSet locked-users {
+    FirewallRule block to 0.0.0.0/0
+}
+"  > /etc/wifidog.conf
+
+	
+	
+}
+
+start_service() {
+	config_load wifidog
+	
+	config_get wifidog_enable "wifidog" "wifidog_enable" "0"
+	if [ $wifidog_enable -eq 0  ]; then
+		stop
+		exit
+	fi
+
+	create_config
+	
+	sleep 1
+	procd_open_instance
+    # -s: log to syslog
+    # -f: run in foreground
+    procd_set_param command /usr/bin/wifidog -s -f
+    procd_set_param respawn # respawn automatically if something died
+    procd_set_param file /etc/wifidog.conf
+    procd_close_instance
+}
+
+status() {
+    /usr/bin/wdctl status
+}
+
+service_triggers() {
+	procd_add_reload_trigger "wifidog"
+}
+

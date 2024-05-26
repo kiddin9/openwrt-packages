@@ -1,0 +1,27 @@
+plugin_start() {
+  echo "Inserting kernel modules: "
+  insmod ip_conntrack
+  insmod ip_nat
+  insmod ip_tables
+  insmod ipt_MARK
+  insmod ipt_mark
+  insmod ipt_mac
+  insmod ipt_REDIRECT
+  insmod ipt_MASQUERADE
+  insmod ipt_state
+  insmod iptable_mangle
+  insmod iptable_nat
+  insmod iptable_filter
+
+ # echo "Starting wifidog: " 
+	
+  #/usr/bin/wifidog-init start
+  echo
+  true
+}
+plugin_stop() {
+  killall wifidog
+ #/usr/bin/wifidog-init stop
+  true
+}
+

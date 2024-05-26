@@ -1,0 +1,13 @@
+#!/bin/sh
+touch /etc/config/syncthing
+
+sed -i "s/127.0.0.1:8384/0.0.0.0:8384/" /etc/config/syncthing
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@syncthing[-1]
+	add ucitrack syncthing
+	set ucitrack.@syncthing[-1].exec='/etc/init.d/syncthing restart'
+	commit ucitrack
+EOF
+# remove LuCI cache
+rm -f /tmp/luci*
+exit 0

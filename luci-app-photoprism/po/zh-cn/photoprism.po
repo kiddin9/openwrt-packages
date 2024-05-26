@@ -1,0 +1,50 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Official website:"
+msgstr "官方网站："
+
+msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
+msgstr "PhotoPrism® PhotoPrism 是一个 AI 驱动的相册管理应用。"
+
+msgid "Config path"
+msgstr "配置文件路径"
+
+msgid "HTTP Port"
+msgstr "HTTP 端口"
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Photoprism status:"
+msgstr "Photoprism 的状态信息如下："
+
+msgid "Setup"
+msgstr "安装配置"
+
+msgid "The following parameters will only take effect during installation or upgrade:"
+msgstr "以下参数只在安装或者升级时才会生效："
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Photoprism is running"
+msgstr "Photoprism 运行中"
+
+msgid "Photoprism is not running"
+msgstr "Photoprism 未运行"
+
+msgid "Open Photoprism"
+msgstr "打开 Photoprism"
+
+msgid "Photo path"
+msgstr "相册路径"
+
+msgid "Default Password"
+msgstr "初始密码"
+
+msgid "Default User:"
+msgstr "默认用户："
+
+msgid "Only works on first install or after using a fresh 'Config path'"
+msgstr "只在初次安装时或使用全新的'配置文件路径'后有效"

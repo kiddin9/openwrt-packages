@@ -1,0 +1,14 @@
+touch /etc/config/wizard
+touch /etc/config/wireless
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@wizard[-1]
+	add ucitrack wizard
+	set ucitrack.@wizard[-1].init=wizard
+	commit ucitrack
+EOF
+
+chmod +x /etc/init.d/wizard 2>/dev/null
+rm -f /tmp/luci-indexcache
+
+exit 0

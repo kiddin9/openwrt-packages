@@ -1,0 +1,11 @@
+{
+	"luci-app-wan-mac": {
+		"description": "Grant access to 'WAN MAC'",
+		"read": {
+			"uci": [ "wan_mac" ]
+		},
+		"write": {
+			"uci": [ "wan_mac" ]
+		}
+	}
+}

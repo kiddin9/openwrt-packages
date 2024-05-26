@@ -1,0 +1,11 @@
+{
+	"luci-app-autoupdate": {
+		"description": "Grant UCI access for luci-app-autoupdate",
+		"read": {
+			"uci": [ "autoupdate" ]
+		},
+		"write": {
+			"uci": [ "autoupdate" ]
+		}
+	}
+}

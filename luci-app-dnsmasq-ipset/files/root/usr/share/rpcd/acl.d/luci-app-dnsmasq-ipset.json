@@ -1,0 +1,11 @@
+{
+	"luci-app-dnsmasq-ipset": {
+		"description": "Grant access to DNSMasq ipset management",
+		"read": {
+			"uci": ["dnsmasq-ipset"]
+		},
+		"write": {
+			"uci": ["dnsmasq-ipset"]
+		}
+	}
+}

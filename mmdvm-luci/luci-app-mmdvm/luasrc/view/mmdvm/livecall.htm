@@ -1,0 +1,54 @@
+<%#
+Copyright 2019-2020 Michael BD7MQB <bd7mqb@qq.com>
+This is free software, licensed under the GNU GENERAL PUBLIC LICENSE, Version 2.0
+-%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+        <style type="text/css">
+        body {margin:0;padding:0}
+        #back {float: left; color:#000;margin-left: 5px;}
+        #lc {height: 100vh; width: 100vw;}
+        html, body {touch-action: manipulation;}
+        </style>
+        <script type="text/javascript" src="<%=resource%>/luci.js"></script>
+        <link rel="stylesheet" href="<%=resource%>/mmdvm.css">
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	</head>
+	<body>
+    <div id="lc">
+        <% luci.template.render("mmdvm/lc", {lastheard = lastheard} ) %>
+    </div>
+    <script type="text/javascript">
+    //<![CDATA[
+        XHR.poll(1.5, '<%=luci.dispatcher.build_url("mmdvm", "lc")%>', null,
+        function(x) {
+            if (!x || !x.responseText || x.responseText == "") {
+                return;
+            }
+
+            document.getElementById("lc").innerHTML = x.responseText;
+        });
+        document.addEventListener('DOMContentLoaded', XHR.run);
+
+        //disabled handle pinch/double-tap view zooming for mobile device
+        window.onload = () => {
+            document.addEventListener('touchstart', (event) => {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            }, { passive: false });
+            
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', (event) => {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+        }
+    //]]>
+    </script>
+</body>

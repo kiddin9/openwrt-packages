@@ -1,0 +1,20 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Xwan"
+msgstr "多拨"
+
+msgid "Xwan Settings"
+msgstr "多拨设置"
+
+msgid "Enable xwan"
+msgstr "开启多拨"
+
+msgid "multiwan on single interface"
+msgstr "单网口多拨号"
+
+msgid "Number of xwan"
+msgstr "多少拨"
+
+msgid "Auto balanced setup"
+msgstr "自动负载均衡和叠加"

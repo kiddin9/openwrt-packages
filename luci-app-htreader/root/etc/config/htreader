@@ -1,0 +1,4 @@
+config main
+	option 'port' '9060'
+	option 'multiuser' '0'
+

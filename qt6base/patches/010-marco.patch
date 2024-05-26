@@ -1,0 +1,12 @@
+--- a/src/corelib/plugin/qelfparser_p.cpp
++++ b/src/corelib/plugin/qelfparser_p.cpp
+@@ -382,7 +382,9 @@ Q_DECL_UNUSED Q_DECL_COLD_FUNCTION stati
+     case EM_ALPHA:      d << ", Alpha"; break;
+     case EM_68K:        d << ", MC68000"; break;
+     case EM_ARM:        d << ", ARM"; break;
++#ifdef EM_AARCH64
+     case EM_AARCH64:    d << ", AArch64"; break;
++#endif
+ #ifdef EM_BLACKFIN
+     case EM_BLACKFIN:   d << ", Blackfin"; break;
+ #endif

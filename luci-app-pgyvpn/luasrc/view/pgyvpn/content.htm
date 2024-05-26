@@ -1,0 +1,9 @@
+<%
+	local config = require("luci.pgyvpn.config") 
+%>
+
+<h2 name="content">蒲公英智能组网</h2>
+<div class="cbi-map-descr">
+	蒲公英SD-WAN，为个人和企业用户提供简单灵活、安全稳定的异地组网方案。让用户不受地域及公网IP限制，快速组建异地虚拟局域网，解决数据远程互访难题。<br/>
+	<%=config.URL_LINK.OFFICIAL[1]%>：<a href=<%=config.URL_LINK.OFFICIAL[2]%> target="_blank" onclick="123">pgy.oray.com</a>，前往 <a href=<%=config.URL_LINK.CONSOLE[2]%> target="_blank" onclick="123"><%=config.URL_LINK.CONSOLE[1]%></a> 注册体验组网服务，点此查看 <a href=<%=config.URL_LINK.HELP[2]%> target="_blank" onclick="123"><%=config.URL_LINK.HELP[1]%></a>
+</div>

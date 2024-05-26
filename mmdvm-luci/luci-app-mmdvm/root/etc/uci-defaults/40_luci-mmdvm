@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sed -i "s/cgi-bin\/luci\/\"/cgi-bin\/luci\/mmdvm\/\"/g" /www/index.html
+rm -rf /tmp/luci-*
+exit 0

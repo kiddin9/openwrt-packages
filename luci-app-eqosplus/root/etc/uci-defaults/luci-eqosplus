@@ -1,0 +1,13 @@
+#!/bin/sh
+chmod +x  /etc/init.d/eqosplus /usr/bin/eqosplus*
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@eqosplus[-1]
+	add ucitrack eqosplus
+	set ucitrack.@eqosplus[-1].init=eqosplus
+	commit ucitrack
+EOF
+
+[ -s /etc/config/eqosplus ] || echo "config eqosplus" > /etc/config/eqosplus
+
+rm -f /tmp/luci-indexcache
+exit 0

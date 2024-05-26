@@ -1,0 +1,27 @@
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(5, '<%=url("admin/services/homebox_status")%>', null,
+		function(x, st)
+		{
+			var tb = document.getElementById('homebox_status');
+			if (st && tb)
+			{
+				if (st.running)
+				{
+					tb.innerHTML = '<br/><em style=\"color:green\"><%:The Homebox service is running.%></em>'
+						+ "<br/><br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open Homebox%> \" onclick=\"window.open('http://" + window.location.hostname + ":" + st.port + "/')\"/>";
+				}
+				else
+				{
+					tb.innerHTML = '<br/><em style=\"color:red\"><%:The Homebox service is not running.%></em>';
+				}
+			}
+		}
+	);
+//]]></script>
+
+<fieldset class="cbi-section">
+	<legend><%:Homebox Status%></legend>
+	<p id="homebox_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>

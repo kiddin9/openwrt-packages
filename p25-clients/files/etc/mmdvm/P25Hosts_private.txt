@@ -1,0 +1,7 @@
+# P25Hosts_private.txt
+#
+# The format of this file is the number of the Talk Group followed by the host name or address and port
+#
+
+# Your private reflector servers
+# 1	14.116.159.221		41000

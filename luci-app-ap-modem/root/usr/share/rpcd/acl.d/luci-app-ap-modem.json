@@ -1,0 +1,11 @@
+{
+	"luci-app-ap-modem": {
+		"description": "Grant access to 'Access AP / Modem'",
+		"read": {
+			"uci": [ "ap_modem" ]
+		},
+		"write": {
+			"uci": [ "ap_modem" ]
+		}
+	}
+}
