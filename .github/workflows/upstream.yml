@@ -91,7 +91,7 @@ jobs:
         }
         (
         git_clone https://github.com/kiddin9/my-packages && mvdir my-packages
-        git_clone https://github.com/kiddin9/openwrt-bypass && mvdir openwrt-bypass
+        git_clone https://github.com/xiaoka6666/openwrt-bypass && mvdir openwrt-bypass
         git_clone https://github.com/kiddin9/luci-app-dnsfilter
         git_clone https://github.com/kiddin9/aria2
         git_clone https://github.com/kiddin9/luci-theme-edge
@@ -316,7 +316,7 @@ jobs:
 
     - name: Apply patches
       run: |
-        find ".github/diy/patches" -type f -name '*.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -p1 -E --forward --no-backup-if-mismatch" || (curl -k --data chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" --data "text=❌ 软件包更新失败 😂 https://github.com/kiddin9/openwrt-packages/actions" "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage";exit 1)
+        find ".github/diy/patches" -type f -name '*.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -p1 -E --forward --no-backup-if-mismatch" || (curl -k --data chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" --data "text=❌ 软件包更新失败 😂 https://github.com/xiaoka6666/openwrt-packages/actions" "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage";exit 1)
 
     - name: Modify
       run: |
