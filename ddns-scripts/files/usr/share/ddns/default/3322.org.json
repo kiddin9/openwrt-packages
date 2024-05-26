@@ -1,6 +1,0 @@
-{
-	"name": "3322.org",
-	"ipv4": {
-		"url": "http://[USERNAME]:[PASSWORD]@members.3322.org/dyndns/update?system=dyndns&hostname=[DOMAIN]&myip=[IP]"
-	}
-}

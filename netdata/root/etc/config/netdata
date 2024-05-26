@@ -1,3 +1,0 @@
-config netdata 'config'
-        option cloud_claim_token ''
-        option cloud_claim_rooms ''

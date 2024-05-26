@@ -1,7 +1,0 @@
-config main
-	option 'hostnet' '0'
-	option 'port' '2345'
-	option 'image_name' 'registry.cn-shenzhen.aliyuncs.com/cnk3x/xunlei:latest'
-	option 'config_path' ''
-	option 'dl_path' ''
-

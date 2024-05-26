@@ -1,5 +1,0 @@
-config main
-	option 'port' '8090'
-	option 'config_path' ''
-	option 'image_ver' ''
-

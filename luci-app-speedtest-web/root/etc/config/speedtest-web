@@ -1,4 +1,0 @@
-
-config speedtest-web 'config'
-	option enabled '1'
-	option port '8989'

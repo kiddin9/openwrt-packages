@@ -1,9 +1,0 @@
-config cosclient
-	option secretid ''
-	option secretkey ''
-	option bucket ''
-	option region ''
-	option sharename ''
-	option folder 'cos'
-	option siteid ''
-

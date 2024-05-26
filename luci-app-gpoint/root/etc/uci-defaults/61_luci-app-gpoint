@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ "$PKG_UPGRADE" != "1" ]; then
-	touch /etc/config/gpoint
-	uci set gpoint.modem_settings=modem_settings
-	uci set gpoint.server_settings=server_settings
-	uci set gpoint.service_settings=service_settings
-fi
-

@@ -1,6 +1,0 @@
-
-config pppwn 'config'
-	option port 'br-lan'
-	option fwver '1100'
-	option enable '0'
-

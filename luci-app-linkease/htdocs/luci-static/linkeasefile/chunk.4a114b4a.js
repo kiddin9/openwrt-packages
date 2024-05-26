@@ -1,1 +1,0 @@
-import{e as t,r as a,F as _,y as s,S as o,q as n,a7 as c}from"./index.js";const r={class:"layout-conatiner"},d={class:"layout-f"},l={class:"layout-r"},i=t({__name:"index",setup(u){return a(!0),(e,p)=>(n(),_("div",r,[s("div",d,[o(e.$slots,"f",{},void 0,!0)]),s("div",l,[o(e.$slots,"r",{},void 0,!0)])]))}});const v=c(i,[["__scopeId","data-v-cbf72d2b"]]);export{v as l};

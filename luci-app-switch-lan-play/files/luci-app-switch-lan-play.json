@@ -1,7 +1,0 @@
-{
-  "luci-app-switch-lan-play": {
-    "description": "Grant UCI access for luci-app-switch-lan-play",
-    "read": { "uci": ["switchlanplay"] },
-    "write": { "uci": ["switchlanplay"] }
-  }
-}

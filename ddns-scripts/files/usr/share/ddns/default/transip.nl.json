@@ -1,9 +1,0 @@
-{
-	"name": "transip.nl",
-	"ipv4": {
-		"url": "update_transip_nl.sh"
-	},
-	"ipv6": {
-		"url": "update_transip_nl.sh"
-	}
-}

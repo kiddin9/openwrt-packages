@@ -1,9 +1,0 @@
-{
-	"name": "PowerDNS",
-	"ipv4": {
-		"url": "update_pdns.sh"
-	},
-	"ipv6": {
-		"url": "update_pdns.sh"
-	}
-}

@@ -1,8 +1,0 @@
-
-config basic
-	option apiHost 'https://api.openai.com/'
-	option modelver 'gpt-3.5-turbo'
-	option userpic 'girl.jpg'
-	option apikey ''
-	option systemrole '你是一个乐于助人的专业助手，尽量简明扼要地回答'
-

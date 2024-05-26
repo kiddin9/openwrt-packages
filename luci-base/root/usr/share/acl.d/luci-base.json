@@ -1,8 +1,0 @@
-{
-	"user": "nobody",
-	"access": {
-		"system": {
-			"methods": [ "board", "info" ]
-		}
-	}
-}

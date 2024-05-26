@@ -1,7 +1,0 @@
-#!/bin/sh
-CONFIG=parentcontrol
-
-[ "$ACTION" = ifup ] || exit 0
-[ "$(`uci -q get $CONFIG.@basic[0].enabled`)" == 1 ] || exit 0
-/etc/init.d/parentcontrol start
-

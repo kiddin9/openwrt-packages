@@ -1,9 +1,0 @@
-#!/bin/sh
-
-date
-
-nslookup baidu.com
-
-ping -c 4 baidu.com
-
-curl -o /dev/null https://www.baidu.com/

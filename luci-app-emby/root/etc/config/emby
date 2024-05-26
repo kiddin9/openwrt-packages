@@ -1,6 +1,0 @@
-config main
-	option 'hostnet' '0'
-	option 'http_port' '8097'
-	option 'image_name' 'emby/embyserver'
-	option 'config_path' ''
-

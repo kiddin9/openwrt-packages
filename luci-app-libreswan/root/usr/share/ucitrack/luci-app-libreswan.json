@@ -1,4 +1,0 @@
-{
-	"config": "libreswan",
-	"init": "ipsec"
-}

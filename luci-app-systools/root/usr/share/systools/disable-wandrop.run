@@ -1,4 +1,0 @@
-#!/bin/sh
-
-/etc/init.d/wan_drop disable
-

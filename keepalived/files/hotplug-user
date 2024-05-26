@@ -1,7 +1,0 @@
-#!/bin/sh
-
-[ -f "/etc/keepalived.user" ] && {
-	/bin/sh /etc/keepalived.user "$@"
-}
-
-exit 0

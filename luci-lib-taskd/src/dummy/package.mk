@@ -1,2 +1,0 @@
-define BuildPackage
-endef

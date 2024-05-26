@@ -1,4 +1,0 @@
-
-config cloudreve
-	option enabled '0'
-	option port '8052'

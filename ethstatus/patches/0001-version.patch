@@ -1,8 +1,0 @@
---- ethstatus-0.4.9.orig/ethstatus.h
-+++ ethstatus-0.4.9/ethstatus.h
-@@ -1,4 +1,4 @@
--#define VERSION "0.4.8"
-+#define VERSION "0.4.9"
- #define AUTHOR "Gabriel Montenegro / Christoph Haas / Marcio Souza"
- 
- #define LED_RX    1

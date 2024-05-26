@@ -1,9 +1,0 @@
-#!/bin/sh
-uci -q batch <<-EOF >/dev/null
-	delete ucitrack.@nat6-helper[-1]
-	add ucitrack nat6-helper
-	set ucitrack.@nat6-helper[-1].init=nat6-helper
-	commit ucitrack
-EOF
-rm -f /tmp/luci-indexcache
-exit 0

@@ -1,7 +1,0 @@
-{
-	"name": "moniker.com",
-	"ipv4": {
-		"url": "https://dynamicdns.key-systems.net/update.php?hostname=[DOMAIN]&password=[PASSWORD]&ip=[IP]",
-		"answer": "success"
-	}
-}

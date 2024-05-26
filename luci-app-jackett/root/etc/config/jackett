@@ -1,6 +1,0 @@
-config jackett
-	option 'auto_update' '1'
-	option 'port' '9117'
-	option 'save_path' ''
-	option 'config_path' ''
-  option 'image_name' 'linuxserver/jackett:latest'

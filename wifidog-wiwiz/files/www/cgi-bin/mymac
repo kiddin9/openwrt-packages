@@ -1,8 +1,0 @@
-#!/usr/bin/lua
-require("luci.sys")
-require("luci.util")
-
-local client_ip = luci.sys.getenv("REMOTE_ADDR")
-local client_mac = luci.util.exec("echo \"_wiwiz_setmac('$(cat /proc/net/arp | grep 0x2 | grep '".. client_ip .." ' | awk '{print $4}')');\" 2>/dev/null")
-print("Content-type: application/javascript\n")
-print(client_mac)

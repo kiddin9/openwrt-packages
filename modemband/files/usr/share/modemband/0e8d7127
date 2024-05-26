@@ -1,4 +1,0 @@
-# +GTUSBMODE: 41
-_DEVICE=/dev/ttyUSB4
-
-. $RES/_fibocom_fm350_common

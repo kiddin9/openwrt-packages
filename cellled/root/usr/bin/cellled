@@ -1,4 +1,0 @@
-#!/bin/sh
-while true :; do
-	/usr/share/cellled.sh >/dev/null 2>&1
-done

@@ -1,3 +1,0 @@
-#!/bin/ash
-
-/bin/coremark | grep "CoreMark 1.0" | cut -d "/" -f 1 | cut -d "." -f -2 | sed -e 's/CoreMark 1.0\(.*\)/(CpuMark\1 Scores)/g' | tee /etc/bench.log

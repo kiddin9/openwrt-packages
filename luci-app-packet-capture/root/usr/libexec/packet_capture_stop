@@ -1,9 +1,0 @@
-#!/bin/sh
-
-pid=$(cat /var/run/packet_capture.pid)
-if [ -n "$pid" ] && grep -sq packet_capture "/proc/$pid/cmdline"; then
-    ppid=$(pgrep -P $pid)
-    kill -TERM $ppid
-fi
-
-exit 0

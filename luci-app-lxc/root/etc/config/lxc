@@ -1,3 +1,0 @@
-
-config lxc 'lxc'
-	option url 'images.linuxcontainers.org'

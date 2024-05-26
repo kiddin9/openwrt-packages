@@ -1,8 +1,0 @@
-config webvirtcloud
-	option 'config_path' ''
-	option 'http_port' '6009'
-	option 'image_name' 'linkease/webvirtcloud:latest'
-# option 'time_zone' ''
-# option 'bootargs' ''
-# option 'vfioargs' ''
-# option 'mod_ignores' ''

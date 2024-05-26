@@ -1,9 +1,0 @@
-opengt
- set com 115200n81
- set comecho off
- set senddelay 0.02
- waitquiet 0.2 0.2
-
- send "AT+CGACT=0,"
- send $env("CID")
- send "^m"

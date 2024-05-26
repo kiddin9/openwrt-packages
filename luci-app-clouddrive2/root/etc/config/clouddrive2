@@ -1,6 +1,0 @@
-config clouddrive2
-	option 'port' '19798'
-	option 'image' 'default'
-#	option 'config_path' ''
-#	option 'cache_path' ''
-	option 'share_mnt' '0'

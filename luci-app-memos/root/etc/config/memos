@@ -1,5 +1,0 @@
-config main
-	option 'http_port' '5230'
-	option 'image_name' 'neosmemo/memos:latest'
-	option 'config_path' ''
-

@@ -1,6 +1,0 @@
-{
-	"name": "ddo.jp",
-	"ipv4": {
-		"url": "http://free.ddo.jp/dnsupdate.php?dn=[DOMAIN]&pw=[PASSWORD]&ip=[IP]"
-	}
-}

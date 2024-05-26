@@ -1,7 +1,0 @@
-config jellyfin
-	option 'hostnet' '0'
-	option 'port' '8096'
-	option 'image' 'default'
-#	option 'media_path' ''
-#	option 'config_path' ''
-#	option 'cache_path' ''

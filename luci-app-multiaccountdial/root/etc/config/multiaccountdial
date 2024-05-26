@@ -1,2 +1,0 @@
-config base_setting
-    option add_mwan "0"

@@ -1,4 +1,0 @@
-{
-	"config": "ngrokc",
-	"init": [ "ngrokc" ]
-}

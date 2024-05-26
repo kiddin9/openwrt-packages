@@ -1,5 +1,0 @@
-config main
-	option 'port' '8063'
-#	option 'config_path' ''
-#	option 'upload_path' ''
-

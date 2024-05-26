@@ -1,6 +1,0 @@
-#!/bin/sh
-
-/etc/init.d/vmease enable
-/etc/init.d/vmease start
-
-exit 0

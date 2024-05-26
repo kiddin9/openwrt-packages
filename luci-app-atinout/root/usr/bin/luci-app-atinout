@@ -1,3 +1,0 @@
-#!/bin/sh
-
-echo $1 | atinout - $2 -

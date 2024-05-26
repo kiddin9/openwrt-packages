@@ -1,6 +1,0 @@
-#!/bin/sh
-
-. /usr/share/libubox/jshn.sh
-
-json_load "$(/usr/share/modeminfo/modeminfo)"
-json_dump
