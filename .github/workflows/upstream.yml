@@ -41,8 +41,8 @@ jobs:
     
     - name: Set git identity
       run : |
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
+        git config --global user.email "115566356+xiaoka6666@users.noreply.github.com"
+        git config --global user.name "xiaoka6666"
         sudo timedatectl set-timezone "Asia/Shanghai"
 
     - name: Syn upstream
