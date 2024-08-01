@@ -1,6 +1,7 @@
-name: build
+name: Build and Release
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "*"
@@ -26,45 +27,62 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -yq gettext libncurses5-dev rsync xsltproc
-          
+          sudo apt-get install -yq gettext libncurses5-dev rsync xsltproc wget file zstd
+
       - name: Create Directories
         run: |
           echo "SDK_HOME=$(mktemp -d)" >> $GITHUB_ENV
           echo "SDK_DL_DIR=$(mktemp -d)" >> $GITHUB_ENV
-          
+
       - name: Prepare Build Environment
         run: |
+          source $GITHUB_ENV
           cd "$SDK_DL_DIR"
           if ! ( wget -q -O - "$SDK_URL_PATH/sha256sums" | grep -- "$SDK_NAME" > sha256sums.small 2>/dev/null ) ; then
-            echo "Can not find ${SDK_NAME} file in sha256sums."
+            echo "Cannot find ${SDK_NAME} file in sha256sums."
             exit 1
           fi
-          SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
-          wget -q -O "$SDK_FILE" "$SDK_URL_PATH/$SDK_FILE"
-          if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-            echo "SDK can not be verified!"
+          SDK_FILE="$(awk '{print $2}' sha256sums.small | sed 's/*//g')"
+          wget -q -O "$SDK_DL_DIR/$SDK_FILE" "$SDK_URL_PATH/$SDK_FILE"
+          echo "Downloaded file type:"
+          file "$SDK_DL_DIR/$SDK_FILE"
+          if ! sha256sum -c sha256sums.small >/dev/null 2>&1 ; then
+            echo "SDK cannot be verified!"
             exit 1
           fi
-          tar -Jxf "$SDK_DL_DIR/$SDK_FILE" -C "$SDK_HOME" --strip=1
-          
+          unzstd "$SDK_DL_DIR/$SDK_FILE" -o "${SDK_FILE%.zst}.tar"
+          tar -xf "${SDK_FILE%.zst}.tar" -C "$SDK_HOME" --strip=1 || { echo "Failed to extract SDK"; exit 1; }
+
+      - name: Create Release Tag
+        if: github.event_name == 'push' && github.ref_type == 'tag'
+        run: git tag ${{ github.ref }}
+      
       - name: Build Packages
         run: |
+          source $GITHUB_ENV
           cd "$SDK_HOME"
           ./scripts/feeds update -a > /dev/null 2>&1
-          ./scripts/feeds install golang > /dev/null 2>&1
-          ln -s "${{ github.workspace }}" "package/$PACKAGE_NAME"
+          ./scripts/feeds install -a > /dev/null 2>&1
+          cp -r "${GITHUB_WORKSPACE}" "package/$PACKAGE_NAME"
           make defconfig > /dev/null 2>&1
-          make package/${PACKAGE_NAME}/{clean,download,compile}
+          make package/${PACKAGE_NAME}/{clean,download,compile} V=s
           find "$SDK_HOME/bin" -type f -name "${PACKAGE_NAME}_*.ipk" \
-           -exec cp -f {} "${{ github.workspace }}" \;
+           -exec cp -f {} "${GITHUB_WORKSPACE}" \;
+
       - name: Release and Upload Assets
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ github.ref }}
           files: "*.ipk"
         env:
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clean up
+        run: |
+          rm -rf "$SDK_HOME"
+          rm -rf "$SDK_DL_DIR"
