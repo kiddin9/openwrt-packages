@@ -21,8 +21,6 @@ sed -i '/profile.d/d' /lib/upgrade/keep.d/base-files
 echo $(uci -q get uhttpd.main.index_page) | grep -q "cgi-bin/luci" ||
 	uci -q add_list uhttpd.main.index_page='cgi-bin/luci' && uci commit uhttpd
 
-/etc/init.d/wizard disable
-
 [[ -x /usr/bin/wget && ! -x /usr/bin/wget-ssl ]] && 	
 	ln -s /usr/bin/wget /usr/bin/wget-ssl
 
@@ -223,16 +221,43 @@ if [[ ! "$version" || "$version" -lt 1 ]]; then
 	echo net.nf_conntrack_max=$nf_conntrack_max >>$SYSCTL_LOCAL
 	echo net.core.rmem_max=$nf_conntrack_max >>$SYSCTL_LOCAL
 
-if [ -f /etc/config/nginx ]; then
-uci -q rename nginx._redirect2ssl='op'
-uci -q set nginx.op.server_name='op'
-uci -q set nginx.op.include='conf.d/*.locations'
-uci -q set nginx.op.access_log='off; # logd openwrt'
-uci commit nginx
-sed -i 's/option return/# option return/' /etc/config/nginx
+if [ -n "$(command -v nginx)" ]; then
+	uci add wizard shortcuts
+	uci set wizard.@shortcuts[-1].shortcut='pw'
+	uci set wizard.@shortcuts[-1].to_url='http://10.0.0.1/cgi-bin/luci/admin/services/passwall'
+	uci set wizard.@shortcuts[-1].comments='passwall'
+	uci commit wizard
+
+	uci -q set nginx._sc_pw=server
+	uci -q set nginx._sc_pw.server_name="pw"
+	uci -q add_list nginx._sc_pw.listen="80"
+	uci -q add_list nginx._sc_pw.listen="443"
+	uci -q set nginx._sc_pw.return="302 http://10.0.0.1/cgi-bin/luci/admin/services/passwall"
+
+	uci -q set dhcp._sc_pw=domain
+	uci -q set dhcp._sc_pw.name="pw"
+	uci -q set dhcp._sc_pw.ip="10.0.0.1"
+	uci -q set dhcp._sc_pw.comments="PassWall"
+	uci commit dhcp
+fi
+	version=1
 fi
 
-	version=1
+if [ -n "$(command -v nginx)" ]; then
+if [ -z "`uci -q get nginx.default_server`" ]; then
+	uci -q set nginx.default_server=server
+	uci -q set nginx.default_server.server_name='op'
+	uci -q add_list nginx.default_server.include='conf.d/*.locations'
+	uci -q set nginx.default_server.access_log='off; # logd openwrt'
+	uci commit nginx
+fi
+if [ -z "`uci -q get dhcp.default_server`" ]; then
+	uci -q set dhcp.default_server=domain
+	uci -q set dhcp.default_server.name='op'
+	uci -q set dhcp.default_server.ip='10.0.0.1'
+	uci -q set dhcp.default_server.comments='后台地址'
+	uci commit dhcp
+fi
 fi
 
 grep -q "location /luci " /etc/nginx/conf.d/luci.locations 2>/dev/null &&
@@ -250,6 +275,8 @@ uci -q set base_config.@status[0].version=$version
 uci commit base_config
 
 modprobe xt_FULLCONENAT || {
+[ "$(iptables -L -t nat | grep "FULLCONENAT")" ] || {
 uci -q set firewall.@defaults[0].fullcone='0'
 uci commit firewall
+}
 }
