@@ -173,6 +173,3 @@ msgstr "温度"
 
 msgid "Ethernet Information"
 msgstr "网口信息"
-
-msgid "Force redirect all local DNS queries to DNSMasq, a.k.a. DNS Hijacking."
-msgstr "强制将所有本地 DNS 查询重定向到 DNSMasq，即 DNS 劫持。"

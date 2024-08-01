@@ -1,10 +1,10 @@
 modem_data(){
         # hwinfo
-	O=$(echo "$O" | grep -Ev 'OK|^$')
-        MANUF=$(echo "$O" | grep -i $FAMILY)
-        MODEL=$(echo "$O" | grep -A1 -i $FAMILY | tail -1)
+	O=$(echo "$O" | grep -Ev '^OK|^$|^NO|^ERR')
+        MANUF=$(echo "$O" | awk 'c&&! --c;/CEREG/{c=1}')
+        MODEL=$(echo "$O" | awk 'c&&! --c;/CEREG/{c=2}')
         DEVICE="$MANUF $MODEL"
-        FW=$(echo "$O" | grep -A2 -i $FAMILY | tail -1)
+        FW=$(echo "$O" | awk 'c&&! --c;/CEREG/{c=3}')
         ICCID=$(echo "$O" | awk -F [:] '/ICCID:/{gsub("\r","");print $2}')
         IMEI=$(echo "$O" | awk 'c&&! --c;/ICCID/{c=1}')
         IMSI=$(echo "$O" | awk 'c&&! --c;/ICCID/{c=2}')
@@ -12,7 +12,7 @@ modem_data(){
 	if [ "$MODE" = "LTE" ]; then
 		LAC=$(echo "$O" | awk -F [,] '/\+CEREG/{gsub("\"","");print $3}')
                 CID=$(echo "$O" | awk -F [,] '/\+CEREG/{gsub("\"","");print $4}')
-		EARFCN=$(echo "$O" |  awk -F [\:/\ ] '/pcell:/{getline;print $2}')
+		EARFCN=$(echo "$O" | grep 'pcell:' -A2 |awk -F [\:/\ ] '/channel:/{print $2}')
 		PCI=$(echo "$O" | awk -F [\:/\ ] '/pcell:/{getline;print $4}')
 		RSRP=$(echo "$O" | awk -F [\:/\ ,] '/pcell:/{getline;getline;gsub("dB|dBm","");printf "%.0f\n", $2}')
 		CSQ_RSSI=$(echo "$O" | awk -F [\:/\ ,]  '/pcell:/{getline;getline;getline;gsub("dB|dBm","");printf "%.0f\n", $2}')
@@ -24,7 +24,8 @@ modem_data(){
 		ENBx=$(echo $CID | sed -e 's/..$//')
                 CELL=$(printf %d 0x${CID: -2})
                 ENBID=$(printf %d 0x$ENBx)
-		BWDx=$(echo "$O" | awk '/PCC info/{printf "%.0f\n",$8}')
+		#BWDx=$(echo "$O" | awk '/PCC info/{printf "%.0f\n",$8}')
+		BWDx=$(echo "$O" | awk -F  [\:/\ ,] '/pcell:/{gsub("MHz","");printf "%.0f\n", $6}')
 		LTE_CA=$(echo "$O" | awk '/SCC/{print $0}' | wc -l)
 		case $BWDx in
 			3) BWDL=1 ;;
