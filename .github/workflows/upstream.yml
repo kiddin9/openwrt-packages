@@ -26,7 +26,7 @@ on:
 
 jobs:
   merge:
-    if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == '119362912'
+    if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id || github.event.sender.id == '115566356'
     runs-on: Ubuntu-22.04
 
     steps:
@@ -80,16 +80,16 @@ jobs:
         rm -rf $1
         }
         (
-        git_clone https://github.com/kiddin9/my-packages && mvdir my-packages
-        git_clone https://github.com/kiddin9/openwrt-bypass && mvdir openwrt-bypass
-        git_clone https://github.com/kiddin9/luci-app-dnsfilter
-        git_clone https://github.com/kiddin9/aria2
-        git_clone https://github.com/kiddin9/luci-theme-edge
-        git_clone https://github.com/kiddin9/autoshare && mvdir autoshare
-        git_clone https://github.com/kiddin9/luci-app-xlnetacc
-        git_clone https://github.com/kiddin9/luci-app-wizard
-        git_clone https://github.com/kiddin9/openwrt-adguardhome && mvdir openwrt-adguardhome
-        git_clone https://github.com/kiddin9/luci-app-cloudreve
+        git_clone https://github.com/xiaoka6666/my-packages && mvdir my-packages
+        git_clone https://github.com/xiaoka6666/openwrt-bypass && mvdir openwrt-bypass
+        git_clone https://github.com/xiaoka6666/luci-app-dnsfilter
+        git_clone https://github.com/xiaoka6666/aria2
+        git_clone https://github.com/xiaoka6666/luci-theme-edge
+        git_clone https://github.com/xiaoka6666/autoshare && mvdir autoshare
+        git_clone https://github.com/xiaoka6666/luci-app-xlnetacc
+        git_clone https://github.com/xiaoka6666/luci-app-wizard
+        git_clone https://github.com/xiaoka6666/openwrt-adguardhome && mvdir openwrt-adguardhome
+        git_clone https://github.com/xiaoka6666/luci-app-cloudreve
         ) &
         (
         git_clone https://github.com/xiaorouji/openwrt-passwall && mvdir openwrt-passwall
