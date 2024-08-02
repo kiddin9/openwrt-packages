@@ -43,5 +43,8 @@ if [ -s "/etc/uwsgi/vassals/luci-webui.ini" ];then
 	/etc/init.d/uwsgi restart
 fi
 
+grep -q ipapi.co /etc/ssrplus/black.list ||
+	sed -i '$a ipapi.co' /etc/ssrplus/black.list
+
 rm -rf /tmp/luci-modulecache /tmp/luci-indexcache
 exit 0
