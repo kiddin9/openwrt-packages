@@ -502,9 +502,10 @@ jobs:
         sed -i '$a cgi-timeout = 300' uwsgi/files-luci-support/luci-cgi_io.ini
         sed -i '/limit-as/c\limit-as = 5000' uwsgi/files-luci-support/luci-webui.ini
         sed -i 's/procd_set_param stderr 1/procd_set_param stderr 0/' uwsgi/files/uwsgi.init
-        mkdir -p luci-app-passwall/root/www/luci-static/passwall
+        mkdir -p luci-app-passwall/root/www/luci-static/passwall luci-app-passwall2/root/www/luci-static/passwall2 luci-app-ssr-plus/root/www/luci-static/shadowsocksr
         cp -rf luci-app-bypass/root/www/luci-static/bypass/* luci-app-passwall/root/www/luci-static/passwall/
-        cp -rf luci-app-bypass/root/usr/share/bypass/GeoLite2-Country.mmdb luci-app-passwall/root/usr/share/passwall/
+        cp -rf luci-app-bypass/root/www/luci-static/bypass/* luci-app-passwall2/root/www/luci-static/passwall2/
+        cp -rf luci-app-bypass/root/www/luci-static/bypass/* luci-app-ssr-plus/root/www/luci-static/shadowsocksr/
         echo "#page>div[data-v-d324f700]:first-child{display:none}
         button.btn_styles.color1[data-v-0d223b54]:last-child{display:none}" >>luci-app-quickstart/htdocs/luci-static/quickstart/style.css
         sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' tailscale/Makefile

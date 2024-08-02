@@ -48,12 +48,7 @@ display:block !important;
 }
 }
 </style>
-<script src="<%=media%>/js/jquery.min.js"></script>
-<script>
-if(typeof jQuery == 'undefined'){
-document.write('<script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"><\/script>');
-}
-</script>
+
 <div class="status-bar">
     <div class="inner">
         <div class="pure-g">
@@ -73,52 +68,58 @@ document.write('<script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.
     </div>
 </div>
 
-
 <script>
 const _ASSETS = '/luci-static/bypass/';
 const CHECK_IP_URL = '<%=url([[admin]], [[services]], [[bypass]], [[ip]])%>';
 
-    var wW = $(window).width();
+let wW = window.innerWidth;
 
-    function resize() {
-        wW = $(window).width();
-        lw = $(".main-left").width()
-        $(".status-bar").width(wW - lw);
-        $(".status-bar .flag").width($(".status-bar .flag").height() / 3 * 4);
+function resize() {
+    wW = window.innerWidth;
+    let lw = document.querySelector(".main-left").offsetWidth;
+    let statusBar = document.querySelector(".status-bar");
+    statusBar.style.width = (wW - lw) + 'px';
+    let flagElement = statusBar.querySelector(".flag");
+    flagElement.style.width = (flagElement.offsetHeight / 3 * 4) + 'px';
 
-        $(".flag-icon").each(function (index, el) {
-            if ($(el).height < 60) {
-                $(el).parent.height(60);
-                $(el).width(60)
-            } else {
-                $(el).width($(el).height());
-            }
-        });
-    }
-
-    function wirte_status(data) {
-        if (data.outboard) {
-            json = data.outboardip;
-            $(".flag img").attr("src", _ASSETS + "flags/" + json.flag + ".svg");
-            $(".status-info").html(data.outboard + "<br>" + json.country);
+    document.querySelectorAll(".flag-icon").forEach(function(el) {
+        if (el.offsetHeight < 60) {
+            el.parentElement.style.height = '60px';
+            el.style.width = '60px';
+        } else {
+            el.style.width = el.offsetHeight + 'px';
         }
-        data.baidu ? $(".i1").attr("src", _ASSETS + "img/site_icon_01.png") : $(".i1").attr("src", _ASSETS + "img/site_icon1_01.png");
-        data.taobao ? $(".i2").attr("src", _ASSETS + "img/site_icon_02.png") : $(".i2").attr("src", _ASSETS + "img/site_icon1_02.png");
-        data.google ? $(".i3").attr("src", _ASSETS + "img/site_icon_03.png") : $(".i3").attr("src", _ASSETS + "img/site_icon1_03.png");
-        data.youtube ? $(".i4").attr("src", _ASSETS + "img/site_icon_04.png") : $(".i4").attr("src", _ASSETS + "img/site_icon1_04.png");
-        setTimeout(function () { $("body").trigger("iploaded", [true]); }, 200);
-    }
-    XHR.poll(5, CHECK_IP_URL, null,
+    });
+}
+
+function write_status(data) {
+        document.querySelector(".flag img").src = _ASSETS + "flags/" + data.flag + ".svg";
+        document.querySelector(".status-info").innerHTML = data.ip + "<br>" + data.country;
+    document.querySelector(".i1").src = data.baidu ? _ASSETS + "img/site_icon_01.png" : _ASSETS + "img/site_icon1_01.png";
+    document.querySelector(".i2").src = data.taobao ? _ASSETS + "img/site_icon_02.png" : _ASSETS + "img/site_icon1_02.png";
+    document.querySelector(".i3").src = data.google ? _ASSETS + "img/site_icon_03.png" : _ASSETS + "img/site_icon1_03.png";
+    document.querySelector(".i4").src = data.youtube ? _ASSETS + "img/site_icon_04.png" : _ASSETS + "img/site_icon1_04.png";
+    setTimeout(function() {
+        let event = new Event('iploaded');
+        document.body.dispatchEvent(event);
+    }, 200);
+}
+
+XHR.poll(5, CHECK_IP_URL, null,
         function (x, data) {
-            wirte_status(data);
+            write_status(data);
         }
     );
 
-    $(document).ready(function () {
-        resize();
-        $.getJSON(CHECK_IP_URL, wirte_status);
-    });
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout("resize()",10)
+    fetch(CHECK_IP_URL)
+        .then(response => response.json())
+        .then(data => {
+            write_status(data);
+        })
+        .catch(error => console.error('Error:', error));
+});
 
-    $(window).resize(resize);
-
+window.addEventListener('resize', resize);
 </script>

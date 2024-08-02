@@ -17,7 +17,7 @@
  	+libuci-lua +lua +luci-compat +luci-lib-jsonc \
 -	+microsocks +resolveip +tcping
 +	+microsocks +resolveip +tcping \
-+	+lua-maxminddb +ipt2socks \
++	+ipt2socks \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
@@ -125,24 +125,10 @@
  	local e
  	if uci:get(appname, "@global[0]", "hide_from_luci") ~= "1" then
  		e = entry({"admin", "services", appname}, alias("admin", "services", appname, "settings"), _("Pass Wall"), -1)
-@@ -209,6 +210,58 @@ function clear_log()
+@@ -211,6 +212,59 @@ function clear_log()
  	luci.sys.call("echo '' > /tmp/log/passwall.log")
  end
  
-+function get_iso(ip)
-+    local mm = require 'maxminddb'
-+    local db = mm.open('/usr/share/passwall/GeoLite2-Country.mmdb')
-+    local res = db:lookup(ip)
-+    return string.lower(res:get('country', 'iso_code'))
-+end
-+
-+function get_cname(ip)
-+    local mm = require 'maxminddb'
-+    local db = mm.open('/usr/share/passwall/GeoLite2-Country.mmdb')
-+    local res = db:lookup(ip)
-+    return string.lower(res:get('country', 'names', 'zh-CN'))
-+end
-+
 +function check_site(host, port)
 +    local nixio = require "nixio"
 +    local socket = nixio.socket("inet", "stream")
@@ -153,26 +139,41 @@
 +    return ret
 +end
 +
-+-- 获取当前代理状态 与节点ip
++function get_ip_geo_info(ip)
++    local result = luci.sys.exec('curl --retry 3 -m 10 -LfsA "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36" https://ipapi.co/json/')
++    local json = require "luci.jsonc"
++    local info = json.parse(result)
++    
++    return {
++        flag = string.lower(info.country_code) or "un",
++        country = get_country_name(info.country_code) or "Unknown",
++        ip = info.ip
++    }
++end
++
++function get_country_name(country_code)
++    local country_names = {
++        US = "美国", CN = "中国", JP = "日本", GB = "英国", DE = "德国",
++        FR = "法国", BR = "巴西", IT = "意大利", RU = "俄罗斯", CA = "加拿大",
++        KR = "韩国", ES = "西班牙", AU = "澳大利亚", MX = "墨西哥", ID = "印度尼西亚",
++        NL = "荷兰", TR = "土耳其", CH = "瑞士", SA = "沙特阿拉伯", SE = "瑞典",
++        PL = "波兰", BE = "比利时", AR = "阿根廷", NO = "挪威", AT = "奥地利",
++        TW = "台湾", ZA = "南非", TH = "泰国", DK = "丹麦", MY = "马来西亚",
++        PH = "菲律宾", SG = "新加坡", IE = "爱尔兰", HK = "香港", FI = "芬兰",
++        CL = "智利", PT = "葡萄牙", GR = "希腊", IL = "以色列", NZ = "新西兰",
++        CZ = "捷克", RO = "罗马尼亚", VN = "越南", UA = "乌克兰", HU = "匈牙利",
++        AE = "阿联酋", CO = "哥伦比亚", IN = "印度", EG = "埃及", PE = "秘鲁", TW = "台湾"
++    }
++    return country_names[country_code]
++end
++
 +function check_ip()
 +    local e = {}
-+    local d = {}
 +    local port = 80
-+    local ip = luci.sys.exec('curl --retry 3 -m 10 -LfsA "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36" http://api.ipify.org/')
-+    d.flag = 'un'
-+    d.country = 'Unknown'
-+    if (ip ~= '') then
-+        local status, code = pcall(get_iso, ip)
-+        if (status) then
-+            d.flag = code
-+        end
-+        local status1, country = pcall(get_cname, ip)
-+        if (status1) then
-+            d.country = country
-+        end
-+    end
-+    e.outboard = ip
-+    e.outboardip = d
++    local geo_info = get_ip_geo_info(ip)
++    e.ip = geo_info.ip
++    e.flag = geo_info.flag
++    e.country = geo_info.country
 +    e.baidu = check_site('www.baidu.com', port)
 +    e.taobao = check_site('www.taobao.com', port)
 +    e.google = check_site('www.google.com', port)
@@ -198,7 +199,7 @@ index 0c33ccd90f..258da6a551 100644
  return m
 diff --git a/luci-app-passwall/luasrc/view/passwall/global/status_bottom.htm b/luci-app-passwall/luasrc/view/passwall/global/status_bottom.htm
 new file mode 100644
-index 0000000000..29de71618a
+index 000000000000..a00fff9c79b3
 --- /dev/null
 +++ b/luci-app-passwall/luasrc/view/passwall/global/status_bottom.htm
 @@ -0,0 +1,128 @@
@@ -256,12 +257,6 @@ index 0000000000..29de71618a
 +}
 +}
 +</style>
-+<script src="<%=media%>/js/jquery.min.js"></script>
-+<script>
-+if(typeof jQuery == 'undefined'){
-+document.write('<script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"><\/script>');
-+}
-+</script>
 +<div class="status-bar">
 +    <div class="inner">
 +        <div class="pure-g">
@@ -281,54 +276,60 @@ index 0000000000..29de71618a
 +    </div>
 +</div>
 +
-+
 +<script>
 +const _ASSETS = '/luci-static/passwall/';
 +const CHECK_IP_URL = '<%=url([[admin]], [[services]], [[passwall]], [[ip]])%>';
 +
-+    var wW = $(window).width();
++let wW = window.innerWidth;
 +
-+    function resize() {
-+        wW = $(window).width();
-+        lw = $(".main-left").width()
-+        $(".status-bar").width(wW - lw);
-+        $(".status-bar .flag").width($(".status-bar .flag").height() / 3 * 4);
++function resize() {
++    wW = window.innerWidth;
++    let lw = document.querySelector(".main-left").offsetWidth;
++    let statusBar = document.querySelector(".status-bar");
++    statusBar.style.width = (wW - lw) + 'px';
++    let flagElement = statusBar.querySelector(".flag");
++    flagElement.style.width = (flagElement.offsetHeight / 3 * 4) + 'px';
 +
-+        $(".flag-icon").each(function (index, el) {
-+            if ($(el).height < 60) {
-+                $(el).parent.height(60);
-+                $(el).width(60)
-+            } else {
-+                $(el).width($(el).height());
-+            }
-+        });
-+    }
-+
-+    function wirte_status(data) {
-+        if (data.outboard) {
-+            json = data.outboardip;
-+            $(".flag img").attr("src", _ASSETS + "flags/" + json.flag + ".svg");
-+            $(".status-info").html(data.outboard + "<br>" + json.country);
++    document.querySelectorAll(".flag-icon").forEach(function(el) {
++        if (el.offsetHeight < 60) {
++            el.parentElement.style.height = '60px';
++            el.style.width = '60px';
++        } else {
++            el.style.width = el.offsetHeight + 'px';
 +        }
-+        data.baidu ? $(".i1").attr("src", _ASSETS + "img/site_icon_01.png") : $(".i1").attr("src", _ASSETS + "img/site_icon1_01.png");
-+        data.taobao ? $(".i2").attr("src", _ASSETS + "img/site_icon_02.png") : $(".i2").attr("src", _ASSETS + "img/site_icon1_02.png");
-+        data.google ? $(".i3").attr("src", _ASSETS + "img/site_icon_03.png") : $(".i3").attr("src", _ASSETS + "img/site_icon1_03.png");
-+        data.youtube ? $(".i4").attr("src", _ASSETS + "img/site_icon_04.png") : $(".i4").attr("src", _ASSETS + "img/site_icon1_04.png");
-+        setTimeout(function () { $("body").trigger("iploaded", [true]); }, 200);
-+    }
-+    XHR.poll(5, CHECK_IP_URL, null,
++    });
++}
++
++function write_status(data) {
++        document.querySelector(".flag img").src = _ASSETS + "flags/" + data.flag + ".svg";
++        document.querySelector(".status-info").innerHTML = data.ip + "<br>" + data.country;
++    document.querySelector(".i1").src = data.baidu ? _ASSETS + "img/site_icon_01.png" : _ASSETS + "img/site_icon1_01.png";
++    document.querySelector(".i2").src = data.taobao ? _ASSETS + "img/site_icon_02.png" : _ASSETS + "img/site_icon1_02.png";
++    document.querySelector(".i3").src = data.google ? _ASSETS + "img/site_icon_03.png" : _ASSETS + "img/site_icon1_03.png";
++    document.querySelector(".i4").src = data.youtube ? _ASSETS + "img/site_icon_04.png" : _ASSETS + "img/site_icon1_04.png";
++    setTimeout(function() {
++        let event = new Event('iploaded');
++        document.body.dispatchEvent(event);
++    }, 200);
++}
++
++XHR.poll(5, CHECK_IP_URL, null,
 +        function (x, data) {
-+            wirte_status(data);
++            write_status(data);
 +        }
 +    );
 +
-+    $(document).ready(function () {
-+        resize();
-+        $.getJSON(CHECK_IP_URL, wirte_status);
-+    });
++document.addEventListener('DOMContentLoaded', function() {
++    setTimeout("resize()",10)
++    fetch(CHECK_IP_URL)
++        .then(response => response.json())
++        .then(data => {
++            write_status(data);
++        })
++        .catch(error => console.error('Error:', error));
++});
 +
-+    $(window).resize(resize);
-+
++window.addEventListener('resize', resize);
 +</script>
 diff --git a/luci-app-passwall/root/etc/uci-defaults/luci-passwall b/luci-app-passwall/root/etc/uci-defaults/luci-passwall
 index cc39c00a21..079c9723b3 100755
@@ -337,8 +338,8 @@ index cc39c00a21..079c9723b3 100755
 @@ -1,5 +1,8 @@
  #!/bin/sh
  
-+grep -q api.ipify.org /usr/share/passwall/rules/proxy_host ||
-+	sed -i '$a api.ipify.org' /usr/share/passwall/rules/proxy_host
++grep -q ipapi.co /usr/share/passwall/rules/proxy_host ||
++	sed -i '$a ipapi.co' /usr/share/passwall/rules/proxy_host
 +
  uci -q batch <<-EOF >/dev/null
  	set dhcp.@dnsmasq[0].localuse=1
