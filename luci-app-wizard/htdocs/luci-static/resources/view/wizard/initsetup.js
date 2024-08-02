@@ -15,11 +15,13 @@ return view.extend({
 			L.resolveDefault(uci.load('wireless')),
 			uci.load('wizard'),
 			L.resolveDefault(fs.stat('/www/luci-static/istorex/style.css'), null),
-			L.resolveDefault(fs.stat('/www/luci-static/routerdog/style.css'), null)
+			L.resolveDefault(fs.stat('/www/luci-static/routerdog/style.css'), null),
+			L.resolveDefault(fs.stat('/usr/sbin/nginx'), null)
 		]);
 	const data = {
 			istorex: promises[4],
-			routerdog: promises[5]
+			routerdog: promises[5],
+			nginx: promises[6]
 		};
 	return data;
 	},
@@ -120,6 +122,33 @@ return view.extend({
 			o = s.taboption("wifisetup", form.Value, "wifi_key", _("Key"));
 			o.datatype = 'wpakey';
 			o.password = true;
+		}
+
+		if (data.nginx) {
+		s.tab('shortcuts', _('Shortcuts'), _('比如设置google.com的快捷方式为字母g,则在此路由器网络的任何浏览器中输入g/即可访问google.com'));
+
+		o = s.taboption('shortcuts', form.SectionValue, 'shortcuts', form.GridSection, 'shortcuts', null,
+			_('Shortcuts'));
+
+		s = o.subsection;
+		s.addremove = true;
+		s.anonymous = true;
+
+		o = s.option(form.Value, 'shortcut', _('Shortcut'));
+		o.rmempty = false;
+
+		o = s.option(form.Value, 'to_url', _('Target URL'));
+		o.rmempty = false;
+		o.placeholder = 'https://example.com';
+		o.validate = function(section_id, value) {
+		if (value.match(/^https?:\/\/.+/i)) {
+			return true;
+		}
+    return _('Please enter a valid URL starting with http:// or https://');
+};
+
+		o = s.option(form.Value, 'comments', _('Comments'));
+		o.optional  = true;
 		}
 
 		setTimeout("document.getElementsByClassName('cbi-button-apply')[0].children[3].children[0].value='1'", 1000)

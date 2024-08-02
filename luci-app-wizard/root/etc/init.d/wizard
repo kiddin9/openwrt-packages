@@ -5,11 +5,10 @@ START=19
 extra_command "reconfig" ""
 
 boot() {
-	XBOOT=1 start
+	exit 0;
 }
 
 add_wizard() {
-	[ "x$XBOOT" = "x1" ] && return 0
 	local cfg="$1"
 	local wan_proto wan_pppoe_user wan_pppoe_pass
 	local lan_ipaddr lan_netmask lan_dns lan_gateway dhcp
@@ -142,9 +141,6 @@ add_wizard() {
 	uci commit dhcp
 	uci commit firewall
 	uci commit network
-	(
-	 /etc/init.d/network restart
-	 /etc/init.d/dnsmasq reload)&
 	
 	if [ "${autoupgrade_pkg}" != "1" ]; then
 		sed -i '/opkg-upgrade/d' /etc/crontabs/root
@@ -169,11 +165,52 @@ uci -q set wizard.default.lan_dns="$(uci -q get network.lan.dns)"
 uci commit wizard
 }
 
+process_shortcut() {
+	local shortcut to_url comments lanaddr
+	local cfg="$1"
+	lanaddr="$(uci get network.lan.ipaddr)"
+	[ -n $lanaddr ] && lanaddr="$(echo "$lanaddr" | sed -e "s/\/2\+//")"
+
+    config_get shortcut "$cfg" shortcut
+    config_get to_url "$cfg" to_url
+    config_get comments "$cfg" comments
+
+	uci -q set nginx._sc_$shortcut=server
+	uci -q set nginx._sc_$shortcut.server_name="$shortcut"
+	uci -q add_list nginx._sc_$shortcut.listen="80"
+	uci -q add_list nginx._sc_$shortcut.listen="443"
+	uci -q set nginx._sc_$shortcut.return="302 $to_url"
+
+	uci -q set dhcp._sc_$shortcut=domain
+	uci -q set dhcp._sc_$shortcut.name="$shortcut"
+	uci -q set dhcp._sc_$shortcut.ip="$lanaddr"
+	uci -q set dhcp._sc_$shortcut.comments="$comments"
+}
+
 start() {
 	config_load wizard
 	config_foreach add_wizard wizard
+		if [ -n "$(command -v nginx)" ]; then
+		for server in $(uci show nginx | grep '_sc_' | grep '=server' | cut -d. -f2 | cut -d= -f1); do
+			uci delete nginx.$server
+		done
+		for server in $(uci show dhcp | grep '_sc_' | grep '=domain' | cut -d. -f2 | cut -d= -f1); do
+			uci delete dhcp.$server
+		done
+		config_foreach process_shortcut shortcuts
+		uci commit nginx
+		uci commit dhcp
+		/etc/init.d/nginx reload
+		fi
+	(
+		/etc/init.d/network restart
+		/etc/init.d/firewall reload
+	 /etc/init.d/dnsmasq reload
+	 
+	 )&
 }
 
 restart() {
-	XRELOAD=1 start
+	start
 }
+
