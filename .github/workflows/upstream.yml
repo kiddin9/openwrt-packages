@@ -81,7 +81,7 @@ jobs:
         }
         (
         git_clone https://github.com/xiaoka6666/my-packages && mvdir my-packages
-        git_clone https://github.com/xiaoka6666/openwrt-bypass && mvdir openwrt-bypass
+        #git_clone https://github.com/xiaoka6666/openwrt-bypass && mvdir openwrt-bypass
         git_clone https://github.com/xiaoka6666/luci-app-dnsfilter
         git_clone https://github.com/xiaoka6666/aria2
         git_clone https://github.com/xiaoka6666/luci-theme-edge
