@@ -5,8 +5,8 @@ opengt
  waitquiet 0.2 0.2
 
  send "AT+XGAUTH="
- send $env("CID)
- send ",\""
+ send $env("CID")
+ send ","
  send $env("AUTH")
  send ",\""
  send $env("USER")

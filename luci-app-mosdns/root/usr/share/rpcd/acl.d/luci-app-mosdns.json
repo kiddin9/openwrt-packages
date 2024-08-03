@@ -2,10 +2,44 @@
 	"luci-app-mosdns": {
 		"description": "Grant UCI access for luci-app-mosdns",
 		"read": {
+			"file": {
+				"/etc/init.d/mosdns": [ "exec" ],
+				"/etc/mosdns/config_custom.yaml": [ "read" ],
+				"/etc/mosdns/rule/blocklist.txt": [ "read" ],
+				"/etc/mosdns/rule/cloudflare-cidr.txt": [ "read" ],
+				"/etc/mosdns/rule/ddnslist.txt": [ "read" ],
+				"/etc/mosdns/rule/greylist.txt": [ "read" ],
+				"/etc/mosdns/rule/hosts.txt": [ "read" ],
+				"/etc/mosdns/rule/local-ptr.txt": [ "read" ],
+				"/etc/mosdns/rule/redirect.txt": [ "read" ],
+				"/etc/mosdns/rule/streaming.txt": [ "read" ],
+				"/etc/mosdns/rule/whitelist.txt": [ "read" ],
+				"/usr/share/mosdns/mosdns.sh": [ "exec" ]
+			},
+			"ubus": {
+				"file": [ "read" ],
+				"luci": [ "getConntrackHelpers" ]
+			},
 			"uci": [ "mosdns" ]
 		},
 		"write": {
+			"file": {
+				"/etc/mosdns/config_custom.yaml": [ "write" ],
+				"/etc/mosdns/rule/blocklist.txt": [ "write" ],
+				"/etc/mosdns/rule/cloudflare-cidr.txt": [ "write" ],
+				"/etc/mosdns/rule/ddnslist.txt": [ "write" ],
+				"/etc/mosdns/rule/greylist.txt": [ "write" ],
+				"/etc/mosdns/rule/hosts.txt": [ "write" ],
+				"/etc/mosdns/rule/local-ptr.txt": [ "write" ],
+				"/etc/mosdns/rule/redirect.txt": [ "write" ],
+				"/etc/mosdns/rule/streaming.txt": [ "write" ],
+				"/etc/mosdns/rule/whitelist.txt": [ "write" ]
+			},
+			"ubus": {
+				"file": [ "write" ]
+			},
 			"uci": [ "mosdns" ]
 		}
 	}
 }
+

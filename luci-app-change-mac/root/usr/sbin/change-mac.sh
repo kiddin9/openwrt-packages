@@ -47,7 +47,6 @@ Options:\n\
   --help                                -- Returns help info\n\
 \n\
 OptFormat:\n\
-  <xx:xx:xx>             Valid: 06fcee, 06-fc-ee, 06:fc:ee\n\
   <VendorType:NameID>    Valid: Please use 'rgmac -l[VendorType]' to get the reference
 \n"
 }

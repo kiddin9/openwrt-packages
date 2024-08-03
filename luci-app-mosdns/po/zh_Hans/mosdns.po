@@ -1,3 +1,19 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "MosDNS"
+msgstr "MosDNS"
+
+msgid "MosDNS is a plugin-based DNS forwarder/traffic splitter."
+msgstr "MosDNS 是一个插件化的 DNS 转发/分流器。"
+
 msgid "Basic Setting"
 msgstr "基本设置"
 
@@ -12,9 +28,6 @@ msgstr "Cloudflare 选项"
 
 msgid "API Options"
 msgstr "API 选项"
-
-msgid "MosDNS is a plugin-based DNS forwarder/traffic splitter."
-msgstr "MosDNS 是一个插件化的 DNS 转发/分流器。"
 
 msgid "RUNNING"
 msgstr "运行中"
@@ -34,20 +47,17 @@ msgstr "监听端口"
 msgid "API Listen port"
 msgstr "API 监听端口"
 
-msgid "Flush Cache"
-msgstr "刷新缓存"
+msgid "Flush DNS Cache"
+msgstr "刷新 DNS 缓存"
 
-msgid "Flushing Cache will clear any IP addresses or DNS records from MosDNS cache"
-msgstr "刷新缓存会清空 MosDNS 所有 IP 地址和 DNS 解析缓存"
+msgid "Flushing DNS Cache will clear any IP addresses or DNS records from MosDNS cache."
+msgstr "刷新 DNS 缓存会清空 MosDNS 所有 IP 地址和 DNS 解析缓存。"
 
-msgid "Flushing..."
-msgstr "正在刷新..."
+msgid "Flushing DNS Cache Success."
+msgstr "刷新 DNS 缓存成功"
 
-msgid "Flushing Success"
-msgstr "刷新成功"
-
-msgid "Flushing Failed, Please check if MosDNS is enabled"
-msgstr "刷新失败，请检查 MosDNS 是否已启用"
+msgid "Flushing DNS Cache Failed, Please check if MosDNS is running."
+msgstr "刷新 DNS 缓存失败，请检查 MosDNS 状态是否在运行中。"
 
 msgid "Match the parsing result with the Cloudflare IP ranges, and when there is a successful match, use the 'Custom IP' as the parsing result (experimental feature)"
 msgstr "将解析结果与 Cloudflare IP 范围进行匹配，当匹配成功时，使用 “自选 IP” 作为解析结果（实验性功能）"
@@ -79,20 +89,26 @@ msgstr "使用自定义规则来源时，请使用 MosDNS 支持的规则类型�
 msgid "Support for local files, such as: file:///var/mosdns/example.txt"
 msgstr "支持本地文件，例如：file:///var/mosdns/example.txt"
 
-msgid "Restart-Service"
-msgstr "重启服务"
-
-msgid "Restart the MosDNS process to take effect of new configuration"
-msgstr "重启 MosDNS 进程使新配置文件生效"
-
 msgid "Configuration Editor"
 msgstr "配置编辑器"
+
+msgid "Edit the MosDNS custom configuration file."
+msgstr "编辑 MosDNS 自定义配置文件。"
+
+msgid "Configuration have been saved."
+msgstr "配置已保存。"
+
+msgid "This is the content of the file '/etc/mosdns/config_custom.yaml' from which your MosDNS configuration will be generated. Only accepts configuration content in yaml format."
+msgstr "这是文件 “/etc/mosdns/config_custom.yaml” 的内容，您的 MosDNS 配置将从此文件生成。仅接受 yaml 格式的配置内容。"
 
 msgid "Geodata Update"
 msgstr "更新数据库"
 
-msgid "Update GeoIP & GeoSite dat"
+msgid "Update GeoIP & GeoSite databases"
 msgstr "更新广告规则、GeoIP & GeoSite 数据库"
+
+msgid "Automatically update GeoIP and GeoSite databases as well as ad filtering rules through scheduled tasks."
+msgstr "通过定时任务自动更新 GeoIP 和 GeoSite 数据库以及广告过滤规则。"
 
 msgid "Update Time"
 msgstr "更新时间"
@@ -133,14 +149,14 @@ msgstr "通过 GitHub 代理更新数据文件，留空则禁用代理下载。"
 msgid "Database Update"
 msgstr "数据库更新"
 
+msgid "Check And Update GeoData."
+msgstr "检查并更新 GeoData 数据库。"
+
 msgid "Check And Update"
 msgstr "检查并更新"
 
 msgid "Enable Auto Database Update"
 msgstr "启用自动更新"
-
-msgid "Updating..."
-msgstr "正在更新..."
 
 msgid "Update success"
 msgstr "更新成功"
@@ -201,6 +217,12 @@ msgstr "阿里云公共 DNS（223.5.5.5）"
 
 msgid "Aliyun Public DNS (223.6.6.6)"
 msgstr "阿里云公共 DNS（223.6.6.6）"
+
+msgid "TrafficRoute Public DNS (180.184.1.1)"
+msgstr "火山引擎公共 DNS（180.184.1.1）"
+
+msgid "TrafficRoute Public DNS (180.184.2.2)"
+msgstr "火山引擎公共 DNS（180.184.2.2）"
 
 msgid "Xinfeng Public DNS (114.114.114.114)"
 msgstr "信风公共 DNS（114.114.114.114）"
@@ -334,52 +356,67 @@ msgstr "日志"
 msgid "Clear logs"
 msgstr "清空日志"
 
-msgid "Rule List"
+msgid "Log Data"
+msgstr "日志数据"
+
+msgid "No log data."
+msgstr "无日志数据。"
+
+msgid "Refresh every %s seconds."
+msgstr "每 %s 秒刷新。"
+
+msgid "Rules"
 msgstr "规则列表"
 
 msgid "Rule Settings"
 msgstr "自定义规则列表"
 
-msgid "<br>The list of rules only apply to 'Default Config' profiles."
-msgstr "<br>规则列表仅适用于 “内置预设” 配置文件"
+msgid "Rules have been saved."
+msgstr "规则已保存"
+
+msgid "Unable to save contents: %s"
+msgstr "无法保存内容：%s"
+
+msgid "The list of rules only apply to 'Default Config' profiles."
+msgstr "规则列表仅适用于 “内置预设” 配置文件。"
 
 msgid "White Lists"
 msgstr "白名单"
 
-msgid "These domain names allow DNS resolution with the highest priority. Please input the domain names of websites, every line can input only one website domain. For example: hm.baidu.com."
+msgid "Added domain names always permit resolution using 'local DNS' with the highest priority (one domain per line, supports domain matching rules)."
 msgstr "加入的域名始终允许使用 “本地 DNS” 进行解析，且优先级最高（每个域名一行，支持域名匹配规则）"
 
 msgid "Block Lists"
 msgstr "黑名单"
 
-msgid "These domains are blocked from DNS resolution. Please input the domain names of websites, every line can input only one website domain. For example: baidu.com."
+msgid "Added domain names will block DNS resolution (one domain per line, supports domain matching rules)."
 msgstr "加入的域名将屏蔽 DNS 解析（每个域名一行，支持域名匹配规则）"
 
 msgid "Grey Lists"
 msgstr "灰名单"
 
-msgid "These domains are always resolved using remote DNS. Please input the domain names of websites, every line can input only one website domain. For example: google.com."
+msgid "Added domain names will always use 'Remote DNS' for resolution (one domain per line, supports domain matching rules)."
 msgstr "加入的域名始终使用 “远程 DNS” 进行解析（每个域名一行，支持域名匹配规则）"
 
 msgid "DDNS Lists"
 msgstr "DDNS 域名"
 
-msgid "These domains are always resolved using local DNS. And force TTL 5 seconds, DNS resolution results will not enter the cache. For example: myddns.example.com."
+msgid "Added domain names will always use 'Local DNS' for resolution, with a forced TTL of 5 seconds, and results will not be cached (one domain per line, supports domain matching rules)."
 msgstr "加入的域名始终使用 “本地 DNS” 进行解析，并且强制 TTL 5 秒，解析结果不会进入缓存（每个域名一行，支持域名匹配规则）"
 
-msgid "Hosts For example: baidu.com 10.0.0.1"
+msgid "Custom Hosts rewrite, for example: baidu.com 10.0.0.1 (one rule per line, supports domain matching rules)."
 msgstr "自定义 Hosts 重写，如：baidu.com 10.0.0.1（每个规则一行，支持域名匹配规则）"
 
 msgid "Redirect"
 msgstr "重定向"
 
-msgid "The domain name to redirect the request to. Requests domain A, but returns records for domain B. example: a.com b.com"
+msgid "Redirecting requests for domain names. Request domain A, but return records for domain B, for example: baidu.com qq.com (one rule per line)."
 msgstr "重定向请求的域名。请求域名 A，但返回域名 B 的记录，如：baidu.com qq.com（每个规则一行）"
 
 msgid "Block PTR"
 msgstr "PTR 黑名单"
 
-msgid "These domains are blocked from PTR requests"
+msgid "Added domain names will block PTR requests (one domain per line, supports domain matching rules)."
 msgstr "加入的域名将阻止 PTR 请求（每个域名一行，支持域名匹配规则）"
 
 msgid "GeoData Export"
@@ -412,5 +449,5 @@ msgstr "自定义 Netflix、Disney+、Hulu 以及 “流媒体” 规则列表�
 msgid "Streaming Media"
 msgstr "流媒体"
 
-msgid "These domains are always resolved using Streaming Media DNS. Please input the domain names of websites, every line can input only one website domain. For example: netflix.com."
+msgid "When enabling 'Custom Stream Media DNS', added domains will always use the 'Streaming Media DNS server' for resolution (one domain per line, supports domain matching rules)."
 msgstr "启用 “自定义流媒体 DNS” 时，加入的域名始终使用 “流媒体 DNS 服务器” 进行解析（每个域名一行，支持域名匹配规则）"
