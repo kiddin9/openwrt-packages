@@ -1,0 +1,98 @@
+#!/bin/sh
+. /usr/share/libubox/jshn.sh
+. /lib/functions.sh
+FILE=/tmp/luci.squid-adv.tmp
+trap 'rm ${FILE} 2> /dev/null' EXIT
+
+##########################################################################################################
+# Function to check firewall to see if proxy firewall rule is setup correctly:
+##########################################################################################################
+check_firewall() {
+	src_port=$1
+	dst_port=$2
+	dst_ip=${dst_port%:*}
+	dst_port=${dst_port#*:}
+	[[ "${dst_port}" == "${dst_ip}" ]] && dst_ip=${ip_addr}
+	[[ "$src_port" -eq 80 ]] && proto=HTTP || proto=HTTPS
+
+	# Does the firewall settings need to be changed?  If not, abort:
+	uci -q show firewall.tproxy_${src_port} > ${FILE}
+	CUR_ZONE=$(grep ".src=" ${FILE} | cut -d= -f 2 | sed "s|'||g")
+	CUR_PORT=$(grep ".dest_port=" ${FILE} | cut -d= -f 2 | sed "s|'||g")
+	CUR_SRC=$(grep ".src_dip=" ${FILE} | cut -d= -f 2 | sed "s|'||g" | sed "s|\!||g")
+	CUR_DST=$(grep ".dest_ip=" ${FILE} | cut -d= -f 2 | sed "s|'||g")
+	[[ "${CUR_ZONE}" == "${zone}" && "${CUR_PORT}" == "${http_port}" && "${CUR_SRC}" == "${ip_addr}" && "${CUR_DST}" == "${ip_addr}" ]] && return
+
+	# Setup transparent proxy firewall rules for specified outgoing port:
+	uci -q delete firewall.tproxy_${src_port}
+	uci set firewall.tproxy_${src_port}='redirect'
+	uci set firewall.tproxy_${src_port}.name="$(echo ${interface} | tr 'a-z' 'A-Z') ${proto} to Squid"
+	uci set firewall.tproxy_${src_port}.src="${interface}"
+	uci set firewall.tproxy_${src_port}.proto="tcp"
+	uci set firewall.tproxy_${src_port}.src_dport="${src_port}"
+	uci set firewall.tproxy_${src_port}.dest_port="${dst_port}"
+	uci set firewall.tproxy_${src_port}.src_dip='!'${dst_ip}
+	uci set firewall.tproxy_${src_port}.dest_ip="${dst_ip}"
+	uci set firewall.tproxy_${src_port}.target="dnat"
+}
+
+##########################################################################################################
+# Main code
+##########################################################################################################
+case "$1" in
+	list)
+		json_init
+		json_add_object "configure"
+		json_add_string 'interface'     'String'
+		json_add_int    'http_enabled'  'Integer'
+		json_add_string 'http_port'     'String'
+		json_add_int    'https_enabled' 'Integer'
+		json_add_string 'https_port'    'String'
+		json_close_object
+		json_dump
+		;;
+
+	call)
+		case "$2" in
+			reconfigure)
+				config_load squid
+				config_get interface transparent interface
+				config_get http_enabled transparent http_enabled
+				config_get http_port transparent http_port
+				config_get https_enabled transparent https_enabled
+				config_get https_port transparent https_port
+
+				# Specify defaults if not specified, then get IP address of specified interface:
+				interface=${interface:-"lan"}
+				http_port=${http_port:-"3126"}
+				https_port=${https_port:-"3127"}
+				ip_addr=$(uci get network.${interface}.ipaddr)
+
+				# Update HTTP intercept lines in "squid.conf":
+				if [[ "${http_enabled}" != "1" ]]; then
+					uci -q delete firewall.tproxy_80
+					sed -i "/^http_port .* intercept$/d" /etc/squid/squid.conf
+				else
+					check_firewall 80 ${http_port}
+					sed -i "/^http_port .* intercept$/d" /etc/squid/squid.conf
+					echo "http_port ${http_port} intercept" >> /etc/squid/squid.conf
+				fi
+
+				# Update HTTPS intercept lines in "squid.conf":
+				if [[ "${https_enabled}" != "1" ]]; then
+					uci -q delete firewall.tproxy_443
+					sed -i "/^http_port .* intercept.*ssl-bump/d" /etc/squid/squid.conf
+				else
+					check_firewall 443 ${https_port}
+					sed -i "/^http_port .* intercept.*ssl-bump/d" /etc/squid/squid.conf
+					echo "http_port ${https_port} intercept tcpkeepalive=60,30,3 ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/cert/ca.pem key=/etc/squid/cert/ca.key cipher=HIGH:MEDIUM:!LOW:!RC4:!SEED:!IDEA:!3DES:!MD5:!EXP:!PSK:!DSS options=NO_TLSv1,NO_SSLv3 tls-dh=prime256v1:/etc/squid/cert/dhparam.pem" >> /etc/squid/squid.conf
+				fi
+
+				# Restart services as required:
+				/sbin/service squid restart
+				uci commit firewall
+				/sbin/service firewall restart
+				;;
+		esac
+		;;
+esac

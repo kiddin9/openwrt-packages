@@ -4,19 +4,16 @@
 		"read": {
 			"ubus": {
 				"luci.squid-adv": [
-					"get_config",
-					"write_config",
+					"reconfigure",
 				]
 			},
 			"uci": [
 				"squid",
-				"squid-adv",
 			],
 		},
 		"write": {
 			"uci": [
 				"squid",
-				"squid-adv",
 			]
 		}
 	}
