@@ -1,4 +1,4 @@
-#!/bin/sh /etc/rc.common
+#!/bin/bash /etc/rc.common
 # Copyright (C) 2023 muink
 
 . "${IPKG_INSTROOT}/lib/functions.sh"

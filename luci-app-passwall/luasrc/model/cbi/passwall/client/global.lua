@@ -356,7 +356,6 @@ o:value("223.5.5.5")
 o:value("223.6.6.6")
 o:value("180.184.1.1")
 o:value("180.184.2.2")
-o:value("139.9.23.90")
 o:depends("direct_dns_mode", "tcp")
 
 o = s:taboption("DNS", Value, "direct_dns_dot", translate("Direct DNS"))
