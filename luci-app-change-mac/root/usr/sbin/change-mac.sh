@@ -13,18 +13,18 @@ MACPOOL=Mpool
 GETOPT=$(getopt -n $(basename $0) -o es:t:d -l assign:,device:,restore,help -- "$@")
 [ $? -ne 0 ] && >&2 echo -e "\tUse the --help option get help" && exit 1
 eval set -- "$GETOPT"
-ERROR=$(echo "$GETOPT" | sed "s| '[^']*'||g; s| -- .+$||; s| --$||")
+OPTIONS=$(sed "s| '[^']*'||g; s| -- .+$||; s| --$||" <<< "$GETOPT")
 
 # Duplicate options
 for ru in --help\|--help -d\|--restore -e\|-e -s\|--assign -t\|--device; do
-  eval "echo \"\$ERROR\" | grep -E \" ${ru%|*}[ .+]* ($ru)| ${ru#*|}[ .+]* ($ru)\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$ru' option is repeated\" && exit 1"
+  eval "grep -qE \" ${ru%|*}[ .+]* ($ru)| ${ru#*|}[ .+]* ($ru)\" <<< \"\$OPTIONS\" && >&2 echo \"\$(basename \$0): Option '\$ru' option is repeated\" && exit 1"
 done
 # Independent options
 for ru in --help\|--help -d\|--restore; do
-  eval "echo \"\$ERROR\" | grep -E \"^ ($ru) .+|.+ ($ru) .+|.+ ($ru) *\$\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$(echo \"\$ERROR\" | sed -E \"s,^.*($ru).*\$,\\1,\")' cannot be used with other options\" && exit 1"
+  eval "grep -qE \"^ ($ru) .+|.+ ($ru) .+|.+ ($ru) *\$\" <<< \"\$OPTIONS\" && >&2 echo \"\$(basename \$0): Option '\$(sed -E \"s,^.*($ru).*\$,\\1,\" <<< \"\$OPTIONS\")' cannot be used with other options\" && exit 1"
 done
 # Conflicting options
-echo "$ERROR" | grep -E " (-s|--assign)\b" | grep -E " (-t|--device)\b" >/dev/null && >&2 echo "$(basename $0): Option '-s|--assign' cannot be used with option '-t|--device'" && exit 1
+echo "$OPTIONS" | grep -E " (-s|--assign)\b" | grep -E " (-t|--device)\b" >/dev/null && >&2 echo "$(basename $0): Option '-s|--assign' cannot be used with option '-t|--device'" && exit 1
 
 
 
@@ -59,11 +59,11 @@ local line
 local timeout=20
 if [ "$1" == "" ]; then
   while read -r -t$timeout line; do
-    echo "$line" | sed -e 'G;:1' -e 's/\(.\)\(.*\n\)/\2\1/;t1' -e 's/.//'
+    sed -e 'G;:1' -e 's/\(.\)\(.*\n\)/\2\1/;t1' -e 's/.//' <<< "$line"
   done
 else
   string="$1"
-  echo "$string" | sed -e 'G;:1' -e 's/\(.\)\(.*\n\)/\2\1/;t1' -e 's/.//'
+  sed -e 'G;:1' -e 's/\(.\)\(.*\n\)/\2\1/;t1' -e 's/.//' <<< "$string"
 fi
 }
 
@@ -107,12 +107,12 @@ while [ -n "$1" ]; do
       MODE=sequence
     ;;
     -s|--assign)
-      TYPE="$(echo "$2" | sed -En "/^[0-f]{2}(:[0-f]{2}){2}$/ {s|^([0-f]{2}(:[0-f]{2}){2})$|-s\1|; p}")"
+      TYPE="$(sed -En "/^[0-f]{2}(:[0-f]{2}){2}$/ {s|^([0-f]{2}(:[0-f]{2}){2})$|-s\1|; p}" <<< "$2")"
       [ -z "$TYPE" ] && >&2 echo -e "$(basename $0): Option '$1' requires a valid argument\n\tUse the --help option get help" && exit 1
       shift
     ;;
     -t|--type)
-      TYPE="$(echo "$2" | sed -En "/^[^:]+:[^:]+$/ {s|^([^:]+:[^:]+)$|-t\1|; p}")"
+      TYPE="$(sed -En "/^[^:]+:[^:]+$/ {s|^([^:]+:[^:]+)$|-t\1|; p}" <<< "$2")"
       [ -z "$TYPE" ] && >&2 echo -e "$(basename $0): Option '$1' requires a valid argument\n\tUse the --help option get help" && exit 1
       shift
     ;;

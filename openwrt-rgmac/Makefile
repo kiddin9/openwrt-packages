@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020-2023 muink
+# Copyright (C) 2020-2024 muink
 #
 # This is free software, licensed under the MIT License.
 # See /LICENSE for more information.
@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rgmac
-PKG_VERSION:=1.5.0
-PKG_RELEASE:=1
+PKG_VERSION:=1.5.1
+PKG_RELEASE:=2
 
 PKG_MAINTAINER:=muink <hukk1996@gmail.com>
 PKG_LICENSE:=MIT

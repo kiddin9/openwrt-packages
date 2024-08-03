@@ -65,7 +65,7 @@ ref=$(for _p in $(find * -type f ! -path "$PKG_DIR/*"); do \
 
 for _i in $ref; do
     suburl=($(sed -E "s/(,|;)/\1\n/g" $_i | grep -E "\burl\([^\)]+\)" | grep -Ev "\burl\(\"data:image" | sed -En "s|^[^']+'([^']+)'.+|\1| p"))
-    hosturl=$(for _ in "${refurl[@]}"; do echo "$_" | grep "${_i##*/}"; done)
+    hosturl=$(for _ in "${refurl[@]}"; do grep "${_i##*/}" <<< "$_"; done)
 
     for _j in $(seq 0 1 $[ ${#suburl[@]} -1 ]); do
         url="${suburl[$_j]}"

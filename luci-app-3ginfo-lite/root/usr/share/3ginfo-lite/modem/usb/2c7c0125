@@ -1,76 +1,74 @@
 # Quectel EC20-E
 # Quectel EC25
 
-O=$(sms_tool -d $DEVICE at "at+qtemp;+qnwinfo;+qeng=\"servingcell\";+qspn")
+O=$(sms_tool -d $DEVICE at "at+qtemp")
 
 T=$(echo "$O" | awk -F[,:] '/^\+QTEMP/ {t=$2*1;if($3*1>t)t=$3*1;if($4*1>t)t=$4*1;printf "%d", t}')
-if [ -n "$T" ]; then
-	[ -n "$ADDON" ] && ADDON="$ADDON,"
-	TEMP="$T &deg;C"
-	ADDON="$ADDON"'{"Temperatura":"'$T' &deg;C"}'
-fi
+[ -n "$T" ] && TEMP="$T &deg;C"
 
-T=$(echo "$O" | awk -F[,:] '/^\+QNWINFO:/ {print $4}' | xargs)
+if [ "$REGOK" = "1" ]; then
+
+O=$(sms_tool -d $DEVICE at "at+qnwinfo;+qeng=\"servingcell\";+qspn")
+
+T=$(echo "$O" | awk -F[,:] '/^\+QNWINFO/ {print $2"/"$4}' | xargs)
 if [ -n "$T" ]; then
-	case "$T" in
-		*"LTE BAND 1") MODE=$(band4g 1 "LTE ");;
-		*"LTE BAND 3") MODE=$(band4g 3 "LTE ");;
-		*"LTE BAND 7") MODE=$(band4g 5 "LTE ");;
-		*"LTE BAND 7") MODE=$(band4g 7 "LTE ");;
-		*"LTE BAND 8") MODE=$(band4g 8 "LTE ");;
-		*"LTE BAND 20") MODE=$(band4g 20 "LTE ");;
-		*"LTE BAND 28") MODE=$(band4g 28 "LTE ");;
-		*"LTE BAND 32") MODE=$(band4g 32 "LTE ");;
-		*"LTE BAND 38") MODE=$(band4g 38 "LTE ");;
-		*"LTE BAND 40") MODE=$(band4g 40 "LTE ");;
-		*"LTE BAND 41") MODE=$(band4g 41 "LTE ");;
-		*) MODE="$T";;
-	esac
+	if [ "x$MODE_NUM" = "x7" ]; then
+		B=$(echo $T | sed 's/.*LTE BAND \(.*\)/\1/')
+		MODE="LTE | $(band4g ${B})"
+		MAINCUT="$(band4g ${B})"
+	fi
 fi
 
 T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $4}' | xargs)
 if [ "x$T" = "xLTE" ] || [ "x$T" = "x4G" ]; then
-#	CELLID=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $8}' | xargs)
-#	PCID=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $9}' | xargs)
-#	EARFCN=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $10}' | xargs)
-#	FREQ_BAND_IND=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $11}' | xargs)
-	ULBW=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $12}' | xargs)
-	DLBW=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $13}' | xargs)
-#	TAC=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $14}' | xargs)
-	RSRP=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $15}' | xargs)
-	RSRQ=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $16}' | xargs)
-	RSSI=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $17}' | xargs)
-	SINR=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $18}' | xargs | awk '{printf "%.1f\n", $1*0.2-20}')
-#	SRXLEV=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $19}' | xargs)
-#	[ -n "$ADDON" ] && ADDON="$ADDON,"
-#	ADDON="$ADDON"'{"CELLID":"'$CELLID'"}'
-#	[ -n "$ADDON" ] && ADDON="$ADDON,"
-#	ADDON="$ADDON"'{"PCID":"'$PCID'"}'
-#	[ -n "$ADDON" ] && ADDON="$ADDON,"
-#	ADDON="$ADDON"'{"EARFCN":"'$EARFCN'"}'
-#	[ -n "$ADDON" ] && ADDON="$ADDON,"
-#	ADDON="$ADDON"'{"FREQ_BAND_IND":"'$FREQ_BAND_IND'"}'
-#	[ -n "$ADDON" ] && ADDON="$ADDON,"
-#	ADDON="$ADDON"'{"UL_BANDWIDTH":"'$UL_BANDWIDTH'"}'
-#	[ -n "$ADDON" ] && ADDON="$ADDON,"
-#	ADDON="$ADDON"'{"DL_BANDWIDTH":"'$DL_BANDWIDTH'"}'
-#	[ -n "$ADDON" ] && ADDON="$ADDON,"
-#	ADDON="$ADDON"'{"TAC":"'$TAC'"}'
-	[ -n "$ADDON" ] && ADDON="$ADDON,"
-	ADDON="$ADDON"'{"RSRP":"'$RSRP' dBm"}'
-	[ -n "$ADDON" ] && ADDON="$ADDON,"
-	ADDON="$ADDON"'{"RSRQ":"'$RSRQ' dB"}'
-	[ -n "$ADDON" ] && ADDON="$ADDON,"
-	ADDON="$ADDON"'{"RSSI":"'$RSSI' dBm"}'
-	[ -n "$ADDON" ] && ADDON="$ADDON,"
-	ADDON="$ADDON"'{"SINR":"'$SINR' dB"}'
-#	[ -n "$ADDON" ] && ADDON="$ADDON,"
-#	ADDON="$ADDON"'{"SRXLEV":"'$SRXLEV'"}'
+	T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $14}')
+	TAC_DEC=$(printf "%d" "0x$T")
+	TAC_HEX="$T"
+
+	T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $12}')
+	case $T in
+		0) T1="1.4";;
+		1) T1="3";;
+		2) T1="5";;
+		3) T1="10";;
+		4) T1="15";;
+		5) T1="20";;
+		*) T1="";;
+	esac
+	[ -n "$T1" ] && ULBW="UL: @$T1 MHz"
+	T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $13}')
+	case $T in
+		0) T1="1.4";;
+		1) T1="3";;
+		2) T1="5";;
+		3) T1="10";;
+		4) T1="15";;
+		5) T1="20";;
+		*) T1="";;
+	esac
+	[ -n "$T1" ] && DLBW="DL: @$T1 MHz"
+	PBAND="$MAINCUT $DLBW $ULBW"
+
+	T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $9}')
+	[ -n "$T" ] && PCI="$T"
+	T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $10}')
+	[ -n "$T" ] && EARFCN="$T"
+
+	T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $17}')
+	RSSI="$T"
+	T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $15}')
+	RSRP="$T"
+	T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $16}')
+	RSRQ="$T"
+	T=$(echo "$O" | awk -F[,:] '/^\+QENG:/ {print $18}' | awk '{printf "%.1f\n", $1*0.2-20}')
+	SINR="$T"
 fi
 
 T=$(echo "$O" | awk -F[,:] '/^\+QSPN/ {print $4}' | xargs)
 if [ -n "$T" ]; then
 	COPS="$T"
+fi
+
 fi
 
 # International Mobile Equipment Identity (IMEI)

@@ -36,7 +36,7 @@ start() {
 		--url "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records" \
 		-H "Authorization: Bearer ${TOKEN}" \
 		-H 'Content-Type: application/json')"
-	[ -z "$records" -o -n "$(echo "$records"|grep -E "\"success\":\s*false")" ] && return 1
+	[ -z "$records" -o -n "$(grep -E "\"success\":\s*false" <<< "$records")" ] && return 1
 
 	local the_record
 

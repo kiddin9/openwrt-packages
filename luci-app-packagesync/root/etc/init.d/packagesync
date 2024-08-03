@@ -136,13 +136,13 @@ echo "$rawhtml" | sed -n '/Release Archive/,/\$/p' \
 | sed -n '/<ul>/,/<\/ul>/p' | grep 'OpenWrt' \
 | sed -E "s|.+\breleases/([\.0-9]+)/.+|\1|g" \
 )"
-rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$OPENWRT_URL/$URLHREF_RELEASES/$(echo "$stables"|head -n1)/$URLHREF_VERS_TARGETS")"
+rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$OPENWRT_URL/$URLHREF_RELEASES/$(head -n1 <<< "$stables")/$URLHREF_VERS_TARGETS")"
 targets="$( \
 echo "$rawhtml" \
 | sed -n '/<table>/,/<\/table>/p' | grep '<a href=' \
 | sed -E "s|.+\bhref=\"([^/]+)/.+|\1|g" \
 )"
-rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$OPENWRT_URL/$URLHREF_RELEASES/$(echo "$stables"|head -n1)/$URLHREF_VERS_PACKAGES")"
+rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$OPENWRT_URL/$URLHREF_RELEASES/$(head -n1 <<< "$stables")/$URLHREF_VERS_PACKAGES")"
 pkgarchs="$( \
 echo "$rawhtml" \
 | sed -n '/<table>/,/<\/table>/p' | grep '<a href=' \
@@ -234,7 +234,7 @@ local rm_path="$(\
 find $home_path/$URLHREF_RELEASES/* -type d -o -type l -maxdepth 3|grep -Ev "$targets"|grep -Ev "$packages"|grep -Ev "$pkgarchs"\
 |grep -E "(/\d+\.\d+[^/]*/($URLHREF_VERS_PACKAGES|$URLHREF_VERS_TARGETS/[^/]+/[^/]+)\$|/${URLHREF_PACKAGES_PREFIX}\d+\.\d+/[^/]+\$)"\
 )"
-echo "$rm_path"|sed "s|^/|rm '/|g;s|$|'|g"
+sed "s|^/|rm '/|g;s|$|'|g" <<< "$rm_path"
 [ -z "$autorm" ] && return 0 || echo "$rm_path" | xargs rm -rf 
 
 }

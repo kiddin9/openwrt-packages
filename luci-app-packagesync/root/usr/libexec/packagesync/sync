@@ -35,15 +35,15 @@ BWLIMIT='8000'
 GETOPT=$(getopt -n $(basename $0) -o x:l:d:n:s:t:k:e:m:o:V -l proxy:,bwlimit:,homedir:,name:,version:,target:,arch:,extra:,model:,orders:,Version,help -- "$@")
 [ $? -ne 0 ] && >&2 echo -e "\tUse the --help option get help" && exit 1
 eval set -- "$GETOPT"
-OPTIONS=$(echo "$GETOPT" | sed -E "s|'[^']*'||g; s| --( .*)?$||")
+OPTIONS=$(sed -E "s|'[^']*'||g; s| --( .*)?$||" <<< "$GETOPT")
 
 # Duplicate options
 for ru in --help\|--help -V\|--Version -x\|--proxy -l\|--bwlimit -d\|--homedir -n\|--name -s\|--version -t\|--target -k\|--arch -o\|--orders; do
-  eval "echo \"\$OPTIONS\" | grep -E \" ${ru%|*}[ .+]* ($ru)| ${ru#*|}[ .+]* ($ru)\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$ru' option is repeated\" && exit 1"
+  eval "grep -qE \" ${ru%|*}[ .+]* ($ru)| ${ru#*|}[ .+]* ($ru)\" <<< \"\$OPTIONS\" && >&2 echo \"\$(basename \$0): Option '\$ru' option is repeated\" && exit 1"
 done
 # Independent options
 for ru in --help\|--help -V\|--Version; do
-  eval "echo \"\$OPTIONS\" | grep -E \"^ ($ru) .+|.+ ($ru) .+|.+ ($ru) *\$\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$(echo \"\$OPTIONS\" | sed -E \"s,^.*($ru).*\$,\\1,\")' cannot be used with other options\" && exit 1"
+  eval "grep -qE \"^ ($ru) .+|.+ ($ru) .+|.+ ($ru) *\$\" <<< \"\$OPTIONS\" && >&2 echo \"\$(basename \$0): Option '\$(sed -E \"s,^.*($ru).*\$,\\1,\" <<< \"\$OPTIONS\")' cannot be used with other options\" && exit 1"
 done
 # Conflicting options
 echo "$OPTIONS" | grep -E " (-o|--orders)\b" | grep -E " (-n|--name)\b" >/dev/null && >&2 echo "$(basename $0): Option '-o|--orders' cannot be used with option '-n|--name'" && exit 1
@@ -99,7 +99,7 @@ _version() {
 #verify_path <absolute path>
 verify_path() {
   [ -z "$1" ] && return 1
-  [ -d "$1" -a -n "$(echo "$1"|sed -n '/^\//p')" ] || return 1
+  [ -d "$1" -a -n "$(sed -n '/^\//p' <<< "$1")" ] || return 1
   return 0
 }
 
@@ -109,9 +109,9 @@ verify_order() {
 
   local HTTPCODE ERROR=0
   HTTPCODE="$(curl --connect-timeout 10 --retry 3 -sSIL -w "%{http_code}" -o /dev/null "$WEB_URL/$URLHREF_RELEASES/${version:-null}/$URLHREF_VERS_TARGETS/${target:-null}")"
-  [ -n "$(echo "$HTTPCODE"|sed -n '/^2\d\d$/p')" ] || { >&2 echo -e "$(basename $0): Get '$WEB_URL/$URLHREF_RELEASES/${version:-<null>}/$URLHREF_VERS_TARGETS/${target:-<null>}' failed. Code '$HTTPCODE'"; ((ERROR++)); }
+  [ -n "$(sed -n '/^2\d\d$/p' <<< "$HTTPCODE")" ] || { >&2 echo -e "$(basename $0): Get '$WEB_URL/$URLHREF_RELEASES/${version:-<null>}/$URLHREF_VERS_TARGETS/${target:-<null>}' failed. Code '$HTTPCODE'"; ((ERROR++)); }
   HTTPCODE="$(curl --connect-timeout 10 --retry 3 -sSIL -w "%{http_code}" -o /dev/null "$WEB_URL/$URLHREF_RELEASES/${version:-null}/$URLHREF_VERS_PACKAGES/${arch:-null}")"
-  [ -n "$(echo "$HTTPCODE"|sed -n '/^2\d\d$/p')" ] || { >&2 echo -e "$(basename $0): Get '$WEB_URL/$URLHREF_RELEASES/${version:-<null>}/$URLHREF_VERS_PACKAGES/${arch:-<null>}' failed. Code '$HTTPCODE'"; ((ERROR++)); }
+  [ -n "$(sed -n '/^2\d\d$/p' <<< "$HTTPCODE")" ] || { >&2 echo -e "$(basename $0): Get '$WEB_URL/$URLHREF_RELEASES/${version:-<null>}/$URLHREF_VERS_PACKAGES/${arch:-<null>}' failed. Code '$HTTPCODE'"; ((ERROR++)); }
 
   [ "$ERROR" -gt 0 ] && return 1
   return 0

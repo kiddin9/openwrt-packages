@@ -334,8 +334,8 @@ launcher() {
 		[ "$forward_mode" = "dnat" -a "$family" = "ipv6" ] && >&2 echo "$(basename $0): section $1 option forward_mode 'dnat' not support under IPv6" && let error++
 		[ "$forward_mode" != "dnat" ] && natloopback=0
 		if [ -n "$forward_target" ]; then
-			[ -n "$(echo $forward_target|grep -E "^127(\.\d+){3}")" -o "$forward_target" = "::1" ] && forward_target="$lan_addr"
-			[ -n "$(echo $forward_target|grep -E "^0(\.\d+){3}")" -o "$forward_target" = "::" ] && forward_target="$bind_ip"
+			[ -n "$(grep -E "^127(\.\d+){3}" <<< $forward_target)" -o "$forward_target" = "::1" ] && forward_target="$lan_addr"
+			[ -n "$(grep -E "^0(\.\d+){3}"   <<< $forward_target)" -o "$forward_target" = "::" ] && forward_target="$bind_ip"
 			if [ -n "$forward_target" ]; then
 				[ -z "$(ip_match "$family" "$forward_target")" ] && >&2 echo "$(basename $0): section $1 option forward_target '$forward_target' not a $family address" && let error++
 			else
