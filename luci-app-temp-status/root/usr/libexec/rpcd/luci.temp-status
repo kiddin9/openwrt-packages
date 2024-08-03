@@ -78,6 +78,9 @@ local function getHwmonData()
 							if tPointMax ~= nil then
 								tPoints["2"] = { type = "max", temp = tPointMax }
 							end
+							if deviceDirPath and (not tPoints or not next(tPoints)) then
+								tPoints = findTPoints(deviceDirPath) or tPoints
+							end
 							if sNumber ~= nil and temp ~= nil then
 								sources[#sources + 1] = {
 									number  = sNumber,
