@@ -1133,6 +1133,36 @@ return view.extend({
 	},
 
 	render: function(listData) {
+		var checkUpdateNeeded = function() {
+            return Promise.all([
+                L.resolveDefault(fs.stat('/tmp/opkg-lists'), null),
+                L.resolveDefault(fs.read('/tmp/resolv.conf.d/resolv.conf.auto'), '')
+            ]).then(function(results) {
+                var stat = results[0];
+                var resolvContent = results[1];
+
+                // 检查 /tmp/opkg-lists 的更新时间
+                var needTimeUpdate = false;
+                if (!stat) {
+                    needTimeUpdate = true; // 如果文件夹不存在，需要更新
+                } else {
+                    var currentTime = Math.floor(Date.now() / 1000);
+                    var lastUpdateTime = stat.mtime;
+                    var timeDifference = currentTime - lastUpdateTime;
+                    needTimeUpdate = timeDifference > 3600; // 如果超过1小时，需要更新
+                }
+
+                // 检查 resolv.conf.auto 文件内容
+                var hasResolvContent = resolvContent && resolvContent.trim().length > 0;
+
+                // 只有当需要时间更新且 resolv.conf.auto 不为空时，才返回 true
+                return needTimeUpdate && hasResolvContent;
+            }).catch(function(error) {
+                console.error('Error checking update status:', error);
+                return false; // 如果出错，不执行更新
+            });
+        };
+
 		var query = decodeURIComponent(L.toArray(location.search.match(/\bquery=([^=]+)\b/))[1] || '');
 
 		var view = E([], [
@@ -1252,7 +1282,17 @@ return view.extend({
 		]);
 
 		requestAnimationFrame(function() {
-			updateLists(listData)
+			updateLists(listData);
+            checkUpdateNeeded().then(function(needUpdate) {
+                if (needUpdate) {
+					setTimeout(function() {
+                    var updateButton = document.querySelector('button[data-command="update"]');
+                    if (updateButton) {
+                        updateButton.click();
+                    }
+					}, 10)
+                }
+            });
 		});
 
 		return view;

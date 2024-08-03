@@ -82,7 +82,7 @@
  				'data-package': name,
  				'class': 'btn cbi-button-action',
  				'click': handleOpkg,
-@@ -1088,7 +1103,7 @@ function updateLists(data)
+@@ -1088,7 +1099,7 @@ function updateLists(data)
  
  	return (data ? Promise.resolve(data) : downloadLists()).then(function(data) {
  		var pg = document.querySelector('.cbi-progressbar'),
@@ -91,7 +91,44 @@
  				.sort(function(a, b) { return a.mount > b.mount })[0] || { size: 0, free: 0 };
  
  		pg.firstElementChild.style.width = Math.floor(mount.size ? (100 / mount.size) * (mount.size - mount.free) : 100) + '%';
-@@ -1138,7 +1153,7 @@ return view.extend({
+@@ -1122,6 +1133,36 @@ return view.extend({
+ 	},
+ 
+ 	render: function(listData) {
++		var checkUpdateNeeded = function() {
++            return Promise.all([
++                L.resolveDefault(fs.stat('/tmp/opkg-lists'), null),
++                L.resolveDefault(fs.read('/tmp/resolv.conf.d/resolv.conf.auto'), '')
++            ]).then(function(results) {
++                var stat = results[0];
++                var resolvContent = results[1];
++
++                // 检查 /tmp/opkg-lists 的更新时间
++                var needTimeUpdate = false;
++                if (!stat) {
++                    needTimeUpdate = true; // 如果文件夹不存在，需要更新
++                } else {
++                    var currentTime = Math.floor(Date.now() / 1000);
++                    var lastUpdateTime = stat.mtime;
++                    var timeDifference = currentTime - lastUpdateTime;
++                    needTimeUpdate = timeDifference > 3600; // 如果超过1小时，需要更新
++                }
++
++                // 检查 resolv.conf.auto 文件内容
++                var hasResolvContent = resolvContent && resolvContent.trim().length > 0;
++
++                // 只有当需要时间更新且 resolv.conf.auto 不为空时，才返回 true
++                return needTimeUpdate && hasResolvContent;
++            }).catch(function(error) {
++                console.error('Error checking update status:', error);
++                return false; // 如果出错，不执行更新
++            });
++        };
++
+ 		var query = decodeURIComponent(L.toArray(location.search.match(/\bquery=([^=]+)\b/))[1] || '');
+ 
+ 		var view = E([], [
+@@ -1138,7 +1179,7 @@ return view.extend({
  				E('div', {}, [
  					E('label', {}, _('Filter') + ':'),
  					E('span', { 'class': 'control-group' }, [
@@ -100,7 +137,7 @@
  						E('button', { 'class': 'btn cbi-button', 'click': handleReset }, [ _('Clear') ])
  					])
  				]),
-@@ -1155,6 +1170,7 @@ return view.extend({
+@@ -1155,6 +1196,7 @@ return view.extend({
  					E('label', {}, _('Actions') + ':'), ' ',
  					E('span', { 'class': 'control-group' }, [
  						E('button', { 'class': 'btn cbi-button-positive', 'data-command': 'update', 'click': handleOpkg, 'disabled': isReadonlyView }, [ _('Update lists…') ]), ' ',
@@ -108,6 +145,25 @@
  						E('button', { 'class': 'btn cbi-button-action', 'click': handleUpload, 'disabled': isReadonlyView }, [ _('Upload Package…') ]), ' ',
  						E('button', { 'class': 'btn cbi-button-neutral', 'click': handleConfig }, [ _('Configure opkg…') ])
  					])
+@@ -1240,7 +1282,17 @@ return view.extend({
+ 		]);
+ 
+ 		requestAnimationFrame(function() {
+-			updateLists(listData)
++			updateLists(listData);
++            checkUpdateNeeded().then(function(needUpdate) {
++                if (needUpdate) {
++					setTimeout(function() {
++                    var updateButton = document.querySelector('button[data-command="update"]');
++                    if (updateButton) {
++                        updateButton.click();
++                    }
++					}, 10)
++                }
++            });
+ 		});
+ 
+ 		return view;
 
 --- a/luci-app-opkg/root/usr/libexec/opkg-call
 +++ b/luci-app-opkg/root/usr/libexec/opkg-call
@@ -181,7 +237,15 @@
 
 --- a/luci-app-opkg/root/usr/share/rpcd/acl.d/luci-app-opkg.json
 +++ b/luci-app-opkg/root/usr/share/rpcd/acl.d/luci-app-opkg.json
-@@ -20,6 +20,8 @@
+@@ -9,6 +9,7 @@
+ 				"/usr/libexec/opkg-call list-installed": [ "exec" ],
+ 				"/usr/libexec/opkg-call list-available": [ "exec" ],
+ 				"/etc/opkg.conf": [ "read" ],
++				"/tmp/resolv.conf.d/resolv.conf.auto": [ "read" ],
+ 				"/etc/opkg/*.conf": [ "read" ]
+ 			},
+ 			"ubus": {
+@@ -20,6 +21,8 @@
  				"/usr/libexec/opkg-call install *": [ "exec" ],
  				"/usr/libexec/opkg-call remove *": [ "exec" ],
  				"/usr/libexec/opkg-call update *": [ "exec" ],
