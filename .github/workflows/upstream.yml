@@ -409,7 +409,7 @@ jobs:
 
     - name: SSH connection to Actions
       uses: kiddin9/debugger-action@master
-      if: github.event.inputs.ssh == 'true'
+      if: github.event.inputs.ssh == 'false'
 
     - name: Apply patches
       run: |
