@@ -1,5 +1,5 @@
 #!/bin/bash /etc/rc.common
-# Copyright (C) 2023 muink
+# Copyright (C) 2023-2024 muink
 
 . "${IPKG_INSTROOT}/lib/functions.sh"
 . "${IPKG_INSTROOT}/usr/share/libubox/jshn.sh"
@@ -16,7 +16,7 @@ EXTRA_HELP=\
 	cleanup [autorm]	Clean up invalid versions"
 
 CONFIG_NAME='packagesync'
-TYPEDSECTION='packagesync'
+SCONFIG='config'
 RELEASE='release'
 
 MNTPKGS='/mnt/packagesync'
@@ -30,20 +30,46 @@ TARGETS_LIST="/var/packagesync/targetslist"
 PKGARCHS_LIST="/var/packagesync/pkgarchslist"
 RESULTPATH='/var/packagesync/results'
 # url path
-OPENWRT_URL="https://downloads.openwrt.org"
+DOWNLOAD_URL="https://downloads.openwrt.org"
 URLHREF_RELEASES='releases'
 URLHREF_SNAPSHOTS='snapshots'
 URLHREF_PACKAGES_PREFIX='packages-' # packages-22.03
 URLHREF_VERS_PACKAGES='packages'
 URLHREF_VERS_TARGETS='targets'
 
-if [ "$(uci -q get $CONFIG_NAME.@$TYPEDSECTION[0].proxy_enabled)" == "1" ]; then
-    export ALL_PROXY=$(uci -q get $CONFIG_NAME.@$TYPEDSECTION[0].proxy_protocol)://$(uci -q get $CONFIG_NAME.@$TYPEDSECTION[0].proxy_server)
-fi
-
 config_load $CONFIG_NAME
 
 
+
+# define global var: GLOBAL_*
+define_global() {
+	[ "$2" == "0" ] || { >&2 echo "$(basename $0): section $1 validation failed"; return 1; }
+
+	local error=0
+	local v ucivv="download_url rsync_url home_url bwlimit proxy_enabled proxy_protocol proxy_server"
+	for v in $ucivv; do
+		[ -z "$(config_get $1 $v)" ] && grep -qEv "^(download_url|rsync_url|proxy_protocol|proxy_server)$" <<< "$v" && {
+			>&2 echo "$(basename $0): section $1 option $v cannot be empty"
+			let error++
+		}
+		config_get GLOBAL_$v $1 $v
+	done
+
+	[ "$error" -gt 0 ] && return 1 || return 0
+}
+
+validate_section_config() {
+	uci_load_validate "$CONFIG_NAME" "$SCONFIG" "$1" "$2" \
+		'download_url:string' \
+		'rsync_url:string' \
+		'home_url:string' \
+		'bwlimit:uinteger:8000' \
+		'auto_exec:bool:1' \
+		'cron_expression:string' \
+		'proxy_enabled:bool:0' \
+		'proxy_protocol:string:socks5' \
+		'proxy_server:string'
+}
 
 validate_section_release() {
 	uci_load_validate $CONFIG_NAME $RELEASE "$1" "$2" \
@@ -52,9 +78,9 @@ validate_section_release() {
 		'version:string' \
 		'target:string' \
 		'subtarget:string' \
-		'extra:bool:0' \
 		'pkgarch:string' \
-		'model:string'
+		'model:string' \
+		'extra:bool:0'
 }
 
 gen_order() {
@@ -68,9 +94,9 @@ gen_order() {
 	json_add_string name "$name"
 	json_add_string version "$version"
 	json_add_string target "$target/$subtarget"
-	json_add_boolean extra "$extra"
 	json_add_string arch "$pkgarch"
 	json_add_string model "$model"
+	json_add_boolean extra "$extra"
 	json_close_object
 	orders="$(json_dump)"
 }
@@ -80,7 +106,9 @@ sync_instance() {
 
 	procd_open_instance 'sync'
 	procd_set_param command "$SYNCEXE" -o "$1"
-	procd_append_param command -l "$bwlimit" -d "$homepath" ${ALL_PROXY:+-x $ALL_PROXY}
+	procd_append_param command -l "$bwlimit" -d "$homepath" ${ALL_PROXY:+-x $ALL_PROXY} \
+		${GLOBAL_download_url:+--downloadurl "$GLOBAL_download_url"} \
+		${GLOBAL_rsync_url:+--rsyncurl "$GLOBAL_rsync_url"}
 	#procd_set_param respawn
 	#procd_set_param stdout 1
 	procd_set_param stderr 1
@@ -95,11 +123,14 @@ start_service() {
 	# mount point check
 	[ -n "$(df -hT|grep "$MNTPKGS")" ] || return 1
 
-	local homeurl homepath bwlimit
-	eval "homeurl=\$CONFIG_${CONFIG_SECTIONS%% *}_home_url"
-	[ -n "$homeurl" ] && homepath="/www/$homeurl" || homepath="$DEF_HOMEPATH"
+	validate_section_config "$SCONFIG" define_global || return $?
+	local homepath bwlimit
+	[ -n "$GLOBAL_home_url" ] && homepath="/www/$GLOBAL_home_url" || homepath="$DEF_HOMEPATH"
 	[ -d "$homepath" ] || { >&2 echo -e "$CONFIG_NAME: The Home Path '$homepath' is invalid. please check the 'home_url'"; return 1; }
-	eval "bwlimit=\$CONFIG_${CONFIG_SECTIONS%% *}_bwlimit"
+	bwlimit="$GLOBAL_bwlimit"
+	[ "$GLOBAL_proxy_enabled" = "1" ] && {
+		export ALL_PROXY=$GLOBAL_proxy_protocol://$GLOBAL_proxy_server
+	}
 
 	local orders='{ "orders": [] }'
 	config_foreach validate_section_release $RELEASE gen_order
@@ -124,8 +155,9 @@ start_service() {
 }
 
 getinfo() {
-local rawhtml stables releases targets pkgarchs
-rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$OPENWRT_URL")"
+validate_section_config "$SCONFIG" define_global
+local rawhtml stables releases targets pkgarchs download_url="${GLOBAL_download_url:-$DOWNLOAD_URL}"
+rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$download_url")"
 stables="$( \
 echo "$rawhtml" | sed -n '/Stable Release/,/Development Snapshots/p' \
 | sed -n '/<ul>/,/<\/ul>/p' | grep 'OpenWrt' \
@@ -136,13 +168,13 @@ echo "$rawhtml" | sed -n '/Release Archive/,/\$/p' \
 | sed -n '/<ul>/,/<\/ul>/p' | grep 'OpenWrt' \
 | sed -E "s|.+\breleases/([\.0-9]+)/.+|\1|g" \
 )"
-rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$OPENWRT_URL/$URLHREF_RELEASES/$(head -n1 <<< "$stables")/$URLHREF_VERS_TARGETS")"
+rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$download_url/$URLHREF_RELEASES/$(head -n1 <<< "$stables")/$URLHREF_VERS_TARGETS")"
 targets="$( \
 echo "$rawhtml" \
 | sed -n '/<table>/,/<\/table>/p' | grep '<a href=' \
 | sed -E "s|.+\bhref=\"([^/]+)/.+|\1|g" \
 )"
-rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$OPENWRT_URL/$URLHREF_RELEASES/$(head -n1 <<< "$stables")/$URLHREF_VERS_PACKAGES")"
+rawhtml="$(curl --connect-timeout 10 --retry 3 -sSL "$download_url/$URLHREF_RELEASES/$(head -n1 <<< "$stables")/$URLHREF_VERS_PACKAGES")"
 pkgarchs="$( \
 echo "$rawhtml" \
 | sed -n '/<table>/,/<\/table>/p' | grep '<a href=' \
@@ -162,15 +194,14 @@ echo "$pkgarchs"
 echo "$pkgarchs" > "$PKGARCHS_LIST"
 }
 
-gethomeurl() {
-home_url="$1" home_path=
-[ -z "$home_url" ] && home_url="$(uci -q get $CONFIG_NAME.@$TYPEDSECTION[0].home_url)"
+gethome() {
+home_url="${1:-$(uci -q get $CONFIG_NAME.$SCONFIG.home_url)}"
 home_url="${home_url:-$DEF_HOMEURL}"
 home_path="/www/$home_url"
 }
 
 checkln() {
-gethomeurl
+gethome
 
 # clean up old symlink
 ls -l /www|grep "\-> $MNTPKGS"|grep -v " $home_url -> $MNTPKGS"|sed -En "s,.+ ('.+'|\S+) -> ${MNTPKGS}$,'/www/\1',p" | xargs rm -f 
@@ -179,7 +210,7 @@ find /www/* ! -type l -maxdepth 0|sed "s|.*/||g"
 }
 
 symln() {
-gethomeurl "$1"
+gethome "$1"
 
 # make mount dir
 [ -e "$home_path" ] || { ln -s "$MNTPKGS" "$home_path" 2>/dev/null; ln -s "$RESULTPATH" "$home_path/results" 2>/dev/null; return 0; }
@@ -208,7 +239,7 @@ cleanup_regex() {
 
 cleanup() {
 local autorm="$1"
-gethomeurl
+gethome
 
 local count targets packages pkgarchs
 [ -d "$home_path/$URLHREF_RELEASES" ] || return 1

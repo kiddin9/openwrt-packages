@@ -30,7 +30,7 @@ msgstr "禁用"
 msgid "Enable"
 msgstr "啟用"
 
-#: htdocs/luci-static/resources/view/einat.js:119
+#: htdocs/luci-static/resources/view/einat.js:120
 msgid "Enable hairpin"
 msgstr "啟用 Hairpin"
 
@@ -50,7 +50,7 @@ msgstr "外部介面"
 msgid "Grant access to LuCI app einat"
 msgstr "授予訪問 LuCI 應用 einat 的權限"
 
-#: htdocs/luci-static/resources/view/einat.js:124
+#: htdocs/luci-static/resources/view/einat.js:125
 msgid "Hairpin internal interfaces"
 msgstr "Hairpin 內部介面"
 
@@ -58,13 +58,17 @@ msgstr "Hairpin 內部介面"
 msgid "Info"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/einat.js:120
+#: htdocs/luci-static/resources/view/einat.js:121
 msgid "May conflict with other policy routing-based applications"
 msgstr "可能與其他基於策略路由的應用程式發生衝突"
 
 #: htdocs/luci-static/resources/view/einat.js:99
 msgid "NAT44"
 msgstr ""
+
+#: htdocs/luci-static/resources/view/einat.js:115
+msgid "Please avoid conflicts with external ports used by other applications"
+msgstr "請避免與其他應用程式使用的外部連接埠衝突"
 
 #: htdocs/luci-static/resources/view/einat.js:72
 #: htdocs/luci-static/resources/view/einat.js:73

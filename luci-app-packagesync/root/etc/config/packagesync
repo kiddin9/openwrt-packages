@@ -1,5 +1,7 @@
 
-config packagesync
+config packagesync 'config'
+	option download_url 'https://downloads.openwrt.org'
+	option rsync_url 'rsync://rsync.openwrt.org/downloads'
 	option home_url 'packagesync'
 	option auto_exec '0'
 	option cron_expression '0 0 * * *'

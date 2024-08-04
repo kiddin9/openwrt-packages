@@ -57,7 +57,7 @@ return view.extend({
 		var m, s, o;
 
 		m = new form.Map('alwaysonline', _('AlwaysOnline'),
-			_('<a href="%s" target="_blank"><b>AlwaysOnline</b></a> is a HTTP server which mocks a lot network/internet/portal detection servers.').format('https://github.com/muink/alwaysonline'));
+			_('<a href="%s" target="_blank"><b>AlwaysOnline</b></a> is a HTTP server which mocks a lot network/internet/portal detection servers.').format('https://github.com/Jamesits/alwaysonline'));
 
 		s = m.section(form.NamedSection, '_status');
 		s.anonymous = true;
@@ -67,7 +67,7 @@ return view.extend({
 			]);
 		};
 
-		s = m.section(form.TypedSection, 'alwaysonline');
+		s = m.section(form.NamedSection, 'global', 'alwaysonline');
 		s.anonymous = true;
 
 		o = s.option(form.Flag, 'enabled', _('Enable'));

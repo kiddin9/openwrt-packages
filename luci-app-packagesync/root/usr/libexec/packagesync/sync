@@ -8,14 +8,14 @@
 # Info
 PKGNAME='packagesync'
 RELEASE='release'
-VERSION="20230219"
+VERSION="20240804"
 #
 HOMEPATH=''
 JSON=''
 RESULTPATH='/var/packagesync/results'
 PIDFILE='/var/run/packagesync.pid'
 # url path
-WEB_URL="https://downloads.openwrt.org"
+DOWNLOAD_URL="https://downloads.openwrt.org"
 RSYNC_URL="rsync://rsync.openwrt.org/downloads"
 URLHREF_RELEASES='releases'
 #URLHREF_SNAPSHOTS='snapshots'
@@ -32,7 +32,7 @@ BWLIMIT='8000'
 
 
 # Get parameters
-GETOPT=$(getopt -n $(basename $0) -o x:l:d:n:s:t:k:e:m:o:V -l proxy:,bwlimit:,homedir:,name:,version:,target:,arch:,extra:,model:,orders:,Version,help -- "$@")
+GETOPT=$(getopt -n $(basename $0) -o d:n:s:t:k:m:e:o:l:x:V -l homedir:,name:,version:,target:,arch:,model:,extra:,orders:,bwlimit:,proxy:,downloadurl:,rsyncurl:,Version,help -- "$@")
 [ $? -ne 0 ] && >&2 echo -e "\tUse the --help option get help" && exit 1
 eval set -- "$GETOPT"
 OPTIONS=$(sed -E "s|'[^']*'||g; s| --( .*)?$||" <<< "$GETOPT")
@@ -50,8 +50,8 @@ echo "$OPTIONS" | grep -E " (-o|--orders)\b" | grep -E " (-n|--name)\b" >/dev/nu
 echo "$OPTIONS" | grep -E " (-o|--orders)\b" | grep -E " (-s|--version)\b" >/dev/null && >&2 echo "$(basename $0): Option '-o|--orders' cannot be used with option '-s|--version'" && exit 1
 echo "$OPTIONS" | grep -E " (-o|--orders)\b" | grep -E " (-t|--target)\b" >/dev/null && >&2 echo "$(basename $0): Option '-o|--orders' cannot be used with option '-t|--target'" && exit 1
 echo "$OPTIONS" | grep -E " (-o|--orders)\b" | grep -E " (-k|--arch)\b" >/dev/null && >&2 echo "$(basename $0): Option '-o|--orders' cannot be used with option '-k|--arch'" && exit 1
-echo "$OPTIONS" | grep -E " (-o|--orders)\b" | grep -E " (-e|--extra)\b" >/dev/null && >&2 echo "$(basename $0): Option '-o|--orders' cannot be used with option '-e|--extra'" && exit 1
 echo "$OPTIONS" | grep -E " (-o|--orders)\b" | grep -E " (-m|--model)\b" >/dev/null && >&2 echo "$(basename $0): Option '-o|--orders' cannot be used with option '-m|--model'" && exit 1
+echo "$OPTIONS" | grep -E " (-o|--orders)\b" | grep -E " (-e|--extra)\b" >/dev/null && >&2 echo "$(basename $0): Option '-o|--orders' cannot be used with option '-e|--extra'" && exit 1
 # Required options
 [    -n "$(echo "$OPTIONS" | grep -E " (-d|--homedir)\b" | grep -E " (-s|--version)\b" | grep -E " (-t|--target)\b" | grep -E " (-k|--arch)\b")" \
   -o -n "$(echo "$OPTIONS" | grep -E " (-o|--orders)\b")" \
@@ -77,11 +77,13 @@ Options:\n\
   -s, --version <version>             -- Required option. OpenWRT version\n\
   -t, --target <target/subtarget>     -- Required option. Device target and subtarget\n\
   -k, --arch <pkgarch>                -- Required option. Device architecture\n\
-  -e, --extra <true|false>            -- Optional option. Sync target supplementary. Default is false\n\
   -m, --model <model>                 -- Optional option. Product model keyword\n\
+  -e, --extra <true|false>            -- Optional option. Sync target supplementary. Default is false\n\
   -o, --orders <orders>               -- Required option. Sync multi-versions at once\n\
   -l, --bwlimit <n>[(K|M|G)]          -- Bandwidth limit\n\
   -x, --proxy <protocol://ip:port>    -- Connect using proxy\n\
+  --downloadurl <url>                 -- Optional option. Download url\n\
+  --rsyncurl <url>                    -- Optional option. Rsync url\n\
   -V, --Version                       -- Returns version\n\
   --help                              -- Returns help info\n\
 \n\
@@ -108,10 +110,10 @@ verify_order() {
   local version="$1" target="$2" arch="$3"
 
   local HTTPCODE ERROR=0
-  HTTPCODE="$(curl --connect-timeout 10 --retry 3 -sSIL -w "%{http_code}" -o /dev/null "$WEB_URL/$URLHREF_RELEASES/${version:-null}/$URLHREF_VERS_TARGETS/${target:-null}")"
-  [ -n "$(sed -n '/^2\d\d$/p' <<< "$HTTPCODE")" ] || { >&2 echo -e "$(basename $0): Get '$WEB_URL/$URLHREF_RELEASES/${version:-<null>}/$URLHREF_VERS_TARGETS/${target:-<null>}' failed. Code '$HTTPCODE'"; ((ERROR++)); }
-  HTTPCODE="$(curl --connect-timeout 10 --retry 3 -sSIL -w "%{http_code}" -o /dev/null "$WEB_URL/$URLHREF_RELEASES/${version:-null}/$URLHREF_VERS_PACKAGES/${arch:-null}")"
-  [ -n "$(sed -n '/^2\d\d$/p' <<< "$HTTPCODE")" ] || { >&2 echo -e "$(basename $0): Get '$WEB_URL/$URLHREF_RELEASES/${version:-<null>}/$URLHREF_VERS_PACKAGES/${arch:-<null>}' failed. Code '$HTTPCODE'"; ((ERROR++)); }
+  HTTPCODE="$(curl --connect-timeout 10 --retry 3 -sSIL -w "%{http_code}" -o /dev/null "$DOWNLOAD_URL/$URLHREF_RELEASES/${version:-null}/$URLHREF_VERS_TARGETS/${target:-null}")"
+  [ -n "$(sed -n '/^2\d\d$/p' <<< "$HTTPCODE")" ] || { >&2 echo -e "$(basename $0): Get '$DOWNLOAD_URL/$URLHREF_RELEASES/${version:-<null>}/$URLHREF_VERS_TARGETS/${target:-<null>}' failed. Code '$HTTPCODE'"; ((ERROR++)); }
+  HTTPCODE="$(curl --connect-timeout 10 --retry 3 -sSIL -w "%{http_code}" -o /dev/null "$DOWNLOAD_URL/$URLHREF_RELEASES/${version:-null}/$URLHREF_VERS_PACKAGES/${arch:-null}")"
+  [ -n "$(sed -n '/^2\d\d$/p' <<< "$HTTPCODE")" ] || { >&2 echo -e "$(basename $0): Get '$DOWNLOAD_URL/$URLHREF_RELEASES/${version:-<null>}/$URLHREF_VERS_PACKAGES/${arch:-<null>}' failed. Code '$HTTPCODE'"; ((ERROR++)); }
 
   [ "$ERROR" -gt 0 ] && return 1
   return 0
@@ -127,7 +129,7 @@ parse_json() {
 
   for i in $(seq 0 $[ $count -1 ]); do
     local order="$(eval "jsonfilter -q -s \"\$array\" -e '\$[$i]'")"
-    local ucivv="homedir version target arch extra model name"
+    local ucivv="homedir version target arch model extra name"
     for _var in $ucivv; do
       eval "local $_var=\"\$(jsonfilter -q -s \"\$order\" -e '\$.$_var')\""
     done
@@ -135,10 +137,10 @@ parse_json() {
     mkdir -p "$RESULTPATH" 2>/dev/null
     if [ -n "$name" ]; then
       cat /dev/null > "$RESULTPATH/${name}.log"
-      { mirror "$homedir" "$version" "$target" "$arch" "$extra" "$model" 2>&1 1>&3 | tee "$RESULTPATH/${name}.log"; } 3>&1 1>&2 # in bash
+      { mirror "$homedir" "$version" "$target" "$arch" "$model" "$extra" 2>&1 1>&3 | tee "$RESULTPATH/${name}.log"; } 3>&1 1>&2 # in bash
       #mirror "$homedir" "$version" "$target" "$arch" 2> >(tee "$RESULTPATH/${name}.log" >&2) # in POSIX shell
     else
-      mirror "$homedir" "$version" "$target" "$arch" "$extra" "$model"
+      mirror "$homedir" "$version" "$target" "$arch" "$model" "$extra"
     fi
     local ERROR="$?"
 
@@ -159,15 +161,15 @@ parse_json() {
   return $ERROR
 }
 
-#mirror <local mirror root path> <openwrt version> <target/subtarget> <package arch> <extra> <model>
+#mirror <local mirror root path> <openwrt version> <target/subtarget> <package arch> <model> <extra>
 mirror() {
-  local homedir version target arch extra ERROR=0
+  local homedir version target arch model extra ERROR=0
   homedir="${1:-$HOMEPATH}" && shift
   version="$1" && shift
   target="$1" && shift
   arch="$1" && shift
-  extra="$1" && shift
   model="$1" && shift
+  extra="$1" && shift
 
   verify_path "$homedir" || { >&2 echo -e "$(basename $0): No valid <homedir> specified\n\tUse the --help option get help"; ((ERROR++)); }
   verify_order "$version" "$target" "$arch" || { >&2 echo -e "$(basename $0): Order '$version' '$target' '$arch' seems invalid.\n\tPlease check for network or typos"; ((ERROR++)); }
@@ -244,7 +246,7 @@ sync_extra() {
 
   mkdir -p "$home/${VER}/$URLHREF_VERS_TARGETS/$target" 2>/dev/null
   #supplementary
-  local table="$(curl --connect-timeout 10 --retry 3 -sSL "$WEB_URL/${VER}/$URLHREF_VERS_TARGETS/$target" | sed -n '/Supplementary Files/,$p' | sed -n '/<table>/,/<\/table>/p')"
+  local table="$(curl --connect-timeout 10 --retry 3 -sSL "$DOWNLOAD_URL/${VER}/$URLHREF_VERS_TARGETS/$target" | sed -n '/Supplementary Files/,$p' | sed -n '/<table>/,/<\/table>/p')"
   if [ -n "$table" ]; then
     local expr="{$(echo "$table" | sed -En "s|.+\bhref=\"([^\"/]+)\".+|'\1'|gp" | tr '\n' ',' | sed 's|,$||')}"
     eval "rsync \$ARCHIVE\$INFO \$COMPAC \$PRUNE \$PROGR --bwlimit=\$BWLIMIT --include=$expr --exclude='*' \"\$RSYNC_URL/\${VER}/\$URLHREF_VERS_TARGETS/\$target/\" \"\$home/\${VER}/\$URLHREF_VERS_TARGETS/\$target/\"" || ((ERROR++))
@@ -342,6 +344,14 @@ fe80:(:[[:xdigit:]]{0,4}){0,4}%\w+|\
       #[ -n "$(echo "$2"|sed -En '/^(\d|[1-9]\d*(K|M|G)?)$/lp')" ]
       shift
     ;;
+    --downloadurl)
+      DOWNLOAD_URL="$2"
+      shift
+    ;;
+    --rsyncurl)
+      RSYNC_URL="$2"
+      shift
+    ;;
     -d|--homedir)
       verify_path "$2" && HOMEPATH="$2" || { >&2 echo -e "$(basename $0): Option '$1' requires a valid argument\n\tUse the --help option get help"; exit 1; }
       shift
@@ -362,12 +372,12 @@ fe80:(:[[:xdigit:]]{0,4}){0,4}%\w+|\
       arch="$2"
       shift
     ;;
-    -e|--extra)
-      extra="$2"
-      shift
-    ;;
     -m|--model)
       model="$2"
+      shift
+    ;;
+    -e|--extra)
+      extra="$2"
       shift
     ;;
     -o|--orders)
@@ -389,7 +399,7 @@ done
 # ...
 
 # Execute
-parse_json "${JSON:=[{'name':'$name','version':'$version','target':'$target','arch':'$arch','extra':${extra:-false},'model':'${model}'\}]}" #|| { >&2 echo -e "$(basename $0): Required options requires valid argument\n\tUse the --help option get help"; exit 1; }
+parse_json "${JSON:=[{'name':'$name','version':'$version','target':'$target','arch':'$arch','model':'${model}','extra':${extra:-false}\}]}" #|| { >&2 echo -e "$(basename $0): Required options requires valid argument\n\tUse the --help option get help"; exit 1; }
 exitcode=$?
 rm -f "$PIDFILE" 2>/dev/null
 exit $exitcode

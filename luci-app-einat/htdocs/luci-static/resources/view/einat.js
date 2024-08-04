@@ -111,7 +111,8 @@ return view.extend({
 		o.nocreate = true;
 		o.rmempty = true;
 
-		o = s.option(form.Value, 'ports', _('External TCP/UDP port ranges'));
+		o = s.option(form.Value, 'ports', _('External TCP/UDP port ranges'),
+			_('Please avoid conflicts with external ports used by other applications'));
 		o.datatype = 'portrange';
 		o.placeholder = '20000-29999';
 		o.rmempty = true;

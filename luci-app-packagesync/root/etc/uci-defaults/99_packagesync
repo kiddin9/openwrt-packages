@@ -1,0 +1,10 @@
+#!/bin/sh
+
+[ -n "$(uci -q get packagesync.config)" ] || sed -i "s|^config packagesync|config packagesync 'config'|" /etc/config/packagesync
+
+download_url="$(uci -q get packagesync.config.download_url)"
+rsync_url="$(uci -q get packagesync.config.rsync_url)"
+[ -n "$download_url" ] || uci set packagesync.config.download_url='https://downloads.openwrt.org'
+[ -n "$rsync_url" ] || uci set packagesync.config.rsync_url='rsync://rsync.openwrt.org/downloads'
+
+[ -z "$(uci changes packagesync)" ] || uci commit packagesync

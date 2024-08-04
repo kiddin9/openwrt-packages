@@ -85,7 +85,7 @@ return view.extend({
 
 		m = new form.Map('packagesync');
 
-		s = m.section(form.TypedSection, 'packagesync', _('Local software source'),
+		s = m.section(form.NamedSection, 'config', 'packagesync', _('Local software source'),
 			_('packagesync used to build a local mirror feeds source on the router<br/>\
 			To use packagesync, you need to prepare a storage device with a size of at least <b>16G</b> and connect it to the router<br/>\
 			then open <a href="%s"><b>Mount Points</b></a>, find the connected device and set its mount point to <b>%s</b>, check <b>Enabled</b> and click <b>Save&Apple</b>')

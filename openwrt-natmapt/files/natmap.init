@@ -74,7 +74,10 @@ define_global() {
 	local error=0
 	local v ucivv="enable def_tcp_stun def_udp_stun def_http_server def_fwmark_value def_tcp_interval def_udp_interval"
 	for v in $ucivv; do
-		[ -z "$(config_get $1 $v)" ] && err_msg__empty $1 $v && let error++
+		[ -z "$(config_get $1 $v)" ] && grep -qEv "^(def_fwmark_value)$" <<< "$v" && {
+			err_msg__empty $1 $v
+			let error++
+		}
 		config_get GLOBAL_$v $1 $v
 	done
 
