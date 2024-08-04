@@ -18,7 +18,7 @@
 			},
 			"ubus": {
 				"file": [ "read" ],
-				"luci": [ "getConntrackHelpers" ]
+				"service": [ "list" ]
 			},
 			"uci": [ "mosdns" ]
 		},
