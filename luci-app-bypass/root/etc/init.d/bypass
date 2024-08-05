@@ -806,7 +806,7 @@ gen_dns(){
 	rm -f $O
 	[ $(find $DNS_DIR -name \* -exec cat {} \; 2>/dev/null | wc -l) = 0 ] && rm -rf $DNS_DIR || echo conf-dir=$DNS_DIR >>$DNS_FILE
 	[ $run_mode = router ] && chinadns_flag=1
-	killall -q -9 smartdns
+	killall -q -3 smartdns
 	start_dns
 	/etc/init.d/dnsmasq restart >/dev/null 2>&1
 	preload
@@ -1001,7 +1001,7 @@ stop(){
 	kill -9 $(ps -w | grep by-monitor | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep by-preload | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep $VAR | grep -v grep | awk '{print$1}') 2>/dev/null
-	killall -q -9 smartdns chinadns-ng kcptun-client microsocks
+	killall -q -3 smartdns chinadns-ng kcptun-client microsocks
 	rm -rf $DNS_DIR $VAR $DNS_FILE $CON_T /var/lock/bypass-update.lock
 	[ -z "$GLOBAL_SERVER" ] && grep -q bypass $CRON_FILE && sed -i '/bypass/d' $CRON_FILE && /etc/init.d/cron restart
 	if [ $STATUS = Y -o -z "$GLOBAL_SERVER" ];then
