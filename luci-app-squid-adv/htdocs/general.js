@@ -18,12 +18,11 @@ return view.extend({
 	// Rendering function:
 	render: function() {
 		var s, o, m, t;
-		m = new form.Map('squid', _('Squid Configuration')); 
+		m = new form.Map('squid', _('Squid Proxy Settings')); 
 
-		s = m.section(form.TypedSection, 'squid', _('Normal Proxy'));
+		s = m.section(form.TypedSection, 'squid');
 		s.anonymous = true;
-		
-		o = s.option(form.Value, 'http_port', _('Squid Port'));
+		o = s.option(form.Value, 'http_port', _('Regular Squid Proxy Port'));
 		o.validate = this.validate_ip;
 
 		o = s.option(form.Value, "visible_hostname", _("Visible Hostname"))

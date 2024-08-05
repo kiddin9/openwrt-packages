@@ -48,7 +48,7 @@ url=
 out=
 type=
 
-# \.(css|js)
+# \.(css|js) main ref
 for _i in $(seq 0 1 $[ ${#refurl[@]} -1 ]); do
     eval "url=${refurl[$_i]}"
     out=${url##*/}
@@ -64,6 +64,7 @@ ref=$(for _p in $(find * -type f ! -path "$PKG_DIR/*"); do \
         [ "$?" == "0" ] && echo $_p; \
     done)
 
+# ref of main ref
 for _i in $ref; do
     suburl=($(sed -E "s/(,|;)/\1\n/g" $_i | grep -E "\burl\([^\)]+\)" | grep -Ev "\burl\(\"data:image" | sed -En "s|^[^']+'([^']+)'.+|\1| p"))
     hosturl=$(for _ in "${refurl[@]}"; do grep "${_i##*/}" <<< "$_"; done)

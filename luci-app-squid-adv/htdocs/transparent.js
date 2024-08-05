@@ -1,4 +1,5 @@
 'use strict';
+'require ui';
 'require view';
 'require uci';
 'require form';
@@ -10,6 +11,10 @@ return view.extend({
 	configure_proxies: rpc.declare({
 		object: 'luci.squid-adv',
 		method: 'reconfigure',
+	}),
+	cert_valid: rpc.declare({
+		object: 'luci.squid-adv',
+		method: 'cert_valid',
 	}),
  
  	// Validate whether string passed is a valid IP/Port combination or just a valid Port:  
@@ -24,19 +29,29 @@ return view.extend({
 		}
 	},
 
-	// Rendering function:
-	render: function() {
-		var m, o, i, s, t;
-		m = new form.Map('squid', _('Squid Configuration')); 
+	// Loading function:
+    load: function () {
+        return Promise.all([
+            this.cert_valid(),
+        ]);
+    },
 
-		s = m.section(form.TypedSection, 'transparent', _("Transparent Proxy"));
+	// Rendering function:
+	render: function(data) {
+		var m, o, i, s, t, valid = data[0].valid;
+		if (!valid) {
+			ui.addNotification(null, _("NOTICE: Server certificate missing!  ") + "&quot;" + _("Enable Transparent HTTPS Proxy") + "&quot " + _("setting will be not be shown until the server certificate has been generated!"), 'error' );
+		}
+		m = new form.Map('squid', _('Transparent Proxy Configuration'));
+
+		s = m.section(form.TypedSection, 'transparent');
 		s.anonymous = true;
 		
-		o = s.option(widgets.NetworkSelect, 'interface', _('Interface'), _('Transparent proxy only works on the specified interface.') + "<br />" + _("Do not use on interfaces controlled by programs like nodogsplash!"));
+		o = s.option(widgets.NetworkSelect, 'interface', _('Interface'), _('Transparent proxy only works on the specified interface.') + "<br />" + _("Do not use on interfaces controlled by programs like ") + '<a href="https://nodogsplashdocs.readthedocs.io/en/stable/">nodogsplash</a>!"));
 		o.multiple = false;
 		o.default = 'lan';
 
-		o = s.option(form.Flag, "http_enabled", _("Transparent HTTP Proxy Enabled:"))
+		o = s.option(form.Flag, "http_enabled", _("Enable Transparent HTTP Proxy") + ":")
 
 		o = s.option(form.Value, "http_port", _("Bind for Transparent HTTP Proxy:"), _("Specify either IP address and Port combination, or just the Port."))
 		o.validate = this.validate_ip;
@@ -44,7 +59,12 @@ return view.extend({
 		o.placeholder = "0-65535"
 		o.depends("http_enabled", '1');
 
-		o = s.option(form.Flag, "https_enabled", _("Transparent HTTPS Proxy Enabled:"))
+		o = s.option(form.HiddenValue, "cert_valid")
+		o.cfgvalue = function(section_id) { return valid; }
+		o.write = null;
+
+		o = s.option(form.Flag, "https_enabled", _("Enable Transparent HTTPS Proxy") + ":")
+		o.depends("cert_valid", '1')
 
 		o = s.option(form.Value, "https_port", _("Bind for Transparent HTTPS Proxy:"), _("Specify either IP address and Port combination, or just the Port."))
 		o.validate = this.validate_ip;

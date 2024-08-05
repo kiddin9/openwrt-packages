@@ -5,6 +5,8 @@
 			"ubus": {
 				"luci.squid-adv": [
 					"reconfigure",
+					"generate",
+					"cert_valid",
 				]
 			},
 			"uci": [

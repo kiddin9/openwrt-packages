@@ -1,0 +1,8 @@
+#!/bin/sh
+uci -q batch <<-EOF >/dev/null
+        delete ucitrack.@squid[-1]
+        add ucitrack squid
+        set ucitrack.@squid[-1].init=squid
+        commit ucitrack
+EOF
+exit 0

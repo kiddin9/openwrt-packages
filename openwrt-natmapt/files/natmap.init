@@ -305,11 +305,13 @@ launcher() {
 	[ "$enable" = 0 ] && return 0
 
 	# global options
-	[ "$udp_mode" = 1 ] \
-		&& echo ${stun_server:=$GLOBAL_def_udp_stun} ${interval:=$GLOBAL_def_udp_interval} >/dev/null \
-		|| echo ${stun_server:=$GLOBAL_def_tcp_stun} ${interval:=$GLOBAL_def_tcp_interval} >/dev/null
-	echo ${http_server:=$GLOBAL_def_http_server} >/dev/null
-	echo ${fwmark_value:=$GLOBAL_def_fwmark_value} >/dev/null
+	if [ "$udp_mode" = 1 ]; then
+		local stun_server=${stun_server:-$GLOBAL_def_udp_stun} interval=${interval:-$GLOBAL_def_udp_interval}
+	else
+		local stun_server=${stun_server:-$GLOBAL_def_tcp_stun} interval=${interval:-$GLOBAL_def_tcp_interval}
+	fi
+	local http_server=${http_server:-$GLOBAL_def_http_server}
+	local fwmark_value=${fwmark_value:-$GLOBAL_def_fwmark_value}
 	# natmap options
 	local error=0
 	local proto ifname bind_ip lan_addr
@@ -318,7 +320,8 @@ launcher() {
 		ipv4) network_get_device ifname "$DEF_WAN";;
 		ipv6) network_get_device ifname "$DEF_WAN6";;
 	esac
-	[ -z "${bind_ifname:=$ifname}" ] && >&2 echo "$(basename $0): section $1 option bind_ifname parsing failed, there may be no $family network connection" && let error++
+	local bind_ifname=${bind_ifname:-$ifname}
+	[ -z "$bind_ifname" ] && >&2 echo "$(basename $0): section $1 option bind_ifname parsing failed, there may be no $family network connection" && let error++
 	case "$family" in
 		ipv4)
 			eval "bind_ip=\"\${NIC_${bind_ifname//[[:punct:]]/_}%/*}\""
@@ -366,7 +369,7 @@ launcher() {
 		[ -x "$ddns_script" ] || { >&2 echo "$(basename $0): section $1 option ddns_script '$ddns_script' is empty or non-executable"; let error++; }
 		if [ -n "$ddns_srv" ]; then
 			[ -z "$ddns_srv_serv" ] && err_msg__empty $1 ddns_srv_serv && let error++
-			echo ${ddns_srv_target:=$ddns_srv} >/dev/null
+			local ddns_srv_target=${ddns_srv_target:-$ddns_srv}
 		fi
 	fi
 

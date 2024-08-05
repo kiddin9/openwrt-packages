@@ -29,4 +29,12 @@
             "path": "squid-adv/transparent"
         }
     },
+    "admin/services/squid/openssl": {
+        "title": "OpenSSL Cert",
+        "order": 20,
+        "action": {
+            "type": "view",
+            "path": "squid-adv/openssl"
+        }
+    },
 }

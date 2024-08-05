@@ -1,6 +1,7 @@
 #!/bin/sh
 . /usr/share/libubox/jshn.sh
 . /lib/functions.sh
+CERTS=/etc/squid/cert
 FILE=/tmp/luci.squid-adv.tmp
 trap 'rm ${FILE} 2> /dev/null' EXIT
 
@@ -49,12 +50,18 @@ case "$1" in
 		json_add_int    'https_enabled' 'Integer'
 		json_add_string 'https_port'    'String'
 		json_close_object
+		json_add_object "generate"
+		json_close_object
+		json_add_object "cert_valid"
+		json_close_object
 		json_dump
 		;;
 
 	call)
 		case "$2" in
+			####################################################################################
 			reconfigure)
+				# Get the settings we need for this action:
 				config_load squid
 				config_get interface transparent interface
 				config_get http_enabled transparent http_enabled
@@ -85,13 +92,49 @@ case "$1" in
 				else
 					check_firewall 443 ${https_port}
 					sed -i "/^http_port .* intercept.*ssl-bump/d" /etc/squid/squid.conf
-					echo "http_port ${https_port} intercept tcpkeepalive=60,30,3 ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/cert/ca.pem key=/etc/squid/cert/ca.key cipher=HIGH:MEDIUM:!LOW:!RC4:!SEED:!IDEA:!3DES:!MD5:!EXP:!PSK:!DSS options=NO_TLSv1,NO_SSLv3 tls-dh=prime256v1:/etc/squid/cert/dhparam.pem" >> /etc/squid/squid.conf
+					echo "http_port ${https_port} intercept tcpkeepalive=60,30,3 ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=${CERTS}/ca.pem key=${CERTS}/ca.key cipher=HIGH:MEDIUM:!LOW:!RC4:!SEED:!IDEA:!3DES:!MD5:!EXP:!PSK:!DSS options=NO_TLSv1,NO_SSLv3 tls-dh=prime256v1:${CERTS}/dhparam.pem" >> /etc/squid/squid.conf
 				fi
 
 				# Restart services as required:
-				/sbin/service squid restart
 				uci commit firewall
 				/sbin/service firewall restart
+				;;
+				
+			####################################################################################
+			generate)
+				# Get the settings we need for this action:
+				config_load squid
+				config_get bits cert bits
+				config_get days cert days
+				config_get country cert country
+				config_get state cert state
+				config_get locality cert locality
+				config_get organization cert organization 
+				config_get overwrite cert overwrite 
+
+				# If certificate exists --AND-- force option is NOT set to "1", then abort:
+				[[ -f ${CERTS}/ca.key && "${overwrite}" != "1" ]] && exit
+				
+				# Generate OpenSSL certificates, using defaults if option is not set:
+				mkdir -p ${CERTS}
+				openssl req -new -x509 -newkey rsa:${bits:=2048} -days ${days:=3650} -nodes -keyout ${CERTS}/ca.key  -out ${CERTS}/ca.pem -subj "/C=${country:=XX}/ST=${state:=Unspecified}/L=${locality:=Unspecified}/O=${organization:-OpenWrt Router}" 2>&1
+				openssl x509 -in ${CERTS}/ca.pem -outform DER -out ${CERTS}/ca.der 2>&1
+				openssl pkcs12 -export -out ${CERTS}/ca.p12 -in ${CERTS}/ca.pem -inkey ${CERTS}/ca.key -passout pass: -nokeys 2>&1
+				chmod 0644 ${CERTS}/ca.*
+				chmod 0600 ${CERTS}/ca.key
+				;;
+
+			####################################################################################
+			cert_valid)
+				VALID=false
+				test -f ${CERTS}/ca.pem && openssl x509 -in ${CERTS}/ca.pem -noout -dates -checkdates > ${FILE} && VALID=true
+				echo -n "{"
+				if [[ "${VALID}" == "true" ]]; then
+					cat ${FILE} | while read LINE; do echo -n "\"${LINE%%=*}\": \"${LINE#*=}\","; done
+				else
+					echo -n "\"notBefore\":\"Invalid\",\"notAfter\":\"Invalid\","
+				fi
+				echo "\"valid\":${VALID}}"
 				;;
 		esac
 		;;

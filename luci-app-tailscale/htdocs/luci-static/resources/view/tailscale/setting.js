@@ -187,7 +187,7 @@ return view.extend({
 
 		s.tab('extra',_('Extra Settings'));
 
-		o = s.taboption('extra', form.DynamicList, 'flags', _('Additional Flags'), String.format(_('List of extra flags. Format: --flags=value, e.g. <code>--exit-node=10.0.0.1</code>. <br> %s for enabling settings upon the initiation of Tailscale.'), '<a href="https://tailscale.com/kb/1080/cli#up" target="_blank">' + _('Available flags') + '</a>'));
+		o = s.taboption('extra', form.DynamicList, 'flags', _('Additional Flags'), String.format(_('List of extra flags. Format: --flags=value, e.g. <code>--exit-node=10.0.0.1</code>. <br> %s for enabling settings upon the initiation of Tailscale.'), '<a href="https://tailscale.com/kb/1241/tailscale-up" target="_blank">' + _('Available flags') + '</a>'));
 
 		s = m.section(form.NamedSection, 'settings', 'config');
 		s.title = _('Custom Server Settings');
