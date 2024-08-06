@@ -111,6 +111,7 @@ check() {
 		| grep '"tag_name":' | sed "/$VERSION/,\${/$VERSION/b;d}" \
 		| sed -E 's|",||g; s|^.+"([^"]+)|\1|g' \
 	> "$VARDIR/releaseslist"
+	[ "$?" != 0 ] || sed -i 'i\master' "$VARDIR/releaseslist"
 }
 
 restart() {
